@@ -3,4 +3,5 @@ NEA PROJECT
 
 api:
 needs to have following features
-_1._
+
+LOTS OF PRIVACY
