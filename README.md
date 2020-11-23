@@ -10,3 +10,6 @@ POST to the server with key and hardware id, return success (bool) and a fresh a
 
 b) if an activation already exists in the config file of the application,
 submit a GET request with the activation token and it will either return success or failure based on whether or not the application token/session is valid.
+
+if a user wants to delete their activation, you can submit a DELETE request to same endpoint.
+
