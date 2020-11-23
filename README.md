@@ -13,3 +13,4 @@ submit a GET request with the activation token and it will either return success
 
 if a user wants to delete their activation, you can submit a DELETE request to same endpoint.
 
+should all be under one given endpoint.
