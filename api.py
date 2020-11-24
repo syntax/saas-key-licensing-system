@@ -1,11 +1,14 @@
 from flask import Flask, jsonify, abort, make_response, request
+import os
+from binascii import hexlify
 
 # TESTING PLAYING ABOUT WITH FLASK AND RESTFUL API
 app = Flask(__name__)
 
 licenses = [{'id': 1,'key':'asbd918b2819basd89'}, {'id': 2,'key':'iniboniogb123bobo'}]
 
-def genlicensesession():
+def genlicensesession(): #will need to justify why this is ALWAYS random and crytographically secure
+    return hexlify(os.urandom(16))
 
 @app.errorhandler(404)
 def not_found(error):
@@ -40,4 +43,5 @@ def delete_task(licenseid):
     return jsonify({'result': True})
 
 if __name__ == '__main__':
+    print(genlicensesession())
     app.run(debug=True)
