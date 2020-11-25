@@ -1,0 +1,12 @@
+Auth flow looks something like this
+
+first activation:
+1. Validate license key -> Returns user data (discordId, discord name, etc etc.)
+2. Post hwid / user device ID (to bind users license key to their device)
+
+subsequent startups:
+1. Validate user via hwid
+2. Check user status (if subscription still active)
+
+subsequent checks:
+1. Get hwid every few seconds / minutes (ensuring that users can only use their key on 1 device at a time after they reset machine via their user dashboard for example)
