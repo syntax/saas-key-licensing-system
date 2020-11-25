@@ -1,8 +1,12 @@
 from flask import Flask, jsonify, abort, make_response, request
 import os
 from binascii import hexlify
+import sqlite3
 
 # TESTING PLAYING ABOUT WITH FLASK AND RESTFUL API
+
+sqlite3.connect('licenses.db') #connect to db
+
 app = Flask(__name__)
 
 licenses = [{'id': 1,'key':'asbd918b2819basd89'}, {'id': 2,'key':'iniboniogb123bobo'}]
