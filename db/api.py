@@ -6,17 +6,14 @@ import sqlite3
 
 class Database():
     def __init__(self):
-        if os.path.exists("db/main.db"):
-            self.removeTable()
-
         self.conn = sqlite3.connect('./main.db')
         self.c = self.conn.cursor()
 
     def create(self):
-        if os.path.exists('main.db'):
+        if os.path.getsize('main.db') != 0:
             return 'DB File already exists and has already been created.'
         else:
-            self.c.execute('CREATE TABLE licenses (email text, password text, key text)')
+            self.c.execute('CREATE TABLE licenses (fName text, sName text, emailAddress text, password text, license text, active boolean, HWID string)')
             self.conn.commit()
             return 'Created DB file'
 
@@ -24,7 +21,13 @@ class Database():
         self.c.execute('DROP TABLE licenses')
         self.conn.commit()
 
-    def addToTable(self):
+    def addToTable_wholerow(self):
+        self.c.execute('''INSERT INTO licenses(fName,sName,emailAddress,password,license,active,HWID)
+              VALUES(?,?,?)''')
+        self.conn.commit()
+        pass
+
+    def editTable_specificcol(self):
         pass
 
     def getFromTable(self):
@@ -35,8 +38,6 @@ class Database():
 
 
 db = Database()
-db.create()
-
 
 app = Flask(__name__)
 
@@ -44,16 +45,13 @@ licenses = [{'id': 1,'key':'asbd918b2819basd89'}, {'id': 2,'key':'iniboniogb123b
 
 
 
-class API():
-    def __init__(self):
-        pass
 
 # def genlicensesession():  # will need to justify why this is ALWAYS random and crytographically secure
 #     return hexlify(os.urandom(16))
 
 
 @app.errorhandler(404)
-def not_found(error):
+def not_found():
     return make_response(jsonify({'error': 'not found'}), 404)
 
 
@@ -90,4 +88,5 @@ def delete_task(licenseid):
 
 
 if __name__ == '__main__':
+    db.create()
     app.run()
