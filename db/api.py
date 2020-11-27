@@ -21,13 +21,14 @@ class Database():
         self.c.execute('DROP TABLE licenses')
         self.conn.commit()
 
-    def addToTable_wholerow(self):
-        self.c.execute('''INSERT INTO licenses(fName,sName,emailAddress,password,license,active,HWID)
-              VALUES(?,?,?)''')
+    def addToTable_wholerow(self,values):
+        self.c.execute(f'''INSERT INTO licenses(fName,sName,emailAddress,password,license,active,HWID)
+              VALUES({values})''')
         self.conn.commit()
         pass
 
     def editTable_specificcol(self):
+        self.c.execute('''''')
         pass
 
     def getFromTable(self):
