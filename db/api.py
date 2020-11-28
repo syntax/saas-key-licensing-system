@@ -25,11 +25,18 @@ class Database():
         self.c.execute(f'''INSERT INTO licenses(fName,sName,emailAddress,password,license,active,HWID)
               VALUES({values})''')
         self.conn.commit()
-        pass
 
-    def editTable_specificcol(self):
-        self.c.execute('''''')
-        pass
+    def hwidAndDeviceToTable(self,license,hwid,devname): #database functions that the api call might need to make
+        self.c.execute(f'''UPDATE licenses
+                SET hwid = {hwid}, devicename = {devname}
+                WHERE licensekeyID = {license};''')
+        self.conn.commit()
+
+    def activatedToTable(self,license,activated: bool):
+        self.c.execute(f'''UPDATE licenses
+                        SET activated = {activated}
+                        WHERE licensekeyID = {license};''')
+        self.conn.commit()
 
     def getFromTable(self):
         pass
