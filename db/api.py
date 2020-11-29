@@ -38,7 +38,10 @@ class Database():
                         WHERE licensekeyID = {license};''')
         self.conn.commit()
 
-    def getFromTable(self):
+    def getFromTable(self,license,fieldname):
+        self.c.execute(f'''SELECT {fieldname}
+                        FROM licenses
+                        WHERE licensekeyID = {license};''')
         pass
 
     def removeFromTable(self):
