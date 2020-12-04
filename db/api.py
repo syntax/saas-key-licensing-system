@@ -38,7 +38,7 @@ class Database():
                         WHERE licensekeyID = {license};''')
         self.conn.commit()
 
-    def getFromTable(self,license,fieldname):
+    def getFromTable(self,license):
         self.c.execute(f'''SELECT *
                         FROM licenses
                         WHERE license = ?;''', (license,))
@@ -50,14 +50,13 @@ class Database():
 
 db = Database()
 #testing adding fields to database
-db.addToTable_wholerow('sam,barnett,sambarnettbusiness@gmail.com,killthecats!!,1292-3125-1539,active,91294macbook')
+db.addToTable_wholerow('sam,barnett,sambarnettbusiness@gmail.com,killthecats!!,12345678,active,91294macbook')
 db.addToTable_wholerow('ollie,blair,ollieblair.03@gmail.com,Icat112!!,1292-9412-1539,active,windowsanddat')
-print(db.getFromTable('1292-3125-1539','fName'))
+print(db.getFromTable('1292-3125-1539'))
 
 app = Flask(__name__)
 
 licenses = [{'id': 1,'key':'asbd918b2819basd89'}, {'id': 2,'key':'iniboniogb123bobo'}]
-
 
 
 
@@ -77,7 +76,7 @@ def get_licenses():
 
 @app.route('/api/v1/licenses/<int:licenseid>', methods=['GET'])
 def get_specific_license(licenseid):
-    license = [license for license in licenses if license['id'] == licenseid]
+    license = db.getFromTable(licenseid)
     if len(license) == 0:
         abort(404)
     return jsonify({'license': license[0]})
