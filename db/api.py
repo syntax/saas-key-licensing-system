@@ -76,11 +76,21 @@ def get_licenses():
 @app.route('/api/v1/licenses/<int:licenseid>', methods=['GET'])
 def get_specific_license(licenseid):
     dbtemp = Database()
-    print(licenseid)
     license = dbtemp.getFromTable(licenseid)
     if len(license) == 0:
         abort(404)
-    return jsonify({'license': license[0]})
+    else:
+        license = license[0] #testing purposes only
+        license_dict = {
+                        'first_name': license[0],
+                        'last_name': license[1],
+                        'email': license[2],
+                        'pw': license[3],
+                        'license_key': license[4],
+                        'active_status': license[5],
+                        'hwid_identifier': license[6]
+                        }
+    return jsonify({'license': license_dict})
 
 
 @app.route('/api/v1/licenses', methods=['POST'])
