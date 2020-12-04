@@ -6,11 +6,11 @@ import sqlite3
 
 class Database():
     def __init__(self):
-        self.conn = sqlite3.connect('./main.db')
+        self.conn = sqlite3.connect('./licenses.db')
         self.c = self.conn.cursor()
 
     def create(self):
-        if os.path.getsize('main.db') != 0:
+        if os.path.getsize('licenses.db') != 0:
             return 'DB File already exists and has already been created.'
         else:
             self.c.execute('CREATE TABLE licenses (fName text, sName text, emailAddress text, password text, license text, active boolean, HWID string)')
@@ -23,7 +23,7 @@ class Database():
 
     def addToTable_wholerow(self,values):
         self.c.execute(f'''INSERT INTO licenses(fName,sName,emailAddress,password,license,active,HWID)
-              VALUES({values})''')
+              VALUES(?, ?, ?, ?, ?, ?, ?)''', tuple(values.split(',')))
         self.conn.commit()
 
     def hwidAndDeviceToTable(self,license,hwid,devname): #database functions that the api call might need to make
@@ -39,16 +39,20 @@ class Database():
         self.conn.commit()
 
     def getFromTable(self,license,fieldname):
-        self.c.execute(f'''SELECT {fieldname}
+        self.c.execute(f'''SELECT *
                         FROM licenses
-                        WHERE licensekeyID = {license};''')
-        pass
+                        WHERE license = ?;''', (license,))
+        return self.c.fetchall()
 
     def removeFromTable(self):
         pass
 
 
 db = Database()
+#testing adding fields to database
+db.addToTable_wholerow('sam,barnett,sambarnettbusiness@gmail.com,killthecats!!,1292-3125-1539,active,91294macbook')
+db.addToTable_wholerow('ollie,blair,ollieblair.03@gmail.com,Icat112!!,1292-9412-1539,active,windowsanddat')
+print(db.getFromTable('1292-3125-1539','fName'))
 
 app = Flask(__name__)
 
