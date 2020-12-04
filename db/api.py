@@ -52,7 +52,6 @@ db = Database()
 #testing adding fields to database
 db.addToTable_wholerow('sam,barnett,sambarnettbusiness@gmail.com,killthecats!!,12345678,active,91294macbook')
 db.addToTable_wholerow('ollie,blair,ollieblair.03@gmail.com,Icat112!!,1292-9412-1539,active,windowsanddat')
-print(db.getFromTable('1292-3125-1539'))
 
 app = Flask(__name__)
 
@@ -76,7 +75,9 @@ def get_licenses():
 
 @app.route('/api/v1/licenses/<int:licenseid>', methods=['GET'])
 def get_specific_license(licenseid):
-    license = db.getFromTable(licenseid)
+    dbtemp = Database()
+    print(licenseid)
+    license = dbtemp.getFromTable(licenseid)
     if len(license) == 0:
         abort(404)
     return jsonify({'license': license[0]})
