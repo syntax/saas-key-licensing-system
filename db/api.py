@@ -47,6 +47,9 @@ class Database():
     def removeFromTable(self):
         pass
 
+    def closeConnection(self):
+        self.conn.close()
+
 
 db = Database()
 #testing adding fields to database
@@ -90,6 +93,7 @@ def get_specific_license(licenseid):
                         'active_status': license[5],
                         'hwid_identifier': license[6]
                         }
+    dbtemp.closeConnection()
     return jsonify({'license': license_dict})
 
 
