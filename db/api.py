@@ -51,6 +51,8 @@ class Database():
         self.conn.close()
 
 
+
+#this is not really needed, only for testing.
 db = Database()
 #testing adding fields to database
 db.addToTable_wholerow('sam,barnett,sambarnettbusiness@gmail.com,killthecats!!,12345678,active,91294macbook')
@@ -113,6 +115,11 @@ def create_license():
             dbtemp.closeConnection()
             abort(500)
 
+@app.route('/api/v1/licenses/hwid/<int:licenseid>', methods=['POST'])
+def update_hwid(licenseid):
+    if not request.json or not {'active_status','hwid_identifier'}.issubset(set(request.json)):
+        abort(400) #malformed request syntax
+    else:
 
 @app.route('/api/v1/licenses<int:licenseid>', methods=['DELETE'])
 def delete_task(licenseid):
