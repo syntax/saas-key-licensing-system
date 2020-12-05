@@ -85,13 +85,13 @@ def get_specific_license(licenseid):
     else:
         license = license[0] #testing purposes only
         license_dict = {
-                        'first_name': license[0],
-                        'last_name': license[1],
-                        'email': license[2],
-                        'pw': license[3],
-                        'license_key': license[4],
-                        'active_status': license[5],
-                        'hwid_identifier': license[6]
+                        "first_name": license[0],
+                        "last_name": license[1],
+                        "email": license[2],
+                        "pw": license[3],
+                        "license_key": license[4],
+                        "active_status": license[5],
+                        "hwid_identifier": license[6]
                         }
     dbtemp.closeConnection()
     return jsonify({'license': license_dict})
@@ -99,12 +99,19 @@ def get_specific_license(licenseid):
 
 @app.route('/api/v1/licenses', methods=['POST'])
 def create_license():
-    if not request.json or not 'key' in request.json:
-        abort(400)
-    license = {'id': licenses[-1]['id'] + 1,'key':request.json['key'] }
-    licenses.append(license)
-    print(licenses)
-    return jsonify({'license': license}), 201
+    if not request.json or not {'first_name', 'last_name', 'email', 'pw', 'license_key','active_status','hwid_identifier'}.issubset(set(request.json)):
+        abort(400) #either not all params provided, or not posted correctly
+    else:
+        formattedjson = ','.join(list(request.json.values()))
+        dbtemp = Database()
+        try:
+            dbtemp.addToTable_wholerow(formattedjson)
+            dbtemp.closeConnection()
+            return jsonify({'license': request.json}), 201
+        except Exception as e: #closes connection incase of issue writing to db, as to not present later issues
+            print(e)
+            dbtemp.closeConnection()
+            abort(500)
 
 
 @app.route('/api/v1/licenses<int:licenseid>', methods=['DELETE'])
