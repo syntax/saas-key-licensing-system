@@ -13,7 +13,7 @@ class Database():
         if os.path.getsize('licenses.db') != 0:
             return 'DB File already exists and has already been created.'
         else:
-            self.c.execute('CREATE TABLE licenses (fName text, sName text, emailAddress text, password text, license text, active boolean, HWID string)')
+            self.c.execute('CREATE TABLE licenses (fName text, sName text, emailAddress text, password text, license text, active boolean, HWID string, devicename string)')
             self.conn.commit()
             return 'Created DB file'
 
@@ -22,8 +22,8 @@ class Database():
         self.conn.commit()
 
     def addToTable_wholerow(self,values):
-        self.c.execute(f'''INSERT INTO licenses(fName,sName,emailAddress,password,license,active,HWID)
-              VALUES(?, ?, ?, ?, ?, ?, ?)''', tuple(values.split(',')))
+        self.c.execute(f'''INSERT INTO licenses(fName,sName,emailAddress,password,license,active,HWID,devicename)
+              VALUES(?, ?, ?, ?, ?, ?, ?, ?)''', tuple(values.split(',')))
         self.conn.commit()
 
     def hwidAndDeviceToTable(self,license,hwid,devname): #database functions that the api call might need to make
@@ -51,12 +51,12 @@ class Database():
         self.conn.close()
 
 
-
 #this is not really needed, only for testing.
 db = Database()
+db.create()
 #testing adding fields to database
-db.addToTable_wholerow('sam,barnett,sambarnettbusiness@gmail.com,killthecats!!,12345678,active,91294macbook')
-db.addToTable_wholerow('ollie,blair,ollieblair.03@gmail.com,Icat112!!,1292-9412-1539,active,windowsanddat')
+db.addToTable_wholerow('sam,barnett,sambarnettbusiness@gmail.com,killthecats!!,12345678,active,91294macbook,Sams macbook')
+db.addToTable_wholerow('ollie,blair,ollieblair.03@gmail.com,Icat112!!,1292-9412-1539,active,windowsanddat, Ollies XPS')
 
 app = Flask(__name__)
 
@@ -93,7 +93,8 @@ def get_specific_license(licenseid):
                         "pw": license[3],
                         "license_key": license[4],
                         "active_status": license[5],
-                        "hwid_identifier": license[6]
+                        "hwid_identifier": license[6],
+                        "device_name": license[7]
                         }
     dbtemp.closeConnection()
     return jsonify({'license': license_dict})
@@ -101,7 +102,7 @@ def get_specific_license(licenseid):
 
 @app.route('/api/v1/licenses', methods=['POST'])
 def create_license():
-    if not request.json or not {'first_name', 'last_name', 'email', 'pw', 'license_key','active_status','hwid_identifier'}.issubset(set(request.json)):
+    if not request.json or not {'first_name', 'last_name', 'email', 'pw', 'license_key','active_status','hwid_identifier','devicename'}.issubset(set(request.json)):
         abort(400) #either not all params provided, or not posted correctly
     else:
         formattedjson = ','.join(list(request.json.values()))
@@ -117,9 +118,23 @@ def create_license():
 
 @app.route('/api/v1/licenses/hwid/<int:licenseid>', methods=['POST'])
 def update_hwid(licenseid):
-    if not request.json or not {'active_status','hwid_identifier'}.issubset(set(request.json)):
+    if not request.json or not {'active_status','hwid_identifier','devicename'}.issubset(set(request.json)):
         abort(400) #malformed request syntax
     else:
+        print(request.json)
+        tempdb = Database()
+        # try:
+        hwid = request.json['hwid_identifier']
+        device = request.json['devicename']
+        tempdb.hwidAndDeviceToTable(licenseid,hwid,device)
+        license = tempdb.getFromTable(licenseid)
+        tempdb.closeConnection()
+        return jsonify({'status_code':'success','license': license})
+        # except Exception as e:  # closes connection incase of issue writing to db, as to not present later issues
+        #     print(e)
+        #     tempdb.closeConnection()
+        #     abort(500)
+
 
 @app.route('/api/v1/licenses<int:licenseid>', methods=['DELETE'])
 def delete_task(licenseid):
