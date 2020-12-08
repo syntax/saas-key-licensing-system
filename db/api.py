@@ -29,8 +29,8 @@ class Database():
     def hwidAndDeviceToTable(self,license,hwid,devname): #database functions that the api call might need to make
         print(license,hwid,devname)
         self.c.execute(f'''UPDATE licenses
-                SET hwid = {hwid}, devicename = {devname}
-                WHERE licensekeyID = {license};''')
+                SET HWID = '{hwid}', devicename = '{devname}'
+                WHERE license    = '{license}';''')
         self.conn.commit()
 
     def activatedToTable(self,license,activated: bool):
