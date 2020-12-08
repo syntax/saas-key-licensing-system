@@ -27,6 +27,7 @@ class Database():
         self.conn.commit()
 
     def hwidAndDeviceToTable(self,license,hwid,devname): #database functions that the api call might need to make
+        print(license,hwid,devname)
         self.c.execute(f'''UPDATE licenses
                 SET hwid = {hwid}, devicename = {devname}
                 WHERE licensekeyID = {license};''')
@@ -35,7 +36,7 @@ class Database():
     def activatedToTable(self,license,activated: bool):
         self.c.execute(f'''UPDATE licenses
                         SET activated = {activated}
-                        WHERE licensekeyID = {license};''')
+                        WHERE license = {license};''')
         self.conn.commit()
 
     def getFromTable(self,license):
@@ -126,6 +127,7 @@ def update_hwid(licenseid):
         # try:
         hwid = request.json['hwid_identifier']
         device = request.json['devicename']
+        print(licenseid,hwid,device)
         tempdb.hwidAndDeviceToTable(licenseid,hwid,device)
         license = tempdb.getFromTable(licenseid)
         tempdb.closeConnection()
