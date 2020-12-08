@@ -122,20 +122,18 @@ def update_hwid(licenseid):
     if not request.json or not {'active_status','hwid_identifier','devicename'}.issubset(set(request.json)):
         abort(400) #malformed request syntax
     else:
-        print(request.json)
         tempdb = Database()
-        # try:
-        hwid = request.json['hwid_identifier']
-        device = request.json['devicename']
-        print(licenseid,hwid,device)
-        tempdb.hwidAndDeviceToTable(licenseid,hwid,device)
-        license = tempdb.getFromTable(licenseid)
-        tempdb.closeConnection()
-        return jsonify({'status_code':'success','license': license})
-        # except Exception as e:  # closes connection incase of issue writing to db, as to not present later issues
-        #     print(e)
-        #     tempdb.closeConnection()
-        #     abort(500)
+        try:
+            hwid = request.json['hwid_identifier']
+            device = request.json['devicename']
+            tempdb.hwidAndDeviceToTable(licenseid,hwid,device)
+            license = tempdb.getFromTable(licenseid)
+            tempdb.closeConnection()
+            return jsonify({'status_code':'success','license': license}), 201
+        except Exception as e:  # closes connection incase of issue writing to db, as to not present later issues
+            print(e)
+            tempdb.closeConnection()
+            abort(500)
 
 
 @app.route('/api/v1/licenses<int:licenseid>', methods=['DELETE'])
