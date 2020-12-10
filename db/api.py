@@ -73,6 +73,9 @@ licenses = [{'id': 1,'key':'asbd918b2819basd89'}, {'id': 2,'key':'iniboniogb123b
 def not_found():
     return make_response(jsonify({'error': 'not found'}), 404)
 
+@app.errorhandler(400)
+def not_found():
+    return make_response(jsonify({'error': 'malformed syntax, seek docs'}), 404)
 
 @app.route('/api/v1/licenses', methods=['GET'])
 def get_licenses():
