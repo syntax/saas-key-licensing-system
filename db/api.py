@@ -13,7 +13,7 @@ class Database():
         if os.path.getsize('licenses.db') != 0:
             return 'DB File already exists and has already been created.'
         else:
-            self.c.execute('CREATE TABLE licenses (fName text, sName text, emailAddress text, password text, license text, active boolean, HWID string, devicename string)')
+            self.c.execute('CREATE TABLE licenses (fName text, sName text, emailAddress text, password text, license text, active string, HWID string, devicename string)')
             self.conn.commit()
             return 'Created DB file'
 
@@ -26,10 +26,10 @@ class Database():
               VALUES(?, ?, ?, ?, ?, ?, ?, ?)''', tuple(values.split(',')))
         self.conn.commit()
 
-    def hwidAndDeviceToTable(self,license,hwid,devname): #database functions that the api call might need to make
+    def hwidAndDeviceToTable(self,license,hwid,devname,activestatus): #database functions that the api call might need to make
         print(license,hwid,devname)
         self.c.execute(f'''UPDATE licenses
-                SET HWID = '{hwid}', devicename = '{devname}'
+                SET HWID = '{hwid}', devicename = '{devname}', active = '{activestatus}'
                 WHERE license    = '{license}';''')
         self.conn.commit()
 
@@ -129,7 +129,8 @@ def update_hwid(licenseid):
         try:
             hwid = request.json['hwid_identifier']
             device = request.json['devicename']
-            tempdb.hwidAndDeviceToTable(licenseid,hwid,device)
+            active = request.json['active_status']
+            tempdb.hwidAndDeviceToTable(licenseid,hwid,device,active)
             license = tempdb.getFromTable(licenseid)
             tempdb.closeConnection()
             return jsonify({'status_code':'success','license': license}), 201
