@@ -45,8 +45,10 @@ class Database():
                         WHERE license = ?;''', (license,))
         return self.c.fetchall()
 
-    def removeFromTable(self):
-        pass
+    def removeFromTable(self,license):
+        self.c.execute(f'''DELETE FROM licenses 
+                        WHERE license = {license};''')
+        self.conn.commit()
 
     def closeConnection(self):
         self.conn.close()
@@ -142,11 +144,16 @@ def update_hwid(licenseid):
 
 @app.route('/api/v1/licenses<int:licenseid>', methods=['DELETE'])
 def delete_task(licenseid):
-    license = [license for license in licenses if license['id'] == licenseid]
-    if len(license) == 0:
-        abort(404)
-    licenses.remove(license[0])
-    return jsonify({'result': True})
+    temp = Database()
+    try:
+        temp.removeFromTable(licenseid)
+        temp.closeConnection()
+        return jsonify({'status': 'success'})
+    except Exception as e:
+        print(e)
+        temp.closeConnection()
+        abort(500)
+
 
 
 if __name__ == '__main__':
