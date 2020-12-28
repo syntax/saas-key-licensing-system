@@ -24,4 +24,4 @@ that of his friend.
 ex: https://www.skycheats.com/hwid-spoofer-changer-in-2020/
 
 Friend then opens application and POSTs hwid. POST will return, false.
-FOR I IN RANGE SAM IS DUMBsa
+FOR I IN RANGE SAM IS DUMBsawau
