@@ -34,7 +34,7 @@
       <div class="col-5"></div>
     <div class="col-md-2 text-center">
         <h1>Please login</h1>
-        <h6>or sign-up <i>here</i></h6>
+        <h6>or sign-up <i><a href="/signup">here</a></i></h6>
         <br>
         <form action="" method="post">
             <div class="input-group mb-3">
@@ -42,18 +42,15 @@
                     <span class="input-group-text" id="basic-addon1">@</span>
                 </div>
                 <input type="text" class="form-control" placeholder="Username" aria-label="Username"
-                       aria-describedby="basic-addon1" value="{{
-              request.form.username }}">
+                       aria-describedby="basic-addon1" name="username">
             </div>
-            <br>
             <div class="input-group mb-3">
                 <input type="password" class="form-control" placeholder="Password" aria-label="Password"
-                       aria-describedby="basic-addon" value="{{
-              request.form.password }}">
+                       aria-describedby="basic-addon" name="password">
             </div>
-            <br>
             <input class="btn btn-default" type="submit" value="Login">
         </form>
+        <br>
         {% if error %}
         <p class="error"><strong>Error:</strong> {{ error }}
             {% endif %}
