@@ -28,3 +28,6 @@ Friend then opens application and POSTs hwid. POST will return, false.
 
 
 check otu: https://docs.metalabs.io/
+
+
+for i in
