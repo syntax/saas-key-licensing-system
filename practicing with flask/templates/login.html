@@ -17,6 +17,7 @@
     .h-90{
         height:90%;
     }
+
     .h-80{
         height:80%;
     }
@@ -33,6 +34,7 @@
       <div class="col-5"></div>
     <div class="col-md-2 text-center">
         <h1>Please login</h1>
+        <h6>or sign-up <i>here</i></h6>
         <br>
         <form action="" method="post">
             <div class="input-group mb-3">
@@ -45,9 +47,6 @@
             </div>
             <br>
             <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                    <span class="input-group-text" id="basic-addon1">🔒</span>
-                </div>
                 <input type="password" class="form-control" placeholder="Password" aria-label="Password"
                        aria-describedby="basic-addon" value="{{
               request.form.password }}">
@@ -63,10 +62,10 @@
       <div class="col-5"></div>
   </div>
 </div>
-<div class="container-fluid h-10 bg-dark text-light">
+<div class="container-fluid h-10 bg-dark text-light ">
     <div class="row">
         <div class="col-4"></div>
-        <div class="col-4 text-center">
+        <div class="col-4 text-center align-bottom">
             SaaS distrubution system by Tom Holland :)
         </div>
         <div class="col-4"></div>
