@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+    <style>
+    body,html{
+        height:100%;
+    }
+
+    .h-90{
+        height:90%;
+    }
+
+    .h-80{
+        height:80%;
+    }
+
+    .h-10{
+        height:10%;
+    }
+    </style>
+</head>
+
+<body>
+<div class="container-fluid h-90 bg-dark text-light">
+  <div class="row h-90 justify-content-center align-items-center">
+      <div class="col-5"></div>
+    <div class="col-md-2 text-center">
+        <h1>Please sign-up</h1>
+        <h6>or login <i><a href="/login">here</a></i></h6>
+        <br>
+        <form action="" method="post">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"> <i class="fa fa-user"></i> </span>
+                </div>
+                <input type="text" class="form-control" placeholder="Username" aria-label="Username"
+                       aria-describedby="basic-addon1" name="username">
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"> <i class="fas fa-at"></i> </span>
+                </div>
+                <input type="text" class="form-control" placeholder="Email" aria-label="email"
+                       aria-describedby="basic-addon1" name="email">
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+                </div>
+                <input type="password" class="form-control" placeholder="Password" aria-label="Password"
+                       aria-describedby="basic-addon" name="password">
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+                </div>
+                <input type="password" class="form-control" placeholder="Confirm Password" aria-label="Confirm Password"
+                       aria-describedby="basic-addon" name="confirmpassword">
+            </div>
+            <input class="btn btn-default" type="submit" value="Login">
+        </form>
+        <br>
+        {% if error %}
+        <p class="error"><strong>Error:</strong> {{ error }}
+            {% endif %}
+    </div>
+    </form>
+      <div class="col-5"></div>
+  </div>
+</div>
+<div class="container-fluid h-10 bg-dark text-light ">
+    <div class="row">
+        <div class="col-4"></div>
+        <div class="col-4 text-center align-bottom">
+            SaaS distrubution system by Tom Holland :)
+        </div>
+        <div class="col-4"></div>
+    </div>
+</div>
+</body>
+</html>

@@ -24,20 +24,17 @@ def login():
             return redirect(url_for('home'))
     return render_template('login.html', error=error)
 
-@app.route('/signup')
+@app.route('/signup', methods=['GET', 'POST'])
 def signup():
-    return 'maintenance'
-
-# @app.route('/singup', methods=['GET', 'POST'])
-# def login():
-#     error = None
-#     if request.method == 'POST':
-#         #perfom regex to ensure shit is good
-#         if request.form['username'] != 'admin' or request.form['password'] != 'admin':
-#             error = 'Invalid Credentials. Please try again.'
-#         else:
-#             return redirect(url_for('home'))
-#     return render_template('login.html', error=error)
+    error = None
+    if request.method == 'POST':
+        print(request.post)
+        #perfom regex to ensure shit is good
+        if request.form['username'] != 'admin' or request.form['password'] != 'admin':
+            error = 'Invalid Credentials. Please try again.'
+        else:
+            return redirect(url_for('home'))
+    return render_template('signup.html', error=error)
 
 
 if __name__ == '__main__':
