@@ -1,4 +1,5 @@
 from flask import Flask, render_template, redirect, url_for, request
+import re
 
 #https://realpython.com/introduction-to-flask-part-2-creating-a-login-page/
 
@@ -26,14 +27,17 @@ def login():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
+    mailregex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
+    pwregex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
     error = None
     if request.method == 'POST':
-        print(request.post)
         #perfom regex to ensure shit is good
-        if request.form['username'] != 'admin' or request.form['password'] != 'admin':
-            error = 'Invalid Credentials. Please try again.'
-        else:
-            return redirect(url_for('home'))
+        if not re.search(mailregex,request.form['email']):
+            error = 'Email Invalid'
+        elif not re.search(pwregex, request.form['password']):
+            error = 'Password invalid. Must be 8+ characters, including at least one upper-case letter, lower-case letter, number and special character.'
+        # else:
+        #     return redirect(url_for('home'))
     return render_template('signup.html', error=error)
 
 
