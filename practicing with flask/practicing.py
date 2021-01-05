@@ -31,6 +31,7 @@ def signup():
     pwregex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
     error = None
     if request.method == 'POST':
+        print(request.form)
         #perfom regex to ensure shit is good
         if not re.search(mailregex,request.form['email']):
             error = 'Email Invalid'
