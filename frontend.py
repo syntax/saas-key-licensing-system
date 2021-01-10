@@ -39,9 +39,9 @@ def signup():
             error = 'Password invalid. Must be 8+ characters, including at least one upper-case letter, lower-case letter, number and special character.'
         elif request.form['password'] != request.form['confirmpassword']:
             error = 'Your passwords do not match.'
-
-        # else:
-        #     return redirect(url_for('home'))
+        else:
+            print('Sucessuflly commited to database.')
+            #perform SQL INSERT
     return render_template('signup.html', error=error)
 
 
