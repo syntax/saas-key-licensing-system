@@ -31,8 +31,10 @@ def signup():
     nospacesregex = "^\\S*$"
     error = None
     if request.method == 'POST':
-        #need to add, checking if email/username already registered
-        if not re.search(nospacesregex, request.form['username']):
+        #checks if mans already redistered
+        if not ' ' in request.form['name'] or len(request.form['name'].split(' ')) != 2:
+            error = 'Your first and surname, with a space inbetween!'
+        elif not re.search(nospacesregex, request.form['username']):
             error = 'Your username cannot contain any spaces!'
         elif not re.search(mailregex,request.form['email']):
             error = 'Email Invalid'

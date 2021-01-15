@@ -20,9 +20,9 @@ class Database():
         self.c.execute('DROP TABLE licenses')
         self.conn.commit()
 
-    def addToTable_wholerow(self,values):
-        self.c.execute(f'''INSERT INTO licenses(fName,sName,emailAddress,password,license,active,HWID,devicename)
-              VALUES(?, ?, ?, ?, ?, ?, ?, ?)''', tuple(values.split(',')))
+    def addToUsers(self,values):
+        self.c.execute(f'''INSERT INTO users(username,fName,sName,emailAddress,password))
+              VALUES(?, ?, ?, ?, ?)''', tuple(values.split(',')))
         self.conn.commit()
 
     def hwidAndDeviceToTable(self,license,hwid,devname,activestatus): #database functions that the api call might need to make
