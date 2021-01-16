@@ -42,9 +42,11 @@ def signup():
             error = 'Password invalid. Must be 8+ characters, including at least one upper-case letter, lower-case letter, number and special character.'
         elif request.form['password'] != request.form['confirmpassword']:
             error = 'Your passwords do not match.'
+        elif db.searchUsers(request.form['email'],request.form['username']): #checks if this returns anythng other than NONE
+            error = 'An account using that email or username already exists!'
         else:
+            db.addToUsers(f'''{request.form['username']},{request.form['name'].split()[0]},{request.form['name'].split()[1]},{request.form['email']},{request.form['password']}''')
             print('Sucessuflly commited to database.')
-            #perform SQL INSERT
     return render_template('signup.html', error=error)
 
 @app.errorhandler(404)

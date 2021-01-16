@@ -25,6 +25,11 @@ class Database():
               VALUES(?, ?, ?, ?, ?)''', tuple(values.split(',')))
         self.conn.commit()
 
+    def searchUsers(self, email,user):
+        self.c.execute(f'''SELECT username, emailAddress FROM users WHERE emailAddress = ? OR username = ?''', (email,user) )
+        result = self.c.fetchone()
+        return result
+
     def hwidAndDeviceToTable(self,license,hwid,devname,activestatus): #database functions that the api call might need to make
         print(license,hwid,devname)
         self.c.execute(f'''UPDATE licenses
