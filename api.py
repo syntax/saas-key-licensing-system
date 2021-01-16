@@ -21,7 +21,8 @@ class Database():
         self.conn.commit()
 
     def addToUsers(self,values):
-        self.c.execute(f'''INSERT INTO users(username,fName,sName,emailAddress,password))
+        print(len(values.split(',')))
+        self.c.execute(f'''INSERT INTO users(username,fName,sName,emailAddress,password)
               VALUES(?, ?, ?, ?, ?)''', tuple(values.split(',')))
         self.conn.commit()
 
@@ -62,7 +63,7 @@ class Database():
 # db = Database()
 # db.create()
 # #testing adding fields to database
-# db.addToTable_wholerow('sam,barnett,sambarnettbusiness@gmail.com,killthecats!!,12345678,active,91294macbook,Sams macbook')
+#db.addToTable_wholerow('sam,barnett,sambarnettbusiness@gmail.com,killthecats!!,12345678,active,91294macbook,Sams macbook')
 # db.addToTable_wholerow('ollie,blair,ollieblair.03@gmail.com,Icat112!!,1292-9412-1539,active,windowsanddat, Ollies XPS')
 #
 # licenses = [{'id': 1,'key':'asbd918b2819basd89'}, {'id': 2,'key':'iniboniogb123bobo'}]

@@ -26,6 +26,7 @@ def login():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
+    temp = Database()
     mailregex = "^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$"
     pwregex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
     nospacesregex = "^\\S*$"
@@ -42,11 +43,14 @@ def signup():
             error = 'Password invalid. Must be 8+ characters, including at least one upper-case letter, lower-case letter, number and special character.'
         elif request.form['password'] != request.form['confirmpassword']:
             error = 'Your passwords do not match.'
-        elif db.searchUsers(request.form['email'],request.form['username']): #checks if this returns anythng other than NONE
+        elif temp.searchUsers(request.form['email'],request.form['username']): #checks if this returns anythng other than NONE
             error = 'An account using that email or username already exists!'
         else:
-            db.addToUsers(f'''{request.form['username']},{request.form['name'].split()[0]},{request.form['name'].split()[1]},{request.form['email']},{request.form['password']}''')
+            temp.addToUsers(f'''{request.form['username']},{request.form['name'].split()[0]},{request.form['name'].split()[1]},{request.form['email']},{request.form['password']}''')
             print('Sucessuflly commited to database.')
+            temp.closeConnection()
+            return redirect(url_for('home'))
+
     return render_template('signup.html', error=error)
 
 @app.errorhandler(404)
