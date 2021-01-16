@@ -16,6 +16,11 @@ class Database():
             self.conn.commit()
             return 'Created DB file'
 
+    def getAll(self):
+        self.c.execute(f'''SELECT * FROM users''')
+        result = self.c.fetchall()
+        return result
+
     def removeTable(self):
         self.c.execute('DROP TABLE licenses')
         self.conn.commit()
