@@ -1,8 +1,9 @@
-from flask import Flask, render_template, redirect, url_for, request, abort, jsonify, make_response
+from flask import Flask, render_template, redirect, url_for, request, abort, jsonify, make_response, flash
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
 import re
 from api import Database
 import os
+import time
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24) #secret key for encoding of session on the webapp
@@ -39,7 +40,7 @@ def index():
 
 @app.route('/home')
 def home():
-    return 'success'
+    return f'success! hey {current_user.id}!'
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -65,10 +66,14 @@ def login():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
+
     mailregex = "^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$"
     pwregex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
     nospacesregex = "^\\S*$"
     error = None
+
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
     if request.method == 'POST':
         temp = Database()
         if not ' ' in request.form['name'] or len(request.form['name'].split(' ')) != 2:
@@ -86,10 +91,20 @@ def signup():
         else:
             temp.addToUsers(f'''{request.form['username']},{request.form['name'].split()[0]},{request.form['name'].split()[1]},{request.form['email']},{request.form['password']}''')
             print('Sucessuflly commited to database.')
+            user = load_user(request.form['username'])
+            login_user(user)
             temp.closeConnection()
             return redirect(url_for('home'))
 
     return render_template('signup.html', error=error)
+
+@app.route("/logout")
+@login_required
+def logout():
+    render_template('redirect.html', reason=f'Logging out of account {current_user.id}!')
+    logout_user()
+    time.sleep(2)
+    return redirect('login')
 
 @app.errorhandler(404)
 def not_found():
