@@ -2,21 +2,25 @@ from flask import Flask, render_template, redirect, url_for, request, abort, jso
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
 import re
 from api import Database
+import os
 
 app = Flask(__name__)
+app.secret_key = os.urandom(24) #secret key for encoding of session on the webapp
 
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
 
 class User(UserMixin):
     def __init__(self, username, fname, sname, email, password):
-         self.username = username
+         self.id = username
          self.fname = fname
          self.sname = sname
          self.email = email
          self.password = password
          self.authenticated = False
 
+class AdministativeUser(User):
+   pass
 
 @login_manager.user_loader
 def load_user(username):
@@ -40,14 +44,23 @@ def home():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
     if request.method == 'POST':
-        temp
-        print(request.form)
-        if request.form['username'] != 'admin' or request.form['password'] != 'admin':
-            error = 'Invalid Credentials. Please try again.\nIf you do not yet have an account, you can sign up with the above link.'
+        temp = Database()
+        result = temp.searchUsersByUsername(request.form['username'])
+        temp.closeConnection()
+        if not result:
+            error = 'No account with that username.\nIf you do not yet have an account, you can sign up with the above link.'
         else:
-            print('redirectign')
-            return redirect(url_for('home'))
+            #needs to apply hasing to this section, currently all done in plain txt
+            if request.form['password'] == result[4]:
+                user = load_user(request.form['username'])
+                login_user(user)
+                print(f'user {result[0]} logging in!')
+                return redirect(url_for('home'))
+            else:
+                error = 'Invalid password!'
     return render_template('login.html', error=error)
 
 @app.route('/signup', methods=['GET', 'POST'])
