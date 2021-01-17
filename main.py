@@ -39,6 +39,7 @@ def index():
     return render_template('home.html')
 
 @app.route('/home')
+@login_required
 def home():
     return f'success! hey {current_user.id}!'
 
@@ -101,10 +102,9 @@ def signup():
 @app.route("/logout")
 @login_required
 def logout():
-    render_template('redirect.html', reason=f'Logging out of account {current_user.id}!')
+    reason=f'logging out of account {current_user.id}!'
     logout_user()
-    time.sleep(2)
-    return redirect('login')
+    return render_template('redirect.html', reason=reason)
 
 @app.errorhandler(404)
 def not_found():
