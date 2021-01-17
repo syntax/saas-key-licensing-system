@@ -36,6 +36,11 @@ class Database():
         result = self.c.fetchone()
         return result
 
+    def searchUsersByUsername(self,user):
+        self.c.execute(f'''SELECT * FROM users WHERE username = ?''', (user,) )
+        result = self.c.fetchone()
+        return result
+
     def hwidAndDeviceToTable(self,license,hwid,devname,activestatus): #database functions that the api call might need to make
         print(license,hwid,devname)
         self.c.execute(f'''UPDATE licenses

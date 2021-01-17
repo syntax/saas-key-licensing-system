@@ -1,9 +1,33 @@
 from flask import Flask, render_template, redirect, url_for, request, abort, jsonify, make_response
-
+from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
 import re
 from api import Database
 
 app = Flask(__name__)
+
+login_manager = LoginManager(app)
+login_manager.login_view = "login"
+
+class User(UserMixin):
+    def __init__(self, username, fname, sname, email, password):
+         self.username = username
+         self.fname = fname
+         self.sname = sname
+         self.email = email
+         self.password = password
+         self.authenticated = False
+
+
+@login_manager.user_loader
+def load_user(username):
+    dbconnection = Database()
+    result = dbconnection.searchUsersByUsername(username)
+    dbconnection.closeConnection()
+    print(result)
+    if result:
+        return User(result[0],result[1],result[2],result[3],result[4])
+    else:
+        return None
 
 @app.route('/')
 def index():
@@ -17,6 +41,7 @@ def home():
 def login():
     error = None
     if request.method == 'POST':
+        temp
         print(request.form)
         if request.form['username'] != 'admin' or request.form['password'] != 'admin':
             error = 'Invalid Credentials. Please try again.\nIf you do not yet have an account, you can sign up with the above link.'
@@ -27,13 +52,12 @@ def login():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
-    temp = Database()
     mailregex = "^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$"
     pwregex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
     nospacesregex = "^\\S*$"
     error = None
     if request.method == 'POST':
-        #checks if mans already redistered
+        temp = Database()
         if not ' ' in request.form['name'] or len(request.form['name'].split(' ')) != 2:
             error = 'Your first and surname, with a space inbetween!'
         elif not re.search(nospacesregex, request.form['username']):
