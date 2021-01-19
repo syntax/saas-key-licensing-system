@@ -1,0 +1,58 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+    <style>
+    body,html{
+        height:100%;
+    }
+
+    .h-90{
+        height:90%;
+    }
+
+    .h-80{
+        height:80%;
+    }
+
+    .h-10{
+        height:10%;
+    }
+    </style>
+</head>
+
+<body onload="relayUserTime('sam')">
+<div class="container-fluid h-90 bg-dark text-dark">
+  <div class="row h-90 justify-content-center align-items-center">
+      <div class="col-3"></div>
+    <div class="col-md-6 text-center">
+        <div class="card">
+            <div class="card-body">
+            <h3 class="card-title" id="time"></h3>
+            <a href="#" class="btn btn-primary">Button</a>
+          </div>
+        </div>
+    </div>
+      <div class="col-3"></div>
+  </div>
+</div>
+<div class="container-fluid h-10 bg-dark text-light ">
+    <div class="row">
+        <div class="col-4"></div>
+        <div class="col-4 text-center align-bottom">
+            SaaS distrubution system by Tom Holland :)
+        </div>
+        <div class="col-4"></div>
+    </div>
+</div>
+</body>
+<script src="{{url_for('static', filename='scripts.js')}}"></script>
+</html>

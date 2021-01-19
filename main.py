@@ -60,7 +60,7 @@ def login():
                 user = load_user(request.form['username'])
                 login_user(user)
                 print(f'user {result[0]} logging in!')
-                return redirect(url_for('home'))
+                return redirect(url_for('dash'))
             else:
                 error = 'Invalid password!'
     return render_template('login.html', error=error)
@@ -105,6 +105,17 @@ def logout():
     reason=f'logging out of account {current_user.id}!'
     logout_user()
     return render_template('redirect.html', reason=reason)
+
+@app.route("/dashboard")
+@login_required
+def dash():
+    return render_template('dashboard.html')
+
+@app.route("/getTime", methods=['GET'])
+def getTime():
+    print("browser time: ", request.args.get("time"))
+    print("server time : ", time.strftime('%A %B, %d %Y %H:%M:%S'));
+    return "Done"
 
 @app.errorhandler(404)
 def not_found():
