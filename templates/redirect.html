@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Login</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
         crossorigin="anonymous">
@@ -54,10 +55,10 @@
 </div>
 </body>
 <script>
-   function myFunction() {
+function redirectFunct() {
    location.replace("http://127.0.0.1:5000/login")
    }
 
-   setTimeout(function(){ myFunction(); }, 3000);
+   setTimeout(function(){ redirectFunct(); }, 3000);
 </script>
 </html>
