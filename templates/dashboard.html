@@ -29,7 +29,7 @@
     </style>
 </head>
 
-<body onload="relayUserTime('sam')">
+<body onload="relayUserTime('{{ current_user.id }}')">
 <div class="container-fluid h-90 bg-dark text-dark">
   <div class="row h-90 justify-content-center align-items-center">
       <div class="col-3"></div>
@@ -54,5 +54,16 @@
     </div>
 </div>
 </body>
-<script src="{{url_for('static', filename='scripts.js')}}"></script>
+<script>
+function relayUserTime(user){
+    var time = new Date().getHours();
+    if (0<time && time<12) {
+        document.getElementById("time").innerHTML = "Good morning " + user + " !" ;
+    } else if (12<time && time<17) {
+        document.getElementById("time").innerHTML = "Good afternoon " + user + " !" ;
+    } else {
+        document.getElementById("time").innerHTML = "Good evening " + user + " !" ;
+    }
+}
+</script>
 </html>
