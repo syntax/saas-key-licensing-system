@@ -28,7 +28,7 @@ def load_user(username):
     dbconnection = Database()
     result = dbconnection.searchUsersByUsername(username)
     dbconnection.closeConnection()
-    print(result)
+    print(f'loading user {result[0]}')
     if result:
         return User(result[0],result[1],result[2],result[3],result[4])
     else:

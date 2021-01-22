@@ -26,7 +26,6 @@ class Database():
         self.conn.commit()
 
     def addToUsers(self,values):
-        print(len(values.split(',')))
         self.c.execute(f'''INSERT INTO users(username,fName,sName,emailAddress,password)
               VALUES(?, ?, ?, ?, ?)''', tuple(values.split(',')))
         self.conn.commit()
@@ -42,7 +41,6 @@ class Database():
         return result
 
     def hwidAndDeviceToTable(self,license,hwid,devname,activestatus): #database functions that the api call might need to make
-        print(license,hwid,devname)
         self.c.execute(f'''UPDATE licenses
                 SET HWID = '{hwid}', devicename = '{devname}', boundToDevice = '{activestatus}'
                 WHERE license    = '{license}';''')
