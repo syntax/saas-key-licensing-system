@@ -11,7 +11,7 @@ class Database():
         if os.path.getsize('licenses.db') != 0:
             return 'DB File already exists and has already been created.'
         else:
-            self.c.execute('CREATE TABLE users (username text PRIMARY KEY, fName text, sName text, emailAddress text, password text)')
+            self.c.execute('CREATE TABLE users (username text PRIMARY KEY, fName text, sName text, emailAddress text, password text, admin bool)')
             self.c.execute('CREATE TABLE licenses (license text PRIMARY KEY, username text, boundToUser boolean, boundToDevice boolean, HWID string, devicename string)')
             self.conn.commit()
             return 'Created DB file'
@@ -26,8 +26,8 @@ class Database():
         self.conn.commit()
 
     def addToUsers(self,values):
-        self.c.execute(f'''INSERT INTO users(username,fName,sName,emailAddress,password)
-              VALUES(?, ?, ?, ?, ?)''', tuple(values.split(',')))
+        self.c.execute(f'''INSERT INTO users(username,fName,sName,emailAddress,password, admin)
+              VALUES(?, ?, ?, ?, ?, ?)''', tuple(values.split(',')))
         self.conn.commit()
 
     def searchUsers(self, email,user):

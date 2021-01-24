@@ -36,18 +36,14 @@ def load_user(username):
 
 @app.route('/')
 def index():
-    return render_template('home.html')
+    return render_template('dashboard.html')
 
-@app.route('/home')
-@login_required
-def home():
-    return f'success! hey {current_user.id}!'
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
     if current_user.is_authenticated:
-        return redirect(url_for('home'))
+        return redirect(url_for('dashboard'))
     if request.method == 'POST':
         temp = Database()
         result = temp.searchUsersByUsername(request.form['username'])
@@ -74,7 +70,7 @@ def signup():
     error = None
 
     if current_user.is_authenticated:
-        return redirect(url_for('home'))
+        return redirect(url_for('dashboard'))
     if request.method == 'POST':
         temp = Database()
         if not ' ' in request.form['name'] or len(request.form['name'].split(' ')) != 2:
@@ -90,12 +86,12 @@ def signup():
         elif temp.searchUsers(request.form['email'],request.form['username']): #checks if this returns anythng other than NONE
             error = 'An account using that email or username already exists!'
         else:
-            temp.addToUsers(f'''{request.form['username']},{request.form['name'].split()[0]},{request.form['name'].split()[1]},{request.form['email']},{request.form['password']}''')
+            temp.addToUsers(f'''{request.form['username']},{request.form['name'].split()[0]},{request.form['name'].split()[1]},{request.form['email']},{request.form['password']},false''')
             print('Sucessuflly commited to database.')
             user = load_user(request.form['username'])
             login_user(user)
             temp.closeConnection()
-            return redirect(url_for('home'))
+            return redirect(url_for('dashboard'))
 
     return render_template('signup.html', error=error)
 
