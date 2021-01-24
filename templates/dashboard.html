@@ -36,23 +36,39 @@
     <div class="row h-90 justify-content-center align-items-center">
         <div class="col-3"></div>
         <div class="col-md-6 text-left">
-            <div class="card">
+            <div class="card text-center">
+                <h2 class="card-title mt-5" id="time"></h2>
                 <div class="card-body">
-                    <br>
-                    <h2 class="card-title" id="time"></h2>
-                    <p class="card-body text-muted">email: {{ current_user.email }}</p>
+                    email: {{ current_user.email }}
+                        <br>
+                    license d9812h9b192pb9sbd
                 </div>
-                <div class="row">
-                    <div class="col-sm-6">
+                <div class="row mt-2">
+                    <div class="col-sm-1"></div>
+                    <div class="col-sm-5">
+
+                        <!--License management widget-->
                         <div class="card">
+                            {% if current_user.license == None %}
                             <div class="card-body">
-                                <h5 class="card-title">asdasdasdas</h5>
+                                <h5 class="card-title">No license currently bound</h5>
+                                <div class="card-text">
+                                    <form>
+                                        <input type="text" class="form-control" id="licensekey" placeholder="License Key">
+                                        <button type="submit" class="btn btn-primary mt-2">Bind to this account</button>
+                                    </form>
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="card-body">
+                                <h5 class="card-title">License Information</h5>
                                 <p class="card-text">asdasdasd</p>
                                 <a href="#" class="btn btn-primary">asdasdasd</a>
                             </div>
+                            {%endif%}
                         </div>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-5">
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">asdasdasd</h5>
@@ -61,6 +77,14 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-sm-1"></div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col text-center">
+                        <a href="/logout" class="text-muted"> or logout from account {{ current_user.id }} </a>
+                    </div>
+                </div>
+                <div class="row mt-3">
                 </div>
             </div>
         </div>

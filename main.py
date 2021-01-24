@@ -19,6 +19,8 @@ class User(UserMixin):
          self.email = email
          self.password = password
          self.authenticated = False
+         self.license = None
+
 
 class AdministativeUser(User):
    pass
@@ -36,7 +38,7 @@ def load_user(username):
 
 @app.route('/')
 def index():
-    return render_template('dashboard.html')
+    return render_template('home.html')
 
 
 @app.route('/login', methods=['GET', 'POST'])
