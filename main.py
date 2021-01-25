@@ -104,7 +104,7 @@ def logout():
     logout_user()
     return render_template('redirect.html', reason=reason)
 
-@app.route("/dashboard")
+@app.route("/dashboard", methods=['GET', 'POST'])
 @login_required
 def dash():
     return render_template('dashboard.html')

@@ -16,6 +16,8 @@ class Database():
             self.conn.commit()
             return 'Created DB file'
 
+    #user related functions
+
     def getAll(self):
         self.c.execute(f'''SELECT * FROM users''')
         result = self.c.fetchall()
@@ -24,11 +26,13 @@ class Database():
     def removeTable(self):
         self.c.execute('DROP TABLE licenses')
         self.conn.commit()
+        return
 
     def addToUsers(self,values):
         self.c.execute(f'''INSERT INTO users(username,fName,sName,emailAddress,password, admin)
               VALUES(?, ?, ?, ?, ?, ?)''', tuple(values.split(',')))
         self.conn.commit()
+        return
 
     def searchUsers(self, email,user):
         self.c.execute(f'''SELECT username, emailAddress FROM users WHERE emailAddress = ? OR username = ?''', (email,user) )
@@ -40,32 +44,68 @@ class Database():
         result = self.c.fetchone()
         return result
 
-    def hwidAndDeviceToTable(self,license,hwid,devname,activestatus): #database functions that the api call might need to make
-        self.c.execute(f'''UPDATE licenses
-                SET HWID = '{hwid}', devicename = '{devname}', boundToDevice = '{activestatus}'
-                WHERE license    = '{license}';''')
-        self.conn.commit()
-
-    def activatedToTable(self,license,activated: bool):
-        self.c.execute(f'''UPDATE licenses
-                        SET activated = {activated}
-                        WHERE license = {license};''')
-        self.conn.commit()
-
-    def getFromTable(self,license):
-        self.c.execute(f'''SELECT *
-                        FROM licenses
-                        WHERE license = ?;''', (license,))
-        return self.c.fetchall()
-
-    def removeFromTable(self,license):
-        self.c.execute(f'''DELETE FROM licenses 
-                        WHERE license = {license};''')
-        self.conn.commit()
-
     def closeConnection(self):
         self.conn.close()
+        return
 
+    # license related functions
+
+    def checkIfLicenseExists(self,license):
+        self.c.execute(f'''SELECT * FROM licenses WHERE license = ?''',
+                       (license,))
+        result = self.c.fetchone()
+        if result:
+            return True
+        else:
+            return False
+
+    def checkIfLicenseBound(self,license):
+        self.c.execute(f'''SELECT boundToUser FROM licenses WHERE license = ?''',
+                       (license,))
+        result = self.c.fetchone()
+        if not result[0]:
+            return False
+        else:
+            return True
+
+    def checkIfUserHasLicense(self,username):
+        self.c.execute(f'''SELECT license FROM licenses WHERE username = ?''',
+                       (username,))
+        result = self.c.fetchone()
+        if result:
+            return result[0]
+        else:
+            return False
+
+    def getUserbyLicense(self,license):
+        self.c.execute(f'''SELECT username FROM licenses WHERE license = ?''',
+                       (license,))
+        result = self.c.fetchone()
+        if result:
+            return result[0]
+        else:
+            return None
+
+    def commitLicense(self,license):
+        self.c.execute(f'''INSERT INTO licenses(license,username,boundtoUser,boundtoDevice,HWID, devicename)
+                      VALUES(?, NULL, FALSE, FALSE, NULL, NULL)''', (license,))
+        self.conn.commit()
+        return
+
+    def bindUsertoLicense(self,license,username):
+        if self.checkIfLicenseExists(license):
+            if not self.checkIfLicenseBound(license):
+                if not self.checkIfUserHasLicense(username):
+                    self.c.execute(f'''UPDATE INTO licenses(license,username,boundtoUser,boundtoDevice,HWID, devicename)
+                                                  VALUES(?, NULL, NULL, FALSE, FALSE, NULL)''', (license,))
+                    self.conn.commit()
+                    return
+                else:
+                    return self.checkIfUserHasLicense(username)
+            else:
+                return self.getUserbyLicense(license)
+        else:
+            return 'License doesnt exist'
 
 #this is not really needed, only for testing.
 # db = Database()
