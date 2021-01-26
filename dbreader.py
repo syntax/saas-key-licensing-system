@@ -2,4 +2,4 @@ from api import Database
 
 db = Database()
 db.create()
-print(db.getAll())
+print(db.getAll('licenses'))

@@ -21,6 +21,16 @@ class User(UserMixin):
          self.authenticated = False
          self.license = None
 
+    #need to add a function to check if a user has a license on load of the user!
+    def loadUserLicense(self):
+        db = Database()
+        license = db.checkIfUserHasLicense(self.id)
+        if not license:
+            return None
+        else:
+            self.license = license
+            return license
+
 
 class AdministativeUser(User):
    pass
@@ -58,7 +68,7 @@ def login():
                 user = load_user(request.form['username'])
                 login_user(user)
                 print(f'user {result[0]} logging in!')
-                return redirect(url_for('dash'))
+                return redirect(url_for('dashboard'))
             else:
                 error = 'Invalid password!'
     return render_template('login.html', error=error)
@@ -88,7 +98,7 @@ def signup():
         elif temp.searchUsers(request.form['email'],request.form['username']): #checks if this returns anythng other than NONE
             error = 'An account using that email or username already exists!'
         else:
-            temp.addToUsers(f'''{request.form['username']},{request.form['name'].split()[0]},{request.form['name'].split()[1]},{request.form['email']},{request.form['password']},false''')
+            temp.addToUsers(f'''{request.form['username']},{request.form['name'].split()[0]},{request.form['name'].split()[1]},{request.form['email']},{request.form['password']},FALSE''')
             print('Sucessuflly commited to database.')
             user = load_user(request.form['username'])
             login_user(user)
@@ -106,8 +116,20 @@ def logout():
 
 @app.route("/dashboard", methods=['GET', 'POST'])
 @login_required
-def dash():
-    return render_template('dashboard.html')
+def dashboard():
+    lerror = None
+    if request.method == 'POST' and request.form['licenseid'] != '':
+        print('trying to bind')
+        temp = Database()
+        result = temp.bindUsertoLicense(request.form['licenseid'],current_user.id)
+        if result == "success":
+            current_user.loadUserLicense()
+            print(current_user.license)
+        else:
+            lerror = result
+            print(f'ERROR: {lerror}')
+
+    return render_template('dashboard.html', lerror=lerror)
 
 @app.route("/getTime", methods=['GET'])
 def getTime():

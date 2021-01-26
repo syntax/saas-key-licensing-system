@@ -18,8 +18,8 @@ class Database():
 
     #user related functions
 
-    def getAll(self):
-        self.c.execute(f'''SELECT * FROM users''')
+    def getAll(self,dbname):
+        self.c.execute(f'''SELECT * FROM {dbname}''')
         result = self.c.fetchall()
         return result
 
@@ -96,14 +96,14 @@ class Database():
         if self.checkIfLicenseExists(license):
             if not self.checkIfLicenseBound(license):
                 if not self.checkIfUserHasLicense(username):
-                    self.c.execute(f'''UPDATE INTO licenses(license,username,boundtoUser,boundtoDevice,HWID, devicename)
-                                                  VALUES(?, NULL, NULL, FALSE, FALSE, NULL)''', (license,))
+                    self.c.execute(f'''UPDATE licenses SET boundtoUser = TRUE, username = ? WHERE license = ?;''', (username,license))
+                    print(f'bound {license} to {username}')
                     self.conn.commit()
-                    return
+                    return 'success'
                 else:
-                    return self.checkIfUserHasLicense(username)
+                    return f'User already has license {self.checkIfUserHasLicense(username)}'
             else:
-                return self.getUserbyLicense(license)
+                return f'That license is already bound to another user'
         else:
             return 'License doesnt exist'
 

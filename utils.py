@@ -20,6 +20,5 @@ def createLicense():
 
 
 db = Database()
-db.checkIfLicenseBound('gnwi0oyzuad5wixv1a8mw962xkxb5lzx')
 for _ in range(4):
     createLicense()

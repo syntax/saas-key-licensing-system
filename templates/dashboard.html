@@ -53,8 +53,11 @@
                             <div class="card-body">
                                 <h5 class="card-title">No license currently bound</h5>
                                 <div class="card-text">
+                                    {% if lerror %}
+                                    <p class="error text-danger"><strong>Error:</strong> {{ lerror }}
+                                        {% endif %}
                                     <form action="" method="post">
-                                        <input type="text" class="form-control" id="licensekey" placeholder="License Key">
+                                        <input type="text" class="form-control" name="licenseid" placeholder="License Key">
                                         <button type="submit" class="btn btn-primary mt-2">Bind to this account</button>
                                     </form>
                                 </div>
