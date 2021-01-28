@@ -22,6 +22,7 @@ class License():
         self.devicename = None
 
         self.key = self.loadUserLicense()
+        #self.exists is necessary as self.key being None cannot necessarily be represented in conitional statements (due to str dunder), otherwise.
         if self.key != None:
             self.exists = True
         else:
