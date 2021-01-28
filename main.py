@@ -19,7 +19,8 @@ class User(UserMixin):
          self.email = email
          self.password = password
          self.authenticated = False
-         self.license = None
+
+         self.license = self.loadUserLicense()
 
     #need to add a function to check if a user has a license on load of the user!
     def loadUserLicense(self):
