@@ -47,7 +47,6 @@ class User(UserMixin):
 
          self.license = License(self.id)
 
-    #need to add a function t
 
 
 class AdministativeUser(User):
