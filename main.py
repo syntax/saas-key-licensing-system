@@ -56,7 +56,8 @@ class User(UserMixin):
 
          self.license = License(self.id)
 
-
+    def __str__(self):
+        return self.id
 
 class AdministativeUser(User):
     def __init__(self):
@@ -137,7 +138,7 @@ def signup():
 @app.route("/logout")
 @login_required
 def logout():
-    reason=f'logging out of account {current_user.id}!'
+    reason=f'logging out of account {current_user}!'
     logout_user()
     return render_template('redirect.html', reason=reason)
 
@@ -150,8 +151,8 @@ def dashboard():
         temp = Database()
         result = temp.bindUsertoLicense(request.form['licenseid'],current_user.id)
         if result == "success":
-            current_user.loadUserLicense()
-            print(current_user.license)
+            current_user.license.loadUserLicense()
+            print(f'bound {current_user.license} to {current_user}')
         else:
             lerror = result
             print(f'ERROR: {lerror}')
