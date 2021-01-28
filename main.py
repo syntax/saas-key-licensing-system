@@ -14,15 +14,21 @@ login_manager.login_view = "login"
 
 
 class License():
+    #this is a class that describes the license in context of the user its bound to, only.
     def __init__(self,owner):
         self.owner = owner
-        self.key = self.loadUserLicense()
         self.hwid = None
         self.boundtodevice = False
         self.devicename = None
 
+        self.key = self.loadUserLicense()
+        if self.key != None:
+            self.exists = True
+        else:
+            self.exists = False
+
     def __str__(self):
-        return self.key
+        return str(self.key)
 
     def __repr__(self):
         return self.__str__(self)
@@ -31,9 +37,11 @@ class License():
         db = Database()
         license = db.checkIfUserHasLicense(self.owner)
         if not license:
+            self.exists = False
             return None
         else:
             self.license = license
+            self.exists = True
             return license
 
 class User(UserMixin):
@@ -50,7 +58,8 @@ class User(UserMixin):
 
 
 class AdministativeUser(User):
-   pass
+    def __init__(self):
+        self.license = None
 
 @login_manager.user_loader
 def load_user(username):

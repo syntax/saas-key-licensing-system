@@ -38,18 +38,26 @@
         <div class="col-md-6 text-left">
             <div class="card text-center">
                 <h2 class="card-title mt-5" id="time"></h2>
-                <div class="card-body">
-                    email: {{ current_user.email }}
-                        <br>
-                    license: {{ current_user.license }}
-                </div>
+                {% if current_user.license.exists %}
+                    <div class="card-body">
+                        email: {{ current_user.email }}
+                            <br>
+                            license: {{ current_user.license }}
+                    </div>
+                {% else %}
+                    <div class="card-body">
+                        email: {{ current_user.email }}
+                            <br>
+                            <br>
+                    </div>
+                {% endif %}
                 <div class="row mt-2">
                     <div class="col-sm-1"></div>
                     <div class="col-sm-5">
 
                         <!--License management widget-->
                         <div class="card">
-                            {% if current_user.license == None %}
+                            {% if not current_user.license.exists %}
                             <div class="card-body">
                                 <h5 class="card-title">No license currently bound</h5>
                                 <div class="card-text">
