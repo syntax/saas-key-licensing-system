@@ -11,6 +11,25 @@ app.secret_key = os.urandom(24) #secret key for encoding of session on the webap
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
 
+
+
+class License():
+    def __init__(self,owner):
+        self.owner = owner
+        self.key = self.loadUserLicense()
+        self.hwid = None
+        self.boundtodevice = False
+        self.devicename = None
+
+    def loadUserLicense(self):
+        db = Database()
+        license = db.checkIfUserHasLicense(self.owner)
+        if not license:
+            return None
+        else:
+            self.license = license
+            return license
+
 class User(UserMixin):
     def __init__(self, username, fname, sname, email, password):
          self.id = username
@@ -20,17 +39,9 @@ class User(UserMixin):
          self.password = password
          self.authenticated = False
 
-         self.license = self.loadUserLicense()
+         self.license = License(self.id)
 
-    #need to add a function to check if a user has a license on load of the user!
-    def loadUserLicense(self):
-        db = Database()
-        license = db.checkIfUserHasLicense(self.id)
-        if not license:
-            return None
-        else:
-            self.license = license
-            return license
+    #need to add a function t
 
 
 class AdministativeUser(User):
