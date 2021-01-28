@@ -21,6 +21,12 @@ class License():
         self.boundtodevice = False
         self.devicename = None
 
+    def __str__(self):
+        return self.key
+
+    def __repr__(self):
+        return self.__str__(self)
+
     def loadUserLicense(self):
         db = Database()
         license = db.checkIfUserHasLicense(self.owner)

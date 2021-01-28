@@ -41,7 +41,7 @@
                 <div class="card-body">
                     email: {{ current_user.email }}
                         <br>
-                    license: {{ current_user.license.key }}
+                    license: {{ current_user.license }}
                 </div>
                 <div class="row mt-2">
                     <div class="col-sm-1"></div>
@@ -49,7 +49,7 @@
 
                         <!--License management widget-->
                         <div class="card">
-                            {% if current_user.license.key == None %}
+                            {% if current_user.license == None %}
                             <div class="card-body">
                                 <h5 class="card-title">No license currently bound</h5>
                                 <div class="card-text">
@@ -65,7 +65,7 @@
                             {% else %}
                             <div class="card-body">
                                 <h5 class="card-title">License Information</h5>
-                                <p class="card-text">key: {{ current_user.license.key }}</p>
+                                <p class="card-text">key: {{ current_user.license }}</p>
                                 <p class="card-text">status: bound to device MacbookPro</p>
                                 <a href="#" class="btn btn-primary">Unbind from MacbookPro</a>
                             </div>
