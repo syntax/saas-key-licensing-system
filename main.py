@@ -38,10 +38,11 @@ class License():
         db = Database()
         license = db.checkIfUserHasLicense(self.owner)
         if not license:
+            self.key = None
             self.exists = False
             return None
         else:
-            self.license = license
+            self.key = license
             self.exists = True
             return license
 
