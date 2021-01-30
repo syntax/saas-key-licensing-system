@@ -23,12 +23,12 @@ def gensalt(username):
 
     # a strange algorithm to create larger salts, as well as remove the predictability vulnerability for as long as this algorithm is kept secret
     def ceaser(shift,string):
-        alphabet = 'abcdefghijkl1234mnopqrst567uvwx89yz'
+        alphabet = '0abcdefghijkl1234mnopqrst567uvwx89yz'
         output = []
 
         for letter in string:
             if letter.strip() and letter in alphabet:
-                output.append(alphabet[(alphabet.index(letter) + shift) % 26])
+                output.append(alphabet[(alphabet.index(letter) + shift) % 36])
 
         return ''.join(output)
 
