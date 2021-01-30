@@ -54,10 +54,7 @@ class Database():
         self.c.execute(f'''SELECT * FROM licenses WHERE license = ?''',
                        (license,))
         result = self.c.fetchone()
-        if result:
-            return True
-        else:
-            return False
+        return bool(result)
 
     def checkIfLicenseBound(self,license):
         self.c.execute(f'''SELECT boundToUser FROM licenses WHERE license = ?''',
