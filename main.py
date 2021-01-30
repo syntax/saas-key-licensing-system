@@ -101,9 +101,7 @@ def login():
                 salt=utils.gensalt(request.form['username']).encode('utf-8'),
                 iterations=100000 # 100,000 iterations of SHA-256
             )
-            print(hashdpw)
-            print(result[4])
-            if hashdpw == result[4]:
+            if str(hashdpw) == result[4]:
                 user = load_user(request.form['username'])
                 login_user(user)
                 print(f'user {result[0]} logging in!')
