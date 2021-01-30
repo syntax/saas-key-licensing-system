@@ -9,7 +9,7 @@ def generatekey(random_chars, alphabet="0123456789abcdefghijklmnopqrstuvwxyz"):
 
 def createLicense():
     while True:
-        license = generatekey(random_chars=32)
+        license = generatekey(random_chars=16)
         conn = Database()
         if conn.checkIfLicenseExists(license):
             continue
@@ -51,8 +51,6 @@ def gensalt(username):
 
     return salt+pepper
 
-# db = Database()
-# for _ in range(4):
-#     createLicense()
-
-print(gensalt('farhanhussain'))
+db = Database()
+for _ in range(4):
+    createLicense()

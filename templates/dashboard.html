@@ -74,13 +74,13 @@
                                 {% if not current_user.license.boundtodevice %}
                                 <div class="card-body">
                                     <h5 class="card-title">License Information</h5>
-                                    <p class="card-text">key: {{ current_user.license }}</p>
+                                    <p class="card-text">key: {{ current_user.license }} <br><a href="#" class="muted">click to unbind from this account</a></p>
                                     <p class="card-text">status: not currently bound</p>
                                 </div>
                                 {% else %}
                                 <div class="card-body">
                                     <h5 class="card-title">License Information</h5>
-                                    <p class="card-text">key: {{ current_user.license }}</p>
+                                    <p class="card-text">key: {{ current_user.license }} <br><a href="#" class="muted">click to unbind from this account</a></p>
                                     <p class="card-text">status: bound to device MacbookPro</p>
                                     <a href="#" class="btn btn-primary">Unbind from MacbookPro</a>
                                 </div>
@@ -91,9 +91,9 @@
                     <div class="col-sm-5">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">asdasdasd</h5>
-                                <p class="card-text">asdasdasd</p>
-                                <a href="#" class="btn btn-primary">nionionoin</a>
+                                <h5 class="card-title">Account and Billing</h5>
+                                <p class="card-text">Next Charge of $30 due on Feb 2nd</p>
+                                <a href="#" class="btn btn-primary mt-1">Edit Account/Billing Settings</a>
                             </div>
                         </div>
                     </div>
