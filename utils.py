@@ -50,7 +50,3 @@ def gensalt(username):
     pepper = '3UwF4zVIB2CkF3uOMkmAifCMjO+88RKNfL4u6EXifPQ='
 
     return salt+pepper
-
-db = Database()
-for _ in range(4):
-    createLicense()
