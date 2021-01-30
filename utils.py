@@ -21,7 +21,7 @@ def createLicense():
 
 def gensalt(username):
 
-    # a strange algorithm to create larger salts, as well as remove the predictability vulnerability for as long as this is kept secret
+    # a strange algorithm to create larger salts, as well as remove the predictability vulnerability for as long as this algorithm is kept secret
     def ceaser(shift,string):
         alphabet = 'abcdefghijkl1234mnopqrst567uvwx89yz'
         output = []
