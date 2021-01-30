@@ -2,4 +2,5 @@ from api import Database
 
 db = Database()
 db.create()
-print(db.getAll('licenses'))
+for value in db.getAll('users'):
+    print(value)

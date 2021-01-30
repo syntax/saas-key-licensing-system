@@ -2,8 +2,10 @@ from flask import Flask, render_template, redirect, url_for, request, abort, jso
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
 import re
 from api import Database
+import utils
 import os
 import time
+import hashlib
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24) #secret key for encoding of session on the webapp
@@ -52,7 +54,7 @@ class User(UserMixin):
          self.fname = fname
          self.sname = sname
          self.email = email
-         self.password = password
+         self.hashdpassword = password
          self.authenticated = False
 
          self.license = License(self.id)
@@ -93,7 +95,15 @@ def login():
             error = 'No account with that username.\nIf you do not yet have an account, you can sign up with the above link.'
         else:
             #needs to apply hasing to this section, currently all done in plain txt
-            if request.form['password'] == result[4]:
+            hashdpw = hashlib.pbkdf2_hmac(
+                hash_name='sha256', # The hash digest algorithm for HMAC
+                password=request.form['password'].encode('utf-8'),
+                salt=utils.gensalt(request.form['username']).encode('utf-8'),
+                iterations=100000 # 100,000 iterations of SHA-256
+            )
+            print(hashdpw)
+            print(result[4])
+            if hashdpw == result[4]:
                 user = load_user(request.form['username'])
                 login_user(user)
                 print(f'user {result[0]} logging in!')
@@ -127,7 +137,14 @@ def signup():
         elif temp.searchUsers(request.form['email'],request.form['username']): #checks if this returns anythng other than NONE
             error = 'An account using that email or username already exists!'
         else:
-            temp.addToUsers(f'''{request.form['username']},{request.form['name'].split()[0]},{request.form['name'].split()[1]},{request.form['email']},{request.form['password']},FALSE''')
+            print(request.form['password'].encode('utf-8'))
+            hashdpw = hashlib.pbkdf2_hmac(
+                hash_name='sha256',  # The hash digest algorithm for HMAC
+                password=request.form['password'].encode('utf-8'),
+                salt=utils.gensalt(request.form['username']).encode('utf-8'),
+                iterations=100000  # 100,000 iterations of SHA-256
+            )
+            temp.addToUsers(f'''{request.form['username']},{request.form['name'].split()[0]},{request.form['name'].split()[1]},{request.form['email']},{hashdpw},FALSE''')
             print('Sucessuflly commited to database.')
             user = load_user(request.form['username'])
             login_user(user)
