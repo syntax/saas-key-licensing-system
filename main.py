@@ -115,7 +115,7 @@ def signup():
 
     mailregex = "^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$"
     pwregex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
-    nospacesregex = "^\\S*$"
+    usernameregex = "^[A-Za-z]+$"
     error = None
 
     if current_user.is_authenticated:
@@ -124,7 +124,7 @@ def signup():
         temp = Database()
         if not ' ' in request.form['name'] or len(request.form['name'].split(' ')) != 2:
             error = 'Your first and surname, with a space inbetween!'
-        elif not re.search(nospacesregex, request.form['username']):
+        elif not re.search(usernameregex, request.form['username']):
             error = 'Your username cannot contain any spaces!'
         elif not re.search(mailregex,request.form['email']):
             error = 'Email Invalid'
