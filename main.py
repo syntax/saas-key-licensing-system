@@ -163,6 +163,23 @@ def dashboard():
 
     return render_template('dashboard.html', lerror=lerror)
 
+@app.route("/dashboard/account", methods=['GET', 'POST'])
+@login_required
+def dashboardaccount():
+    lerror = None
+    if request.method == 'POST' and request.form['licenseid'] != '':
+        print('trying to bind')
+        temp = Database()
+        result = temp.bindUsertoLicense(request.form['licenseid'],current_user.id)
+        if result == "success":
+            current_user.license.loadUserLicense()
+            print(f'bound {current_user.license} to {current_user}')
+        else:
+            lerror = result
+            print(f'ERROR: {lerror}')
+
+    return render_template('dashboardaccount.html', lerror=lerror)
+
 @app.route("/getTime", methods=['GET'])
 def getTime():
     print("browser time: ", request.args.get("time"))
