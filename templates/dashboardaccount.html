@@ -69,38 +69,42 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"> <i class="fa fa-user"></i> </span>
                         </div>
-                        <input type="text" class="form-control" placeholder="Full name" aria-label="name"
-                               aria-describedby="basic-addon1" name="name">
+                        <input type="text" class="form-control" placeholder="Firstname" aria-label="fname"
+                               aria-describedby="basic-addon1" name="fname" value="{{current_user.fname}}">
                     </div>
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text"> <i class="fa fa-user"></i> </span>
                         </div>
-                        <input type="text" class="form-control" placeholder="Username" aria-label="Username"
-                               aria-describedby="basic-addon1" name="username">
+                        <input type="text" class="form-control" placeholder="Surname" aria-label="sname"
+                               aria-describedby="basic-addon1" name="sname" value="{{current_user.sname}}">
                     </div>
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text"> <i class="fas fa-at"></i> </span>
                         </div>
                         <input type="text" class="form-control" placeholder="Email" aria-label="email"
-                               aria-describedby="basic-addon1" name="email">
+                               aria-describedby="basic-addon1" name="email" value="{{current_user.email}}">
                     </div>
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
                         </div>
-                        <input type="password" class="form-control" placeholder="Password" aria-label="Password"
-                               aria-describedby="basic-addon" name="password">
+                        <input type="password" class="form-control" placeholder="Current Password" aria-label="Cpassword"
+                               aria-describedby="basic-addon" name="cpassword">
                         </div>
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
                         </div>
-                        <input type="password" class="form-control" placeholder="Confirm Password" aria-label="Confirm Password"
-                               aria-describedby="basic-addon" name="confirmpassword">
+                        <input type="password" class="form-control" placeholder="New Password (leave blank if no change is desired)" aria-label="New Password"
+                               aria-describedby="basic-addon" name="newpassword">
                     </div>
-                    <input class="btn btn-default" type="submit" value="Save Changes">
+                    {% if error %}
+                    <input class="btn btn-default text-align:left" type="submit" value="Save Changes"><span class="error text-danger" style="float:right;"> {{error}}</span>
+                    {% else %}
+                    <input class="btn btn-default text-align:left" type="submit" value="Save Changes">
+                    {% endif%}
                 </form>
             </div>
         </div>

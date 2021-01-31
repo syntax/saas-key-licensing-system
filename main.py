@@ -5,7 +5,6 @@ from api import Database
 import utils
 import os
 import time
-import hashlib
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24) #secret key for encoding of session on the webapp
@@ -95,7 +94,7 @@ def login():
             error = 'No account with that username.\nIf you do not yet have an account, you can sign up with the above link.'
         else:
             hashdpw = utils.hash(request.form['username'], request.form['password'])
-            if str(hashdpw) == result[4]:
+            if hashdpw == result[4]:
                 user = load_user(request.form['username'])
                 login_user(user)
                 print(f'user {result[0]} logging in!')
@@ -166,19 +165,14 @@ def dashboard():
 @app.route("/dashboard/account", methods=['GET', 'POST'])
 @login_required
 def dashboardaccount():
-    lerror = None
-    if request.method == 'POST' and request.form['licenseid'] != '':
-        print('trying to bind')
-        temp = Database()
-        result = temp.bindUsertoLicense(request.form['licenseid'],current_user.id)
-        if result == "success":
-            current_user.license.loadUserLicense()
-            print(f'bound {current_user.license} to {current_user}')
+    error = None
+    if request.method == 'POST':
+        if utils.hash(current_user.id,request.form['cpassword']) == current_user.hashdpassword:
+            print('asdasd')
         else:
-            lerror = result
-            print(f'ERROR: {lerror}')
+            error = 'Current password is needed to commit changes and is incorrect/missing'
 
-    return render_template('dashboardaccount.html', lerror=lerror)
+    return render_template('dashboardaccount.html', error=error)
 
 @app.route("/getTime", methods=['GET'])
 def getTime():

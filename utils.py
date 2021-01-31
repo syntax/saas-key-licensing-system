@@ -60,4 +60,4 @@ def hash(username,password):
         iterations=100000  # 100,000 iterations of SHA-256
     )
 
-    return hashdpw
+    return hashdpw.hex()
