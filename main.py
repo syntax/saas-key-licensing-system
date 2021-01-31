@@ -94,13 +94,7 @@ def login():
         if not result:
             error = 'No account with that username.\nIf you do not yet have an account, you can sign up with the above link.'
         else:
-            #needs to apply hasing to this section, currently all done in plain txt
-            hashdpw = hashlib.pbkdf2_hmac(
-                hash_name='sha256', # The hash digest algorithm for HMAC
-                password=request.form['password'].encode('utf-8'),
-                salt=utils.gensalt(request.form['username']).encode('utf-8'),
-                iterations=100000 # 100,000 iterations of SHA-256
-            )
+            hashdpw = utils.hash(request.form['username'], request.form['password'])
             if str(hashdpw) == result[4]:
                 user = load_user(request.form['username'])
                 login_user(user)
@@ -135,13 +129,7 @@ def signup():
         elif temp.searchUsers(request.form['email'],request.form['username']): #checks if this returns anythng other than NONE
             error = 'An account using that email or username already exists!'
         else:
-            print(request.form['password'].encode('utf-8'))
-            hashdpw = hashlib.pbkdf2_hmac(
-                hash_name='sha256',  # The hash digest algorithm for HMAC
-                password=request.form['password'].encode('utf-8'),
-                salt=utils.gensalt(request.form['username']).encode('utf-8'),
-                iterations=100000  # 100,000 iterations of SHA-256
-            )
+            hashdpw = utils.hash(request.form['username'],request.form['password'])
             temp.addToUsers(f'''{request.form['username']},{request.form['name'].split()[0]},{request.form['name'].split()[1]},{request.form['email']},{hashdpw},FALSE''')
             print('Sucessuflly commited to database.')
             user = load_user(request.form['username'])
