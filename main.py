@@ -116,7 +116,7 @@ def signup():
     if request.method == 'POST':
         temp = Database()
         if not ' ' in request.form['name'] or len(request.form['name'].split(' ')) != 2:
-            error = 'Your first and surname, with a space inbetween!'
+            error = 'We require your first and surname, with a space inbetween!'
         elif not re.search(unameregex, request.form['username']):
             error = 'Your username cannot contain any spaces!'
         elif not re.search(mailregex,request.form['email']):
@@ -168,7 +168,23 @@ def dashboardaccount():
     error = None
     if request.method == 'POST':
         if utils.hash(current_user.id,request.form['cpassword']) == current_user.hashdpassword:
-            print('asdasd')
+            db = Database()
+            if request.form['fname'] != current_user.fname and len(request.form['fname'].split(' ')) == 1 and request.form['fname'].isalpha():
+                db.updateUser('fName',request.form['fname'],current_user.id)
+            if request.form['sname'] != current_user.sname and len(request.form['sname'].split(' ')) == 1 and request.form['sname'].isalpha():
+                db.updateUser('sName', request.form['sname'], current_user.id)
+            if request.form['email'] != current_user.email:
+                mailregex = "^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$"
+                if not re.search(mailregex, request.form['email']):
+                    errpr = 'Invalid Email'
+                else:
+                    db.updateUser('emailAddress',request.form['email'],current_user.id)
+            if request.form['newpassword']:
+                pwregex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                if not re.search(pwregex, request.form['password']):
+                    error = 'Password invalid. Must be 8+ characters, including at least one upper-case letter, lower-case letter, number and special character.'
+                else:
+                    db.updateUser('password',utils.hash(request.form['password']),current_user.id)
         else:
             error = 'Current password is needed to commit changes and is incorrect/missing'
 

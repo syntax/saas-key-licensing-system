@@ -34,6 +34,14 @@ class Database():
         self.conn.commit()
         return
 
+    def updateUser(self,param,value,username):
+        str = f'''UPDATE users SET {param} = {value} WHERE username = {username};'''
+        print(str)
+        self.c.execute(str)
+        # self.c.execute(f'''UPDATE users SET ? = ? WHERE username = ?;''',(param,value,username))
+        self.conn.commit()
+        return
+
     def searchUsers(self, email,user):
         self.c.execute(f'''SELECT username, emailAddress FROM users WHERE emailAddress = ? OR username = ?''', (email,user) )
         result = self.c.fetchone()
