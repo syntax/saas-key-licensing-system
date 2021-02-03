@@ -176,7 +176,7 @@ def dashboardaccount():
             if request.form['email'] != current_user.email:
                 mailregex = "^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$"
                 if not re.search(mailregex, request.form['email']):
-                    errpr = 'Invalid Email'
+                    error = 'Invalid Email'
                 else:
                     db.updateUser('emailAddress',request.form['email'],current_user.id)
             if request.form['newpassword']:
