@@ -35,10 +35,7 @@ class Database():
         return
 
     def updateUser(self,param,value,username):
-        str = f'''UPDATE users SET {param} = {value} WHERE username = {username};'''
-        print(str)
-        self.c.execute(str)
-        # self.c.execute(f'''UPDATE users SET ? = ? WHERE username = ?;''',(param,value,username))
+        self.c.execute(f'''UPDATE users SET {param} = "{value}" WHERE username = "{username}";''')
         self.conn.commit()
         return
 
