@@ -166,27 +166,34 @@ def dashboard():
 @login_required
 def dashboardaccount():
     error = None
+    mailregex = r"^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$"
+    namesregex = r"[a-zA-Z]+"
+    pwregex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+
     if request.method == 'POST':
-        if utils.hash(current_user.id,request.form['cpassword']) == current_user.hashdpassword:
-            db = Database()
-            if request.form['fname'] != current_user.fname and len(request.form['fname'].split(' ')) == 1 and request.form['fname'].isalpha():
-                db.updateUser('fName',request.form['fname'],current_user.id)
-            if request.form['sname'] != current_user.sname and len(request.form['sname'].split(' ')) == 1 and request.form['sname'].isalpha():
-                db.updateUser('sName', request.form['sname'], current_user.id)
-            if request.form['email'] != current_user.email:
-                mailregex = "^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$"
-                if not re.search(mailregex, request.form['email']):
-                    error = 'Invalid Email'
-                else:
-                    db.updateUser('emailAddress',request.form['email'],current_user.id)
+        form = request.form.to_dict()
+        if utils.hash(current_user.id,form['cpassword']) == current_user.hashdpassword:
+            for regex, value, potentialerror in zip([namesregex, namesregex, mailregex], [form['fname'], form['sname'], form['email']], ["Invalid first name", "Invalid surname", "Invalid email"]):
+                if not re.fullmatch(regex, value):
+                    return render_template('dashboardaccount.html', error = potentialerror)
             if request.form['newpassword']:
-                pwregex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
-                if not re.search(pwregex, request.form['password']):
-                    error = 'Password invalid. Must be 8+ characters, including at least one upper-case letter, lower-case letter, number and special character.'
+                if not re.fullmatch(pwregex,form['newpassword']):
+                    return render_template('dashboardaccount.html', error = 'Not a valid password!')
                 else:
-                    db.updateUser('password',utils.hash(request.form['password']),current_user.id)
+                    form['newpassword'] = utils.hash(current_user.id,request.form['newpassword'])
+
+            db = Database()
+
+            keymap = {"newpassword": "password", "fname": "fName", "sname": "sName", "email": "emailAddress"}
+            for k, v in form.items():
+                if v != "" and k != "cpassword":
+                    db.updateUser(keymap[k], v, current_user.id)
+                    
+            db.closeConnection()
+            return render_template('redirect.html', reason='Successfully commited changes!')
         else:
             error = 'Current password is needed to commit changes and is incorrect/missing'
+
 
     return render_template('dashboardaccount.html', error=error)
 
