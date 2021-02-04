@@ -48,7 +48,7 @@ class License():
             return license
 
 class User(UserMixin):
-    def __init__(self, username, fname, sname, email, password):
+    def __init__(self, username, fname, sname, email, password, couldHaveLicense = True):
          self.id = username
          self.fname = fname
          self.sname = sname
@@ -56,23 +56,29 @@ class User(UserMixin):
          self.hashdpassword = password
          self.authenticated = False
 
-         self.license = License(self.id)
+         if couldHaveLicense:
+            self.license = License(self.id)
 
     def __str__(self):
         return self.id
 
 class AdministativeUser(User):
-    def __init__(self):
-        self.license = None
+    def __init__(self, username, fname, sname, email, password):
+        super().__init__(username, fname, sname, email, password, couldHaveLicense = False)
+
 
 @login_manager.user_loader
 def load_user(username):
     dbconnection = Database()
     result = dbconnection.searchUsersByUsername(username)
     dbconnection.closeConnection()
-    print(f'loading user {result[0]}')
     if result:
-        return User(result[0],result[1],result[2],result[3],result[4])
+        if result[5] == "FALSE":
+            print(f'loading user {result[0]}')
+            return User(result[0], result[1], result[2], result[3], result[4])
+        else:
+            print(f'loading admin user {result[0]}')
+            return AdministativeUser(result[0], result[1], result[2], result[3], result[4])
     else:
         return None
 
@@ -103,19 +109,20 @@ def login():
                 error = 'Invalid password!'
     return render_template('login.html', error=error)
 
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
 
-    mailregex = "^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$"
-    pwregex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
-    unameregex = "^[A-Za-z0-9]+$"
+    mailregex = r"^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$"
+    pwregex = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+    unameregex = r"^[A-Za-z0-9]+$"
     error = None
 
     if current_user.is_authenticated:
         return redirect(url_for('dashboard'))
     if request.method == 'POST':
         temp = Database()
-        if not ' ' in request.form['name'] or len(request.form['name'].split(' ')) != 2:
+        if ' ' not in request.form['name'] or len(request.form['name'].split(' ')) != 2:
             error = 'We require your first and surname, with a space inbetween!'
         elif not re.search(unameregex, request.form['username']):
             error = 'Your username cannot contain any spaces!'
@@ -138,12 +145,14 @@ def signup():
 
     return render_template('signup.html', error=error)
 
+
 @app.route("/logout")
 @login_required
 def logout():
-    reason=f'logging out of account {current_user}!'
+    reason = f'logging out of account {current_user}!'
     logout_user()
     return render_template('redirect.html', reason=reason)
+
 
 @app.route("/dashboard", methods=['GET', 'POST'])
 @login_required
@@ -161,6 +170,7 @@ def dashboard():
             print(f'ERROR: {lerror}')
 
     return render_template('dashboard.html', lerror=lerror)
+
 
 @app.route("/dashboard/account", methods=['GET', 'POST'])
 @login_required
@@ -197,19 +207,23 @@ def dashboardaccount():
 
     return render_template('dashboardaccount.html', error=error)
 
+
 @app.route("/getTime", methods=['GET'])
 def getTime():
     print("browser time: ", request.args.get("time"))
     print("server time : ", time.strftime('%A %B, %d %Y %H:%M:%S'));
     return "Done"
 
+
 @app.errorhandler(404)
 def not_found():
     return make_response(jsonify({'error': 'not found'}), 404)
 
+
 @app.errorhandler(400)
 def not_found():
     return make_response(jsonify({'error': 'malformed syntax, seek docs'}), 404)
+
 
 @app.route('/api/v1/licenses', methods=['GET'])
 def get_licenses():
@@ -254,6 +268,7 @@ def create_license():
             dbtemp.closeConnection()
             abort(500)
 
+
 @app.route('/api/v1/licenses/hwid/<int:licenseid>', methods=['POST'])
 def update_hwid(licenseid):
     if not request.json or not {'active_status','hwid_identifier','devicename'}.issubset(set(request.json)):
@@ -285,7 +300,6 @@ def delete_task(licenseid):
         print(e)
         temp.closeConnection()
         abort(500)
-
 
 
 if __name__ == '__main__':
