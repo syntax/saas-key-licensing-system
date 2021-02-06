@@ -49,9 +49,10 @@ class License():
             self.exists = True
             return license
 
-    def getRenewalDate(self):
+    def getRenewalDate(self): #consider making this a whole new class, lots of attrs and other things that can be done about it tbh
         db = Database()
         dbdate = db.getNextRenewal(self.key,)
+        return dbdate
 
 
 class User(UserMixin):
@@ -60,7 +61,7 @@ class User(UserMixin):
          self.fname = fname
          self.sname = sname
          self.email = email
-         self.hashdpassword = passwordsorr
+         self.hashdpassword = password
          self.authenticated = False
 
          if couldHaveLicense:
