@@ -1,6 +1,6 @@
 import os
 import sqlite3
-
+from datetime import datetime
 
 class Database():
     def __init__(self):
@@ -12,7 +12,7 @@ class Database():
             return 'DB File already exists and has already been created.'
         else:
             self.c.execute('CREATE TABLE users (username text PRIMARY KEY, fName text, sName text, emailAddress text, password text, admin bool)')
-            self.c.execute('CREATE TABLE licenses (license text PRIMARY KEY, username text, boundToUser boolean, boundToDevice boolean, HWID string, devicename string)')
+            self.c.execute('CREATE TABLE licenses (license text PRIMARY KEY, username text, boundToUser boolean, boundToDevice boolean, HWID string, devicename string, nextrenewal string)')
             self.conn.commit()
             return 'Created DB file'
 
@@ -89,10 +89,27 @@ class Database():
             return None
 
     def commitLicense(self,license):
-        self.c.execute(f'''INSERT INTO licenses(license,username,boundtoUser,boundtoDevice,HWID, devicename)
-                      VALUES(?, NULL, FALSE, FALSE, NULL, NULL)''', (license,))
+        self.c.execute(f'''INSERT INTO licenses(license,username,boundtoUser,boundtoDevice,HWID,devicename,nextrenewal)
+                      VALUES(?, NULL, FALSE, FALSE, NULL, NULL,NULL)''', (license,))
         self.conn.commit()
         return
+
+    def updateNextRenewal(self,license,date):
+        self.c.execute(f'''UPDATE licenses SET nextrenewal = ? WHERE license = ?;''',
+                       (date, license))
+        self.conn.commit()
+        return
+
+    def getNextRenewal(self,license):
+        self.c.execute(f'''SELECT nextrenewal from licenses where license = ?''', (license,))
+        result = self.c.fetchone()
+        if result != "NULL":
+            return None
+        else:
+            try:
+                return datetime.strptime(result, '%Y-%m-%d %H:%M:%S.%f')
+            except:
+                return 'Error reading DB'
 
     def bindUsertoLicense(self,license,username):
         if self.checkIfLicenseExists(license):

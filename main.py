@@ -21,11 +21,13 @@ class License():
         self.hwid = None
         self.boundtodevice = False
         self.devicename = None
+        self.renewdate =None
 
         self.key = self.loadUserLicense()
         #self.exists is necessary as self.key being None cannot necessarily be represented in conitional statements (due to str dunder), otherwise.
         if self.key != None:
             self.exists = True
+            self.renewdate = self.getRenewalDate()
         else:
             self.exists = False
 
@@ -47,13 +49,18 @@ class License():
             self.exists = True
             return license
 
+    def getRenewalDate(self):
+        db = Database()
+        dbdate = db.getNextRenewal(self.key,)
+
+
 class User(UserMixin):
     def __init__(self, username, fname, sname, email, password, couldHaveLicense = True):
          self.id = username
          self.fname = fname
          self.sname = sname
          self.email = email
-         self.hashdpassword = password
+         self.hashdpassword = passwordsorr
          self.authenticated = False
 
          if couldHaveLicense:
