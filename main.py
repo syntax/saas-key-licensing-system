@@ -104,6 +104,10 @@ class User(UserMixin):
             db.setLicenseToUnbound(self.license.key)
             db.closeConnection()
             self.license = None
+            print(f'>> unbound license from {self.id}')
+            return
+        else:
+            return 'No License bound previously'
 
 class AdministativeUser(User):
     def __init__(self, username, fname, sname, email, password):
@@ -125,6 +129,16 @@ def load_user(username):
     else:
         return None
 
+# api based functs
+
+@app.route("/unbindaccount")
+@login_required
+def unbindkey():
+    print(f'trying to unbind from {current_user.id}')
+    current_user.unbindLicense()
+    return redirect(url_for('dashboard'))
+
+# front end
 @app.route('/')
 def index():
     return render_template('home.html')
@@ -211,6 +225,8 @@ def dashboard():
         else:
             lerror = result
             print(f'ERROR: {lerror}')
+
+        return redirect(url_for('dashboard')) #https://www.youtube.com/watch?v=JQFeEscCvTg&ab_channel=DaveHollingworth
 
     return render_template('dashboard.html', lerror=lerror)
 

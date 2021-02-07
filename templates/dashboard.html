@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
           crossorigin="anonymous">
+     <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
     <style>
     body,html{
         height:100%;
@@ -74,13 +75,13 @@
                                 {% if not current_user.license.boundtodevice %}
                                 <div class="card-body">
                                     <h5 class="card-title">License Information</h5>
-                                    <p class="card-text">key: {{ current_user.license }} <br><a href="#" class="muted">click to unbind from this account</a></p>
+                                    <p class="card-text">key: {{ current_user.license }} <br><a href="javascript:unbind()" class="muted">click to unbind from account {{current_user.id}}</a></p>
                                     <p class="card-text">status: not currently bound</p>
                                 </div>
                                 {% else %}
                                 <div class="card-body">
                                     <h5 class="card-title">License Information</h5>
-                                    <p class="card-text">key: {{ current_user.license }} <br><a href="#" class="muted">click to unbind from this account</a></p>
+                                    <p class="card-text">key: {{ current_user.license }} <br><a href="javascript:unbind()" class="muted">click to unbind from account {{current_user.id}}</a></p>
                                     <p class="card-text">status: bound to device MacbookPro</p>
                                     <a href="#" class="btn btn-primary">Unbind from MacbookPro</a>
                                 </div>
@@ -133,5 +134,9 @@ function relayUserTime(user){
     }
 }
 
+function unbind() {
+    $.get('/unbindaccount');
+    setTimeout(function(){ location.reload(); }, 100);
+}
 </script>
 </html>

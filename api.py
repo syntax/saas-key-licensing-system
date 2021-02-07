@@ -96,8 +96,8 @@ class Database():
         return
 
     def setLicenseToUnbound(self,license):
-        self.c.execute(f'''UPDATE licenses SET username = NULL, boundtoUser = False, boundtoDevice = False, HWID = NULL, devicename = NILL WHERE license = ?;''',
-                       (license))
+        self.c.execute(f'''UPDATE licenses SET username = NULL, boundtoUser = False, boundtoDevice = False, HWID = NULL, devicename = NULL WHERE license = ?;''',
+                       (license,))
         self.conn.commit()
         return
 
