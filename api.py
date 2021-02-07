@@ -12,7 +12,8 @@ class Database():
             return 'DB File already exists and has already been created.'
         else:
             self.c.execute('CREATE TABLE users (username text PRIMARY KEY, fName text, sName text, emailAddress text, password text, admin bool)')
-            self.c.execute('CREATE TABLE licenses (license text PRIMARY KEY, username text, boundToUser boolean, boundToDevice boolean, HWID string, devicename string, nextrenewal string)')
+            self.c.execute('CREATE TABLE licenses (license text PRIMARY KEY, username text, boundToUser boolean, boundToDevice boolean, HWID string, devicename string, nextrenewal string, plan string)')
+            self.c.execute('CREATE TABLE plans (name text PRIMARY KEY, interval integer, amount float)')
             self.conn.commit()
             return 'Created DB file'
 
@@ -88,9 +89,9 @@ class Database():
         else:
             return None
 
-    def commitLicense(self,license):
-        self.c.execute(f'''INSERT INTO licenses(license,username,boundtoUser,boundtoDevice,HWID,devicename,nextrenewal)
-                      VALUES(?, NULL, FALSE, FALSE, NULL, NULL,NULL)''', (license,))
+    def commitLicense(self,license,plan):
+        self.c.execute(f'''INSERT INTO licenses(license,username,boundtoUser,boundtoDevice,HWID,devicename,nextrenewal,plan)
+                      VALUES(?, NULL, FALSE, FALSE, NULL, NULL, NULL, ?)''', (license,plan)) #needs to be updated to include plan, and validate that plane xists etc.
         self.conn.commit()
         return
 
@@ -101,7 +102,7 @@ class Database():
         return
 
     def getNextRenewal(self,license):
-        self.c.execute(f'''SELECT nextrenewal from licenses where license = ?''', (license,))
+        self.c.execute(f'''SELECT nextrenewal FROM licenses WHERE license = ?''', (license,))
         result = self.c.fetchone()
         if result != "NULL":
             return None
@@ -125,6 +126,26 @@ class Database():
                 return f'That license is already bound to another user'
         else:
             return 'License doesnt exist'
+
+    #plan related functions
+
+    def getPlanInfo(self,name):
+        self.c.execute(f'''SELECT * FROM plans WHERE name = "?"'''(name,))
+        result = self.c.fetchone()
+        if not result:
+            return None
+        else:
+            return result
+
+    def createPlan(self,name,interval,amount):
+        if not self.getPlanInfo(name):
+            self.c.execute(f'''INSERT INTO plan(name,interval,amount)
+                  VALUES(?, ?, ?)''', (name,interval,amount))
+            self.conn.commit()
+            return
+        else:
+            return 'Plan already exists'
+
 
 #this is not really needed, only for testing.
 # db = Database()

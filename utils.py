@@ -8,17 +8,23 @@ def generatekey(random_chars, alphabet="0123456789abcdefghijklmnopqrstuvwxyz"):
     r = random.SystemRandom()
     return ''.join([r.choice(alphabet) for i in range(random_chars)])
 
-def createLicense():
-    while True:
-        license = generatekey(random_chars=16)
-        conn = Database()
-        if conn.checkIfLicenseExists(license):
-            continue
-        else:
-            print(f'created license {license}')
-            conn.commitLicense(license)
-            conn.closeConnection()
-            return license
+def createLicense(planname):
+    initialconn = Database()
+    if initialconn.getPlanInfo(planname):
+        initialconn.closeConnection()
+        while True:
+            license = generatekey(random_chars=16)
+            conn = Database()
+            if conn.checkIfLicenseExists(license):
+                continue
+            else:
+                print(f'created license {license}')
+                conn.commitLicense(license,planname)
+                conn.closeConnection()
+                return license
+    else:
+        initialconn.closeConnection()
+        return 'Plan does not exist'
 
 def gensalt(username):
 

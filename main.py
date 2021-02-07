@@ -13,6 +13,9 @@ login_manager = LoginManager(app)
 login_manager.login_view = "login"
 
 
+class RenewalDate():
+    def __init__(self):
+        self.renewdate = None
 
 class License():
     #this is a class that describes the license in context of the user its bound to, only.
@@ -40,6 +43,7 @@ class License():
     def loadUserLicense(self):
         db = Database()
         license = db.checkIfUserHasLicense(self.owner)
+        db.closeConnection()
         if not license:
             self.key = None
             self.exists = False
@@ -51,7 +55,7 @@ class License():
 
     def getRenewalDate(self): #consider making this a whole new class, lots of attrs and other things that can be done about it tbh
         db = Database()
-        dbdate = db.getNextRenewal(self.key,)
+        dbdate = db.getNextRenewal(self.key)
         return dbdate
 
 
