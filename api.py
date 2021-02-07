@@ -95,6 +95,12 @@ class Database():
         self.conn.commit()
         return
 
+    def setLicenseToUnbound(self,license):
+        self.c.execute(f'''UPDATE licenses SET username = NULL, boundtoUser = False, boundtoDevice = False, HWID = NULL, devicename = NILL WHERE license = ?;''',
+                       (license))
+        self.conn.commit()
+        return
+
     def updateNextRenewal(self,license,date):
         self.c.execute(f'''UPDATE licenses SET nextrenewal = ? WHERE license = ?;''',
                        (date, license))

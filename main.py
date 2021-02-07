@@ -48,12 +48,12 @@ class License:
         self.devicename = None
         self.renewal = None
 
-        print(f'''Loading {self.owner}'s license''')
+        print(f'''>> Loading {self.owner}'s license''')
         self.key = self.loadUserLicense()
         #self.exists is necessary as self.key being None cannot necessarily be represented in conitional statements (due to str dunder), otherwise.
         if self.key:
             self.exists = True
-            print(f'Instantiating Renewal Date Class')
+            print(f'>> Instantiating Renewal Date Class for {self.owner}')
             self.renewal = Renewal(self.key)
         else:
             self.exists = False
@@ -94,6 +94,16 @@ class User(UserMixin):
 
     def __str__(self):
         return self.id
+
+    def unbindLicense(self):
+        #probably needs to be implemented with some sort of ajax on the html client side to prevent it from just having the entire page render again
+        #will need to do things such as unbinding from device, as well, keep this in consideration!
+        if self.license:
+            print(f'>> unbinding license from {self.id}')
+            db = Database()
+            db.setLicenseToUnbound(self.license.key)
+            db.closeConnection()
+            self.license = None
 
 class AdministativeUser(User):
     def __init__(self, username, fname, sname, email, password):
