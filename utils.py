@@ -6,9 +6,10 @@ import math
 
 def generatekey(random_chars, alphabet="0123456789abcdefghijklmnopqrstuvwxyz"):
     r = random.SystemRandom()
-    return ''.join([r.choice(alphabet) for i in range(random_chars)])
+    return ''.join([r.choice(alphabet) for _ in range(random_chars)])
 
 def createLicense(planname):
+    print(planname)
     initialconn = Database()
     if initialconn.getPlanInfo(planname):
         initialconn.closeConnection()

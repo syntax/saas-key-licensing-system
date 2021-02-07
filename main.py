@@ -5,6 +5,7 @@ from api import Database
 import utils
 import os
 import time
+import datetime
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24) #secret key for encoding of session on the webapp
@@ -13,24 +14,47 @@ login_manager = LoginManager(app)
 login_manager.login_view = "login"
 
 
-class RenewalDate():
-    def __init__(self):
-        self.renewdate = None
+class Renewal:
+    def __init__(self, key):
+        self.renewdate = self.getRenewalDate(key)
+        self.renewamount = None
+        self.renewinterval = None
 
-class License():
+        #running of this function should result in the last two being defined.
+        self.getRenewalInfoFromPlan(key)
+
+    def getRenewalDate(self, key):
+        db = Database()
+        dbdate = db.getNextRenewal(key)
+        return dbdate
+
+    def getRenewalInfoFromPlan(self, key):
+        db = Database()
+        planinfo = db.getPlanfromLicense(key)
+        self.renewamount = float(planinfo['renewalprice'])
+        self.renewinterval = int(planinfo['renewalinterval'])
+        return planinfo
+
+    def incrementRenewalDate(self):
+        if self.renewdate and self.renewdate != 'Error reading DB':
+            self.renewdate = self.renewdate + datetime.timedelta(days=self.renewinterval)
+    
+class License:
     #this is a class that describes the license in context of the user its bound to, only.
     def __init__(self,owner):
         self.owner = owner
         self.hwid = None
         self.boundtodevice = False
         self.devicename = None
-        self.renewdate =None
+        self.renewal = None
 
+        print(f'''Loading {self.owner}'s license''')
         self.key = self.loadUserLicense()
         #self.exists is necessary as self.key being None cannot necessarily be represented in conitional statements (due to str dunder), otherwise.
-        if self.key != None:
+        if self.key:
             self.exists = True
-            self.renewdate = self.getRenewalDate()
+            print(f'Instantiating Renewal Date Class')
+            self.renewal = Renewal(self.key)
         else:
             self.exists = False
 
@@ -38,7 +62,7 @@ class License():
         return str(self.key)
 
     def __repr__(self):
-        return self.__str__(self)
+        return self.__str__()
 
     def loadUserLicense(self):
         db = Database()
@@ -53,10 +77,6 @@ class License():
             self.exists = True
             return license
 
-    def getRenewalDate(self): #consider making this a whole new class, lots of attrs and other things that can be done about it tbh
-        db = Database()
-        dbdate = db.getNextRenewal(self.key)
-        return dbdate
 
 
 class User(UserMixin):
@@ -69,6 +89,7 @@ class User(UserMixin):
          self.authenticated = False
 
          if couldHaveLicense:
+            print(f'Checking if {self.id} has a license')
             self.license = License(self.id)
 
     def __str__(self):

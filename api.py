@@ -127,11 +127,21 @@ class Database():
         else:
             return 'License doesnt exist'
 
+    def getPlanfromLicense(self,license):
+        self.c.execute('''SELECT plans.* FROM plans JOIN licenses ON licenses.plan = plans.name WHERE licenses.license = ?;''',(license,))
+        result = self.c.fetchone()
+        resultdict = {"name":result[0],
+                      "renewalinterval":result[1],
+                      "renewalprice":result[2]}
+        return resultdict
+
     #plan related functions
 
     def getPlanInfo(self,name):
-        self.c.execute(f'''SELECT * FROM plans WHERE name = "?"'''(name,))
+        self.c.execute(f'''SELECT * FROM plans WHERE name = "{name}";''')
+        print(f'''SELECT * FROM plans WHERE name = "{name}";''')
         result = self.c.fetchone()
+        print(result)
         if not result:
             return None
         else:
@@ -139,7 +149,7 @@ class Database():
 
     def createPlan(self,name,interval,amount):
         if not self.getPlanInfo(name):
-            self.c.execute(f'''INSERT INTO plan(name,interval,amount)
+            self.c.execute(f'''INSERT INTO plans(name,interval,amount)
                   VALUES(?, ?, ?)''', (name,interval,amount))
             self.conn.commit()
             return
