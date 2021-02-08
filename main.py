@@ -38,6 +38,19 @@ class Renewal:
     def incrementRenewalDate(self):
         if self.renewdate and self.renewdate != 'Error reading DB':
             self.renewdate = self.renewdate + datetime.timedelta(days=self.renewinterval)
+
+    def initalRenewalIncrement(self,key):
+        print('hit this 2')
+        print(self.renewdate)
+        if not self.renewdate:
+            self.renewdate = datetime.datetime.now()
+            self.incrementRenewalDate()
+            dbconn = Database()
+            dbconn.updateNextRenewal(key,self.renewdate)
+            dbconn.closeConnection()
+            return
+        else:
+            return 'Not inital'
     
 class License:
     #this is a class that describes the license in context of the user its bound to, only.
@@ -48,12 +61,10 @@ class License:
         self.devicename = None
         self.renewal = None
 
-        print(f'''>> Loading {self.owner}'s license''')
         self.key = self.loadUserLicense()
         #self.exists is necessary as self.key being None cannot necessarily be represented in conitional statements (due to str dunder), otherwise.
         if self.key:
             self.exists = True
-            print(f'>> Instantiating Renewal Date Class for {self.owner}')
             self.renewal = Renewal(self.key)
         else:
             self.exists = False
@@ -75,6 +86,7 @@ class License:
         else:
             self.key = license
             self.exists = True
+            self.renewal = Renewal(self.key)
             return license
 
 
@@ -89,7 +101,6 @@ class User(UserMixin):
          self.authenticated = False
 
          if couldHaveLicense:
-            print(f'Checking if {self.id} has a license')
             self.license = License(self.id)
 
     def __str__(self):
@@ -99,12 +110,10 @@ class User(UserMixin):
         #probably needs to be implemented with some sort of ajax on the html client side to prevent it from just having the entire page render again
         #will need to do things such as unbinding from device, as well, keep this in consideration!
         if self.license:
-            print(f'>> unbinding license from {self.id}')
             db = Database()
             db.setLicenseToUnbound(self.license.key)
             db.closeConnection()
             self.license = None
-            print(f'>> unbound license from {self.id}')
             return
         else:
             return 'No License bound previously'
@@ -121,10 +130,8 @@ def load_user(username):
     dbconnection.closeConnection()
     if result:
         if result[5] == "FALSE":
-            print(f'loading user {result[0]}')
             return User(result[0], result[1], result[2], result[3], result[4])
         else:
-            print(f'loading admin user {result[0]}')
             return AdministativeUser(result[0], result[1], result[2], result[3], result[4])
     else:
         return None
@@ -134,7 +141,6 @@ def load_user(username):
 @app.route("/unbindaccount")
 @login_required
 def unbindkey():
-    print(f'trying to unbind from {current_user.id}')
     current_user.unbindLicense()
     return redirect(url_for('dashboard'))
 
@@ -160,7 +166,6 @@ def login():
             if hashdpw == result[4]:
                 user = load_user(request.form['username'])
                 login_user(user)
-                print(f'user {result[0]} logging in!')
                 return redirect(url_for('dashboard'))
             else:
                 error = 'Invalid password!'
@@ -194,7 +199,6 @@ def signup():
         else:
             hashdpw = utils.hash(request.form['username'],request.form['password'])
             temp.addToUsers(f'''{request.form['username']},{request.form['name'].split()[0]},{request.form['name'].split()[1]},{request.form['email']},{hashdpw},FALSE''')
-            print('Sucessuflly commited to database.')
             user = load_user(request.form['username'])
             login_user(user)
             temp.closeConnection()
@@ -216,12 +220,14 @@ def logout():
 def dashboard():
     lerror = None
     if request.method == 'POST' and request.form['licenseid'] != '':
-        print('trying to bind')
         temp = Database()
         result = temp.bindUsertoLicense(request.form['licenseid'],current_user.id)
         if result == "success":
             current_user.license.loadUserLicense()
-            print(f'bound {current_user.license} to {current_user}')
+            print(current_user.license.renewal.getRenewalDate(current_user.license.key))
+            if not current_user.license.renewal.getRenewalDate(current_user.license.key):
+                print('hit this')
+                current_user.license.renewal.initalRenewalIncrement(current_user.license.key)
         else:
             lerror = result
             print(f'ERROR: {lerror}')

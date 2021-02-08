@@ -109,14 +109,12 @@ class Database():
 
     def getNextRenewal(self,license):
         self.c.execute(f'''SELECT nextrenewal FROM licenses WHERE license = ?''', (license,))
-        result = self.c.fetchone()
-        if result != "NULL":
+        result = self.c.fetchone()[0]
+        if not result or result == "NULL":
             return None
         else:
-            try:
-                return datetime.strptime(result, '%Y-%m-%d %H:%M:%S.%f')
-            except:
-                return 'Error reading DB'
+            return datetime.strptime(result, '%Y-%m-%d %H:%M:%S.%f')
+
 
     def bindUsertoLicense(self,license,username):
         if self.checkIfLicenseExists(license):
