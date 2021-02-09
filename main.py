@@ -293,6 +293,7 @@ def dashboardaccount():
 @app.route("/admin/dashboard", methods=['GET', 'POST'])
 @login_required
 def admindash():
+    #https://www.w3schools.com/howto/howto_js_sort_table.asp for the tables when being implemented
     if current_user.getAdminPerms():
         return 'yo'
     else:
