@@ -232,57 +232,63 @@ def logout():
 @app.route("/dashboard", methods=['GET', 'POST'])
 @login_required
 def dashboard():
-    lerror = None
-    if request.method == 'POST' and request.form['licenseid'] != '':
-        temp = Database()
-        result = temp.bindUsertoLicense(request.form['licenseid'],current_user.id)
-        if result == "success":
-            current_user.license.loadUserLicense()
-            if not current_user.license.renewal.getRenewalDate(current_user.license.key):
-                current_user.license.renewal.initalRenewalIncrement(current_user.license.key)
-        else:
-            lerror = result
-            print(f'ERROR: {lerror}')
-
-        return redirect(url_for('dashboard')) #https://www.youtube.com/watch?v=JQFeEscCvTg&ab_channel=DaveHollingworth
-
-    return render_template('dashboard.html', lerror=lerror)
+    if not current_user.getAdminPerms():
+        lerror = None
+        if request.method == 'POST' and request.form['licenseid'] != '':
+            temp = Database()
+            result = temp.bindUsertoLicense(request.form['licenseid'],current_user.id)
+            if result == "success":
+                current_user.license.loadUserLicense()
+                if not current_user.license.renewal.getRenewalDate(current_user.license.key):
+                    current_user.license.renewal.initalRenewalIncrement(current_user.license.key)
+            else:
+                lerror = result
+                print(f'ERROR: {lerror}')
+    
+            return redirect(url_for('dashboard')) #https://www.youtube.com/watch?v=JQFeEscCvTg&ab_channel=DaveHollingworth
+    
+        return render_template('dashboard.html', lerror=lerror)
+    else:
+        return redirect(url_for('admindash'))
 
 
 @app.route("/dashboard/account", methods=['GET', 'POST'])
 @login_required
 def dashboardaccount():
-    error = None
-    mailregex = r"^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$"
-    namesregex = r"[a-zA-Z]+"
-    pwregex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
-
-    if request.method == 'POST':
-        form = request.form.to_dict()
-        if utils.hash(current_user.id,form['cpassword']) == current_user.hashdpassword:
-            for regex, value, potentialerror in zip([namesregex, namesregex, mailregex], [form['fname'], form['sname'], form['email']], ["Invalid first name", "Invalid surname", "Invalid email"]):
-                if not re.fullmatch(regex, value):
-                    return render_template('dashboardaccount.html', error = potentialerror)
-            if request.form['newpassword']:
-                if not re.fullmatch(pwregex,form['newpassword']):
-                    return render_template('dashboardaccount.html', error = 'Not a valid password!')
-                else:
-                    form['newpassword'] = utils.hash(current_user.id,request.form['newpassword'])
-
-            db = Database()
-
-            keymap = {"newpassword": "password", "fname": "fName", "sname": "sName", "email": "emailAddress"}
-            for k, v in form.items():
-                if v != "" and k != "cpassword":
-                    db.updateUser(keymap[k], v, current_user.id)
-                    
-            db.closeConnection()
-            return render_template('redirect.html', reason='Successfully commited changes!')
-        else:
-            error = 'Current password is needed to commit changes and is incorrect/missing'
-
-
-    return render_template('dashboardaccount.html', error=error)
+    if not current_user.getAdminPerms():
+        error = None
+        mailregex = r"^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$"
+        namesregex = r"[a-zA-Z]+"
+        pwregex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+    
+        if request.method == 'POST':
+            form = request.form.to_dict()
+            if utils.hash(current_user.id,form['cpassword']) == current_user.hashdpassword:
+                for regex, value, potentialerror in zip([namesregex, namesregex, mailregex], [form['fname'], form['sname'], form['email']], ["Invalid first name", "Invalid surname", "Invalid email"]):
+                    if not re.fullmatch(regex, value):
+                        return render_template('dashboardaccount.html', error = potentialerror)
+                if request.form['newpassword']:
+                    if not re.fullmatch(pwregex,form['newpassword']):
+                        return render_template('dashboardaccount.html', error = 'Not a valid password!')
+                    else:
+                        form['newpassword'] = utils.hash(current_user.id,request.form['newpassword'])
+    
+                db = Database()
+    
+                keymap = {"newpassword": "password", "fname": "fName", "sname": "sName", "email": "emailAddress"}
+                for k, v in form.items():
+                    if v != "" and k != "cpassword":
+                        db.updateUser(keymap[k], v, current_user.id)
+                        
+                db.closeConnection()
+                return render_template('redirect.html', reason='Successfully commited changes!')
+            else:
+                error = 'Current password is needed to commit changes and is incorrect/missing'
+    
+    
+        return render_template('dashboardaccount.html', error=error)
+    else:
+        return redirect(url_for('admindash'))
 
 @app.route("/admin/dashboard", methods=['GET', 'POST'])
 @login_required
