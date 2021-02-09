@@ -5,13 +5,8 @@ from api import Database
 import utils
 import os
 import time
+from functools import wraps
 import datetime
-
-app = Flask(__name__)
-app.secret_key = os.urandom(24) #secret key for encoding of session on the webapp
-
-login_manager = LoginManager(app)
-login_manager.login_view = "login"
 
 
 class Renewal:
@@ -28,6 +23,12 @@ class Renewal:
         dbdate = db.getNextRenewal(key)
         return dbdate
 
+    def commitRenewdatetoDatabase(self, key):
+        dbconn = Database()
+        dbconn.updateNextRenewal(key, self.renewdate)
+        dbconn.closeConnection()
+        return
+
     def getRenewalInfoFromPlan(self, key):
         db = Database()
         planinfo = db.getPlanfromLicense(key)
@@ -38,16 +39,14 @@ class Renewal:
     def incrementRenewalDate(self):
         if self.renewdate and self.renewdate != 'Error reading DB':
             self.renewdate = self.renewdate + datetime.timedelta(days=self.renewinterval)
+            return self.renewdate
 
     def initalRenewalIncrement(self,key):
-        print('hit this 2')
         print(self.renewdate)
         if not self.renewdate:
             self.renewdate = datetime.datetime.now()
             self.incrementRenewalDate()
-            dbconn = Database()
-            dbconn.updateNextRenewal(key,self.renewdate)
-            dbconn.closeConnection()
+            self.commitRenewdatetoDatabase(key)
             return
         else:
             return 'Not inital'
@@ -99,6 +98,7 @@ class User(UserMixin):
          self.email = email
          self.hashdpassword = password
          self.authenticated = False
+         self.isadmin = False
 
          if couldHaveLicense:
             self.license = License(self.id)
@@ -118,9 +118,20 @@ class User(UserMixin):
         else:
             return 'No License bound previously'
 
+    def getAdminPerms(self):
+        return self.isadmin
+
 class AdministativeUser(User):
     def __init__(self, username, fname, sname, email, password):
         super().__init__(username, fname, sname, email, password, couldHaveLicense = False)
+        self.isadmin = True
+
+
+app = Flask(__name__)
+app.secret_key = os.urandom(24) #secret key for encoding of session on the webapp
+
+login_manager = LoginManager(app)
+login_manager.login_view = "login"
 
 
 @login_manager.user_loader
@@ -166,7 +177,10 @@ def login():
             if hashdpw == result[4]:
                 user = load_user(request.form['username'])
                 login_user(user)
-                return redirect(url_for('dashboard'))
+                if current_user.getAdminPerms():
+                    return redirect(url_for('admindash'))
+                else:
+                    return redirect(url_for('dashboard'))
             else:
                 error = 'Invalid password!'
     return render_template('login.html', error=error)
@@ -224,9 +238,7 @@ def dashboard():
         result = temp.bindUsertoLicense(request.form['licenseid'],current_user.id)
         if result == "success":
             current_user.license.loadUserLicense()
-            print(current_user.license.renewal.getRenewalDate(current_user.license.key))
             if not current_user.license.renewal.getRenewalDate(current_user.license.key):
-                print('hit this')
                 current_user.license.renewal.initalRenewalIncrement(current_user.license.key)
         else:
             lerror = result
@@ -272,6 +284,14 @@ def dashboardaccount():
 
     return render_template('dashboardaccount.html', error=error)
 
+@app.route("/admin/dashboard", methods=['GET', 'POST'])
+@login_required
+def admindash():
+    if current_user.getAdminPerms():
+        return 'yo'
+    else:
+        reason = f'Insufficient permissions.'
+        return render_template('redirect.html', reason=reason)
 
 @app.route("/getTime", methods=['GET'])
 def getTime():

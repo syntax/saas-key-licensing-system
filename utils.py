@@ -68,3 +68,11 @@ def hash(username,password):
     )
 
     return hashdpw.hex()
+
+def createAdminUser(values): #needs username,fName,sName,emailAddress,password passed into it as a comma seperated str, where pw is pre hashed
+    values += ',TRUE'
+    db = Database()
+    db.addToUsers(values)
+    return 'success'
+
+createAdminUser(f'''admin,tom,holland,admin@gmail.com,{hash('admin','Ihpw2014')}''')

@@ -29,11 +29,19 @@ class Database():
         self.conn.commit()
         return
 
+    def searchUsersByUsername(self,user):
+        self.c.execute(f'''SELECT * FROM users WHERE username = ?''', (user,) )
+        result = self.c.fetchone()
+        return result
+
     def addToUsers(self,values):
-        self.c.execute(f'''INSERT INTO users(username,fName,sName,emailAddress,password, admin)
-              VALUES(?, ?, ?, ?, ?, ?)''', tuple(values.split(',')))
-        self.conn.commit()
-        return
+        if not self.searchUsersByUsername(tuple(values.split(','))[0]):
+            self.c.execute(f'''INSERT INTO users(username,fName,sName,emailAddress,password,admin)
+                  VALUES(?, ?, ?, ?, ?, ?)''', tuple(values.split(',')))
+            self.conn.commit()
+            return
+        else:
+            return 'user already exists'
 
     def updateUser(self,param,value,username):
         self.c.execute(f'''UPDATE users SET {param} = "{value}" WHERE username = "{username}";''')
@@ -42,11 +50,6 @@ class Database():
 
     def searchUsers(self, email,user):
         self.c.execute(f'''SELECT username, emailAddress FROM users WHERE emailAddress = ? OR username = ?''', (email,user) )
-        result = self.c.fetchone()
-        return result
-
-    def searchUsersByUsername(self,user):
-        self.c.execute(f'''SELECT * FROM users WHERE username = ?''', (user,) )
         result = self.c.fetchone()
         return result
 
