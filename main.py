@@ -295,7 +295,7 @@ def dashboardaccount():
 def admindash():
     #https://www.w3schools.com/howto/howto_js_sort_table.asp for the tables when being implemented
     if current_user.getAdminPerms():
-        return 'yo'
+        return render_template('admindash.html')
     else:
         reason = f'Insufficient permissions.'
         return render_template('redirect.html', reason=reason)
