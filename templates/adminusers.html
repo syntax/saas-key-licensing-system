@@ -104,24 +104,56 @@
 
 
 
+
     </style>
 </head>
 
 <body class="bg-dark">
 <div id="mySidenav" class="sidenav">
-  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-  <a href="#">overview</a>
-  <a href="/admin/dashboard/users">users</a>
-  <a href="/admin/dashboard/licenses">licenses</a>
-  <a href="/admin/dashboard/plans">plans</a>
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <a href="/testing">overview</a>
+    <a href="#">users</a>
+    <a href="#">licenses</a>
+    <a href="#">plans</a>
     <p class="footer fixed-bottom">logged in as {{ current_user.id }}</p>
 </div>
-<div id="main" class="container-fluid h-90 bg-dark text-white">
+<div id="main" class="container-fluid h-10 bg-dark text-white">
+    <div class="col-3 text-left">
+            <div class="navbarbutton"><a href="#" onclick="openNav()"><i class="fas fa-bars"></i></a></div>
+        </div>
+</div>
+<div class="container-fluid h-80 bg-dark text-white">
     <div class="row h-90">
         <div class="col-3 text-left">
-            <div class ="navbarbutton"><a href="#" onclick="openNav()" ><i class="fas fa-bars"></i></a></div>
         </div>
-        <div class="col-md-6 text-left justify-content-center align-items-center"> ASDOIADSIODASASDOIDSAION</div>
+        <div class="col-md-6 text-left justify-content-center align-items-center">
+            <div class="card">
+                <table class="table mt-3 mb-3 px-2">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Username</th>
+                        <th scope="col">First</th>
+                        <th scope="col">Last</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">License</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for value in users %}
+                    <tr class="text-dark">
+                        <th scope="row ">1</th>
+                        <td>@testing</td>
+                        <td>fname</td>
+                        <td>sname</td>
+                        <td>test@gmail.com</td>
+                        <td>d0n109mw901mx109xm1</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
         <div class="col-3"></div>
     </div>
 </div>
@@ -156,5 +188,6 @@ function closeNav() {
         localStorage.setItem("sidebar", "closed");
     }
 }
+
 </script>
 </html>

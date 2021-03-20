@@ -300,6 +300,15 @@ def admindash():
         reason = f'Insufficient permissions.'
         return render_template('redirect.html', reason=reason)
 
+@app.route("/admin/dashboard/users", methods=['GET', 'POST'])
+@login_required
+def adminusers():
+    if current_user.getAdminPerms():
+        return render_template('adminusers.html')
+    else:
+        reason = f'Insufficient permissions.'
+        return render_template('redirect.html', reason=reason)
+
 @app.route("/getTime", methods=['GET'])
 def getTime():
     print("browser time: ", request.args.get("time"))
