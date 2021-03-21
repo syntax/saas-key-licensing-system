@@ -22,7 +22,6 @@ class Database():
     def getAll(self,dbname):
         self.c.execute(f'''SELECT * FROM {dbname}''')
         result = self.c.fetchall()
-        print(result)
         return result
 
     def removeTable(self):

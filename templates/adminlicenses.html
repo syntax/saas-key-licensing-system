@@ -105,22 +105,23 @@
 
 
 
+
     </style>
 </head>
 
 <body class="bg-dark">
 <div id="mySidenav" class="sidenav">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-    <a href="/testing">overview</a>
-    <a href="#">users</a>
-    <a href="#">licenses</a>
-    <a href="#">plans</a>
+    <a href="/admin/dashboard">overview</a>
+    <a href="/admin/dashboard/users">users</a>
+    <a href="/admin/dashboard/licenses">licenses</a>
+    <a href="/admin/dashboard/plans">plans</a>
     <p class="footer fixed-bottom">logged in as {{ current_user.id }}</p>
 </div>
 <div id="main" class="container-fluid h-10 bg-dark text-white">
     <div class="col-3 text-left">
-            <div class="navbarbutton"><a href="#" onclick="openNav()"><i class="fas fa-bars"></i></a></div>
-        </div>
+        <div class="navbarbutton"><a href="#" onclick="openNav()"><i class="fas fa-bars"></i></a></div>
+    </div>
 </div>
 <div class="container-fluid h-80 bg-dark text-white">
     <div class="row h-90">
@@ -144,7 +145,11 @@
                     <tr class="text-dark">
                         <th scope="row ">{{ licenses.index(value) }}</th>
                         <td>{{ value[0] }}</td>
+                        {% if value[1] != None %}
                         <td>@{{ value[1] }}</td>
+                        {% else %}
+                        <td>{{ value[1] }}</td>
+                        {% endif %}
                         <td>{{ value[7] }}</td>
                         <td>{{ value[6] }}</td>
                         <td>{{ value[5] }}</td>
@@ -188,6 +193,7 @@ function closeNav() {
         localStorage.setItem("sidebar", "closed");
     }
 }
+
 
 </script>
 </html>

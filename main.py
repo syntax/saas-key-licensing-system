@@ -305,7 +305,16 @@ def admindash():
 def adminusers():
     if current_user.getAdminPerms():
         db = Database()
-        users = db.getAll('users')
+        tempusers = db.getAll('users')
+        users = []
+        for user in tempusers:
+            user = list(user)
+            dbattempt = db.checkIfUserHasLicense(user[0])
+            if dbattempt != False:
+                user.append(dbattempt)
+            else:
+                user.append(None)
+            users.append(user)
         db.closeConnection()
         return render_template('adminusers.html',users=users)
     else:
@@ -320,6 +329,18 @@ def adminlicenses():
         licenses = db.getAll('licenses')
         db.closeConnection()
         return render_template('adminlicenses.html',licenses=licenses)
+    else:
+        reason = f'Insufficient permissions.'
+        return render_template('redirect.html', reason=reason)
+
+@app.route("/admin/dashboard/plans", methods=['GET', 'POST'])
+@login_required
+def adminplans():
+    if current_user.getAdminPerms():
+        db = Database()
+        plans = list(db.getAll('plans'))
+        db.closeConnection()
+        return render_template('adminplans.html',plans=plans)
     else:
         reason = f'Insufficient permissions.'
         return render_template('redirect.html', reason=reason)

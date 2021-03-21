@@ -133,22 +133,18 @@
                     <thead class="thead-dark">
                     <tr>
                         <th scope="col">#</th>
-                        <th scope="col">Username</th>
-                        <th scope="col">First</th>
-                        <th scope="col">Last</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">License</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Renewal Interval</th>
+                        <th scope="col">Renewal Price</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {% for value in users %}
+                    {% for value in plans %}
                     <tr class="text-dark">
-                        <th scope="row ">{{ users.index(value) }}</th>
-                        <td>@{{ value[0] }}</td>
-                        <td>{{ value[1] }}</td>
-                        <td>{{ value[2] }}</td>
-                        <td>{{ value[3] }}</td>
-                        <td>{{ value[6] }}</td>
+                        <th scope="row ">{{ plans.index(value) }}</th>
+                        <td>{{ value[0] }}</td>
+                        <td>{{ value[1] }} Days</td>
+                        <td>£{{ value[2] }}</td>
                     </tr>
                     {% endfor %}
                     </tbody>
