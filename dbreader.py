@@ -2,5 +2,5 @@ from api import Database
 
 db = Database()
 db.create()
-for value in db.getAll('plans'):
+for value in db.getAll('licenses'):
     print(value)

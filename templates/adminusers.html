@@ -142,12 +142,12 @@
                     <tbody>
                     {% for value in users %}
                     <tr class="text-dark">
-                        <th scope="row ">1</th>
-                        <td>@testing</td>
-                        <td>fname</td>
-                        <td>sname</td>
-                        <td>test@gmail.com</td>
-                        <td>d0n109mw901mx109xm1</td>
+                        <th scope="row ">{{ users.index(value) }}</th>
+                        <td>@{{ value[0] }}</td>
+                        <td>{{ value[1] }}</td>
+                        <td>{{ value[2] }}</td>
+                        <td>{{ value[3] }}</td>
+                        <td>null</td>
                     </tr>
                     {% endfor %}
                     </tbody>
