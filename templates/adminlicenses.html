@@ -24,6 +24,10 @@
         height:80%;
     }
 
+    .h-60{
+        height60%;
+    }
+
     .h-10{
         height:10%;
     }
@@ -92,6 +96,23 @@
       color: #818181;
     }
 
+    table {
+      width: 100%;
+    }
+
+    thead, tbody tr {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+    }
+
+    tbody {
+      display: block;
+      overflow-y: auto;
+      table-layout: fixed;
+      max-height: 200px;
+    }
+
     #main {
       transition: margin-left .5s;
       padding: 20px;
@@ -129,7 +150,7 @@
         </div>
         <div class="col-md-6 text-left justify-content-center align-items-center">
             <div class="card">
-                <table class="table mt-3 mb-3 px-2">
+                <table class="table mb-3 px-2">
                     <thead class="thead-dark">
                     <tr>
                         <th scope="col">#</th>
@@ -142,7 +163,7 @@
                     </thead>
                     <tbody>
                     {% for value in licenses %}
-                    <tr class="text-dark">
+                    <tr class="tbody text-dark">
                         <th scope="row ">{{ licenses.index(value) }}</th>
                         <td>{{ value[0] }}</td>
                         {% if value[1] != None %}
