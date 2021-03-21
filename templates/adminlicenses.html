@@ -110,7 +110,7 @@
       display: block;
       overflow-y: auto;
       table-layout: fixed;
-      max-height: 200px;
+      max-height: 400px;
     }
 
     #main {
@@ -178,6 +178,18 @@
                     {% endfor %}
                     </tbody>
                 </table>
+            </div>
+            <div class="card mt-3 text-dark">
+                <div class="card-body">
+                <h5 class="card-title">Create Licenses</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Please be aware, page may need to be refreshed to show changes in table.</h6>
+                    <label for="plan-select">Choose a plan:</label>
+
+                    <select name="plans" id="plan-select">
+                        <option value="">Choose from available plans</option>
+                        <option value="dog">Dog</option>
+                    </select>
+              </div>
             </div>
         </div>
         <div class="col-3"></div>
