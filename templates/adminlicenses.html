@@ -75,6 +75,7 @@
     .navbarbutton {
       font-size: 150%;
       color: #E5D4C0;
+      position: fixed;
     }
 
     .navbarbutton a {
@@ -183,18 +184,26 @@
                 <div class="card-body">
                 <h5 class="card-title">Create Licenses</h5>
                 <h6 class="card-subtitle mb-2 text-muted">Please be aware, page may need to be refreshed to show changes in table.</h6>
-                    <label for="plan-select">Choose a plan:</label>
+                    <label for="plan-select">Generate</label>
 
                     <select name="plans" id="plan-select">
-                        <option value="">Choose from available plans</option>
+                        <option value="">choose from available plans</option>
                         {% for value in plans %}
                         <option value="{{ value[0] }}">{{ value[0] }}</option>
                         {% endfor %}
                     </select>
+                    with amount:
+                    <input type="number">
+                    <br>
+                    <a href="#" class="btn btn-primary">Generate</a>
               </div>
             </div>
         </div>
         <div class="col-3"></div>
+    </div>
+</div>
+<div class="container-fluid h-10 bg-dark text-white ">
+    <div class="row">
     </div>
 </div>
 <div class="container-fluid h-10 bg-dark text-white ">
