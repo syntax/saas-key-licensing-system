@@ -327,8 +327,9 @@ def adminlicenses():
     if current_user.getAdminPerms():
         db = Database()
         licenses = db.getAll('licenses')
+        plans = db.getAll('plans')
         db.closeConnection()
-        return render_template('adminlicenses.html',licenses=licenses)
+        return render_template('adminlicenses.html',licenses=licenses, plans = plans)
     else:
         reason = f'Insufficient permissions.'
         return render_template('redirect.html', reason=reason)

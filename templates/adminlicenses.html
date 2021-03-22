@@ -187,7 +187,9 @@
 
                     <select name="plans" id="plan-select">
                         <option value="">Choose from available plans</option>
-                        <option value="dog">Dog</option>
+                        {% for value in plans %}
+                        <option value="{{ value[0] }}">{{ value[0] }}</option>
+                        {% endfor %}
                     </select>
               </div>
             </div>
@@ -197,11 +199,13 @@
 </div>
 <div class="container-fluid h-10 bg-dark text-white ">
     <div class="row">
+         <!---
         <div class="col-4"></div>
         <div class="col-4 text-center align-bottom">
             SaaS distrubution system by Tom Holland :)
         </div>
         <div class="col-4"></div>
+         --->
     </div>
 </div>
 </body>
