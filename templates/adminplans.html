@@ -12,6 +12,12 @@
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
           crossorigin="anonymous">
     <style>
+
+    form  { display: table;      }
+	p     { display: table-row;  }
+	label { display: table-cell; }
+	input { display: table-cell; }
+
     body,html{
         height:100%;
     }
@@ -26,6 +32,10 @@
 
     .h-10{
         height:10%;
+    }
+
+    .h-5{
+        height:5%;
     }
 
     .sidenav {
@@ -125,6 +135,7 @@
 
 
 
+
     </style>
 </head>
 
@@ -169,18 +180,32 @@
                     </tbody>
                 </table>
             </div>
+            <div class="card mt-3 text-dark">
+                <div class="card-body">
+                    <h5 class="card-title">Create Plan</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Please be aware, page may need to be refreshed to show
+                        changes in table.</h6>
+                    <form action="" method="post">
+                        <p>
+                            <label for="a">Name of plan</label>
+                            <input id="a" type="text" name="name">
+                        </p>
+                        <p>
+                            <label for="b">Renewal Interval (Days) </label>
+                            <input id="b" type="number" name="days">
+                        </p>
+                        <p>
+                            <label for="c">Renewal Amount (£)</label>
+                            <input id="c" type="number" step="0.01" name="price">
+                        </p>
+                        <button type="submit" class="btn btn-primary mt-2">Create</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-3"></div>
         </div>
-        <div class="col-3"></div>
     </div>
-</div>
-<div class="container-fluid h-10 bg-dark text-white ">
-    <div class="row">
-        <div class="col-4"></div>
-        <div class="col-4 text-center align-bottom">
-            SaaS distrubution system by Tom Holland :)
-        </div>
-        <div class="col-4"></div>
-    </div>
+    <div class="container-fluid h-10 bg-dark text-white "></div>
 </div>
 </body>
 <script>
@@ -204,6 +229,7 @@ function closeNav() {
         localStorage.setItem("sidebar", "closed");
     }
 }
+
 
 
 </script>

@@ -352,6 +352,13 @@ def adminlicenses():
 @login_required
 def adminplans():
     if current_user.getAdminPerms():
+        if request.method == 'POST':
+            db = Database()
+            db.createPlan(request.form['name'],request.form['days'],request.form['price'])
+            db.closeConnection()
+
+            return redirect(url_for('adminplans'))
+
         db = Database()
         plans = list(db.getAll('plans'))
         db.closeConnection()
