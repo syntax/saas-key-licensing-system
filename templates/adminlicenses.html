@@ -199,7 +199,7 @@
                         with amount:
                         <input type="number" name="amount">
                         <br>
-                        <button type="submit" onClick="setTimeout(function(){ redirectFunct(); }, 1000);" class="btn btn-primary mt-2">Generate</button>
+                        <button type="submit" class="btn btn-primary mt-2">Generate</button>
                     </form>
               </div>
             </div>
@@ -233,8 +233,5 @@ function closeNav() {
         localStorage.setItem("sidebar", "closed");
     }
 }
-function redirectFunct() {
-   location.replace("http://127.0.0.1:5000/admin/dashboard/licenses")
-   }
 </script>
 </html>
