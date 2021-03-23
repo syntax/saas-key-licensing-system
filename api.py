@@ -146,7 +146,6 @@ class Database():
 
     def getPlanInfo(self,name):
         self.c.execute(f'''SELECT * FROM plans WHERE name = "{name}";''')
-        print(f'''SELECT * FROM plans WHERE name = "{name}";''')
         result = self.c.fetchone()
         print(result)
         if not result:

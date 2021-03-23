@@ -4,7 +4,7 @@ import hashlib
 import math
 
 
-def generatekey(random_chars, alphabet="i"):
+def generatekey(random_chars, alphabet="abcdefghijklmnopqrstuvwxyz1234567890"):
     r = random.SystemRandom()
     return ''.join([r.choice(alphabet) for _ in range(random_chars)])
 

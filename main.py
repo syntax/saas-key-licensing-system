@@ -327,11 +327,9 @@ def adminlicenses():
     if current_user.getAdminPerms():
         if request.method == 'POST':
             arr = []
-            print('recieved post req')
             for _ in range(int(request.form['amount'])):
-                key = utils.createLicense(request.form['plan'])
+                key = utils.createLicense(request.form['plans'])
                 arr.append(key)
-
             print(arr)
         db = Database()
         licenses = db.getAll('licenses')
