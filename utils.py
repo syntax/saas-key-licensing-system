@@ -4,7 +4,7 @@ import hashlib
 import math
 
 
-def generatekey(random_chars, alphabet="0123456789abcdefghijklmnopqrstuvwxyz"):
+def generatekey(random_chars, alphabet="i"):
     r = random.SystemRandom()
     return ''.join([r.choice(alphabet) for _ in range(random_chars)])
 
@@ -15,6 +15,7 @@ def createLicense(planname):
         initialconn.closeConnection()
         while True:
             license = generatekey(random_chars=16)
+            # 79586 6110994640 0884391936 combinations
             conn = Database()
             if conn.checkIfLicenseExists(license):
                 continue
