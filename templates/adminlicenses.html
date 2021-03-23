@@ -185,17 +185,18 @@
                 <h5 class="card-title">Create Licenses</h5>
                 <h6 class="card-subtitle mb-2 text-muted">Please be aware, page may need to be refreshed to show changes in table.</h6>
                     <label for="plan-select">Generate</label>
-
-                    <select name="plans" id="plan-select">
-                        <option value="">choose from available plans</option>
-                        {% for value in plans %}
-                        <option value="{{ value[0] }}">{{ value[0] }}</option>
-                        {% endfor %}
-                    </select>
-                    with amount:
-                    <input type="number">
-                    <br>
-                    <a href="#" class="btn btn-primary">Generate</a>
+                    <form action="" method="post">
+                        <select name="plans" id="plan-select" name="plan-select">
+                            <option value="">choose from available plans</option>
+                            {% for value in plans %}
+                            <option value="{{ value[0] }}">{{ value[0] }}</option>
+                            {% endfor %}
+                        </select>
+                        with amount:
+                        <input type="number" name="amount">
+                        <br>
+                        <button type="submit" class="btn btn-primary mt-2">Generate</button>
+                    </form>
               </div>
             </div>
         </div>
