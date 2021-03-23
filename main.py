@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, request, abort, jsonify, make_response, flash
+from flask import Flask, render_template, redirect, url_for, request, abort, jsonify, make_response, send_from_directory
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
 import re
 from api import Database
@@ -7,7 +7,7 @@ import os
 import time
 from functools import wraps
 import datetime
-
+import json
 
 class Renewal:
     def __init__(self, key):
@@ -330,7 +330,15 @@ def adminlicenses():
             for _ in range(int(request.form['amount'])):
                 key = utils.createLicense(request.form['plans'])
                 arr.append(key)
-            print(arr)
+
+            filename = 'gennedkeys.txt'
+            with open(f'temp/{filename}','w') as output:
+                for key in arr:
+                    output.write("%s\n" % key)
+
+            #return redirect(url_for('dashboard'))
+            return send_from_directory(directory=app_config['UPLOAD_DIRECTORY'], filename=filename, as_attachment=True)
+
         db = Database()
         licenses = db.getAll('licenses')
         plans = db.getAll('plans')
@@ -447,6 +455,8 @@ def delete_task(licenseid):
 
 
 if __name__ == '__main__':
+    with open('config.json','r') as configfile:
+        app_config = json.load(configfile)
     db = Database()
     db.create()
     app.run()
