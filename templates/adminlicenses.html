@@ -101,6 +101,19 @@
       color: #818181;
     }
 
+    .invisblebutton {
+      background: none!important;
+      border: none;
+      padding: 0!important;
+      /*optional*/
+      font-family: arial, sans-serif;
+      /*input has OS specific font-family*/
+      color: #818181;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+
     table {
       width: 100%;
     }
@@ -164,6 +177,7 @@
                         <th scope="col">Plan</th>
                         <th scope="col">Next Renewal</th>
                         <th scope="col">Bound to device</th>
+                        <th scope="col" width="10%"></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -179,6 +193,9 @@
                         <td>{{ value[7] }}</td>
                         <td>{{ value[6] }}</td>
                         <td>{{ value[5] }}</td>
+                        <form method="post">
+                            <td width="10%"><button  id="delete" name="delete" type="submit" class="invisblebutton" value="{{ value[0] }}"><i class="fas fa-trash-alt"></i></button></td>
+                        </form>
                     </tr>
                     {% endfor %}
                     </tbody>

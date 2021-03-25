@@ -118,7 +118,6 @@ class Database():
         else:
             return datetime.strptime(result, '%Y-%m-%d %H:%M:%S.%f')
 
-
     def bindUsertoLicense(self,license,username):
         if self.checkIfLicenseExists(license):
             if not self.checkIfLicenseBound(license):
@@ -141,6 +140,11 @@ class Database():
                       "renewalinterval":result[1],
                       "renewalprice":result[2]}
         return resultdict
+    
+    def deleteLicense(self,license):
+        self.c.execute('''DELETE FROM licenses WHERE license = ?;''',(license,))
+        self.conn.commit()
+        return
 
     #plan related functions
 

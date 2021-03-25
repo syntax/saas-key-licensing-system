@@ -326,18 +326,24 @@ def adminusers():
 def adminlicenses():
     if current_user.getAdminPerms():
         if request.method == 'POST':
-            arr = []
-            for _ in range(int(request.form['amount'])):
-                key = utils.createLicense(request.form['plans'])
-                arr.append(key)
+            if not 'delete' in request.form:
+                arr = []
+                for _ in range(int(request.form['amount'])):
+                    key = utils.createLicense(request.form['plans'])
+                    arr.append(key)
 
-            filename = 'gennedkeys.txt'
-            with open(f'temp/{filename}','w') as output:
-                for key in arr:
-                    output.write("%s\n" % key)
+                filename = 'gennedkeys.txt'
+                with open(f'temp/{filename}','w') as output:
+                    for key in arr:
+                        output.write("%s\n" % key)
 
-            #return redirect(url_for('dashboard'))
-            return send_from_directory(directory=app_config['UPLOAD_DIRECTORY'], filename=filename, as_attachment=True)
+                #return redirect(url_for('dashboard'))
+                return send_from_directory(directory=app_config['UPLOAD_DIRECTORY'], filename=filename, as_attachment=True)
+            else:
+                db = Database()
+                db.deleteLicense(request.form['delete'])
+                db.closeConnection()
+                return redirect(url_for('adminlicenses'))
 
         db = Database()
         licenses = db.getAll('licenses')
