@@ -17,6 +17,10 @@ class Database():
             self.conn.commit()
             return 'Created DB file'
 
+    def closeConnection(self):
+        self.conn.close()
+        return
+
     #user related functions
 
     def getAll(self,dbname):
@@ -53,9 +57,11 @@ class Database():
         result = self.c.fetchone()
         return result
 
-    def closeConnection(self):
-        self.conn.close()
+    def deleteUser(self,user):
+        self.c.execute('''DELETE FROM users WHERE username = ?;''',(user,))
+        self.conn.commit()
         return
+
 
     # license related functions
 
@@ -166,6 +172,10 @@ class Database():
         else:
             return 'Plan already exists'
 
+    def deletePlan(self,plan):
+        self.c.execute('''DELETE FROM plans WHERE name = ?;''',(plan,))
+        self.conn.commit()
+        return
 
 #this is not really needed, only for testing.
 # db = Database()
