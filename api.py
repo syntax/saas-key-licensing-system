@@ -146,12 +146,31 @@ class Database():
                       "renewalinterval":result[1],
                       "renewalprice":result[2]}
         return resultdict
-    
-    def deleteLicense(self,license):
-        self.c.execute('''DELETE FROM licenses WHERE license = ?;''',(license,))
+
+    def getLicensesfromPlan(self,plan):
+        self.c.execute(
+            '''SELECT license FROM licenses where plan =?;''',
+            (plan,))
+        result = self.c.fetchall()
+        return result
+
+    def findBoundLicensesOfGivenPlan(self,plan):
+        self.c.execute(
+            '''SELECT license FROM licenses where plan =? and boundToUser = 1;''',
+            (plan,))
+        result = self.c.fetchall()
+        return result
+
+
+    def deleteLicensesOfGivenPlan(self,plan):
+        self.c.execute('''DELETE FROM licenses WHERE plan = ?;''', (plan,))
         self.conn.commit()
         return
 
+    def deleteLicense(self, license):
+        self.c.execute('''DELETE FROM licenses WHERE license = ?;''', (license,))
+        self.conn.commit()
+        return
     #plan related functions
 
     def getPlanInfo(self,name):

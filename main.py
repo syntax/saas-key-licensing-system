@@ -366,10 +366,15 @@ def adminplans():
 
                 return redirect(url_for('adminplans'))
             else:
-                #check needs to made to see if no other license are currently dependent on this plan, otherwise it will not work.
-                #two options exist, 1. get them to delete all licnese with that plan before deleting the plan, 2. deleting the plan deletes all licenses using the plan
                 db = Database()
-                db.deletePlan(request.form['delete'])
+                if db.findBoundLicensesOfGivenPlan(request.form['delete']) != []:
+                    print(db.findBoundLicensesOfGivenPlan(request.form['delete']))
+                    print('found some')
+                else:
+                    db.deleteLicensesOfGivenPlan(request.form['delete'])
+                    db.deletePlan(request.form['delete'])
+                    print('done')
+
                 db.closeConnection()
                 return redirect(url_for('adminplans'))
 
