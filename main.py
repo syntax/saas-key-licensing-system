@@ -304,6 +304,19 @@ def admindash():
 @login_required
 def adminusers():
     if current_user.getAdminPerms():
+        if request.method == "POST":
+            try:
+                db = Database()
+                if db.checkIfUserHasLicense(request.form['delete']) != False:
+                    db.setLicenseToUnbound(db.checkIfUserHasLicense(request.form['delete']))
+                db.deleteUser(request.form['delete'])
+                db.closeConnection()
+                
+                return redirect(url_for('adminusers'))
+
+            except:
+                return redirect(url_for("adminusers"))
+
         db = Database()
         tempusers = db.getAll('users')
         users = []
@@ -326,23 +339,27 @@ def adminusers():
 def adminlicenses():
     if current_user.getAdminPerms():
         if request.method == 'POST':
-            if not 'delete' in request.form:
-                arr = []
-                for _ in range(int(request.form['amount'])):
-                    key = utils.createLicense(request.form['plans'])
-                    arr.append(key)
+            try:
+                if not 'delete' in request.form:
+                    arr = []
+                    for _ in range(int(request.form['amount'])):
+                        key = utils.createLicense(request.form['plans'])
+                        arr.append(key)
 
-                filename = 'gennedkeys.txt'
-                with open(f'temp/{filename}','w') as output:
-                    for key in arr:
-                        output.write("%s\n" % key)
+                    filename = 'gennedkeys.txt'
+                    with open(f'temp/{filename}', 'w') as output:
+                        for key in arr:
+                            output.write("%s\n" % key)
 
-                #return redirect(url_for('dashboard'))
-                return send_from_directory(directory=app_config['UPLOAD_DIRECTORY'], filename=filename, as_attachment=True)
-            else:
-                db = Database()
-                db.deleteLicense(request.form['delete'])
-                db.closeConnection()
+                    # return redirect(url_for('dashboard'))
+                    return send_from_directory(directory=app_config['UPLOAD_DIRECTORY'], filename=filename,
+                                               as_attachment=True)
+                else:
+                    db = Database()
+                    db.deleteLicense(request.form['delete'])
+                    db.closeConnection()
+                    return redirect(url_for('adminlicenses'))
+            except:
                 return redirect(url_for('adminlicenses'))
 
         db = Database()
@@ -359,27 +376,29 @@ def adminlicenses():
 def adminplans():
     if current_user.getAdminPerms():
         if request.method == 'POST':
-            if not 'delete' in request.form:
-                db = Database()
-                db.createPlan(request.form['name'],request.form['days'],request.form['price'])
-                db.closeConnection()
-
-                return redirect(url_for('adminplans'))
-            else:
-                db = Database()
-                if db.findBoundLicensesOfGivenPlan(request.form['delete']) != []:
-                    print('cannot delete')
+            try:
+                if not 'delete' in request.form:
                     db = Database()
-                    plans = list(db.getAll('plans'))
+                    db.createPlan(request.form['name'], request.form['days'], request.form['price'])
                     db.closeConnection()
-                    return render_template('adminplans.html', plans=plans, reason='Cannot delete as a user(s) currently has a license of this plan type bound, delete this license first.')
-                else:
-                    db.deleteLicensesOfGivenPlan(request.form['delete'])
-                    db.deletePlan(request.form['delete'])
-                    db.closeConnection()
+
                     return redirect(url_for('adminplans'))
-
-
+                else:
+                    db = Database()
+                    if db.findBoundLicensesOfGivenPlan(request.form['delete']) != []:
+                        print('cannot delete')
+                        db = Database()
+                        plans = list(db.getAll('plans'))
+                        db.closeConnection()
+                        return render_template('adminplans.html', plans=plans,
+                                               reason='Cannot delete as a user(s) currently has a license of this plan type bound, delete this license first.')
+                    else:
+                        db.deleteLicensesOfGivenPlan(request.form['delete'])
+                        db.deletePlan(request.form['delete'])
+                        db.closeConnection()
+                        return redirect(url_for('adminplans'))
+            except:
+                return redirect(url_for('adminplans'))
 
         db = Database()
         plans = list(db.getAll('plans'))
