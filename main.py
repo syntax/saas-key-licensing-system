@@ -359,11 +359,19 @@ def adminlicenses():
 def adminplans():
     if current_user.getAdminPerms():
         if request.method == 'POST':
-            db = Database()
-            db.createPlan(request.form['name'],request.form['days'],request.form['price'])
-            db.closeConnection()
+            if not 'delete' in request.form:
+                db = Database()
+                db.createPlan(request.form['name'],request.form['days'],request.form['price'])
+                db.closeConnection()
 
-            return redirect(url_for('adminplans'))
+                return redirect(url_for('adminplans'))
+            else:
+                #check needs to made to see if no other license are currently dependent on this plan, otherwise it will not work.
+                #two options exist, 1. get them to delete all licnese with that plan before deleting the plan, 2. deleting the plan deletes all licenses using the plan
+                db = Database()
+                db.deletePlan(request.form['delete'])
+                db.closeConnection()
+                return redirect(url_for('adminplans'))
 
         db = Database()
         plans = list(db.getAll('plans'))
