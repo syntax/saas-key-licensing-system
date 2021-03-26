@@ -196,6 +196,9 @@
                     {% endfor %}
                     </tbody>
                 </table>
+                {% if reason %}
+                                <h6 class="mt-1 text-muted text-center"> {{ reason }}</h6>
+                    {% endif %}
             </div>
             <div class="card mt-3 text-dark">
                 <div class="card-body">

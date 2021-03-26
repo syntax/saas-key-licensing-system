@@ -368,20 +368,23 @@ def adminplans():
             else:
                 db = Database()
                 if db.findBoundLicensesOfGivenPlan(request.form['delete']) != []:
-                    print(db.findBoundLicensesOfGivenPlan(request.form['delete']))
-                    print('found some')
+                    print('cannot delete')
+                    db = Database()
+                    plans = list(db.getAll('plans'))
+                    db.closeConnection()
+                    return render_template('adminplans.html', plans=plans, reason='Cannot delete as a user(s) currently has a license of this plan type bound, delete this license first.')
                 else:
                     db.deleteLicensesOfGivenPlan(request.form['delete'])
                     db.deletePlan(request.form['delete'])
-                    print('done')
+                    db.closeConnection()
+                    return redirect(url_for('adminplans'))
 
-                db.closeConnection()
-                return redirect(url_for('adminplans'))
+
 
         db = Database()
         plans = list(db.getAll('plans'))
         db.closeConnection()
-        return render_template('adminplans.html',plans=plans)
+        return render_template('adminplans.html',plans=plans, reason= None)
     else:
         reason = f'Insufficient permissions.'
         return render_template('redirect.html', reason=reason)
