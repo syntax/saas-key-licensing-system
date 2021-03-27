@@ -170,7 +170,7 @@ function sortTable2(col) {
         preswitch.push([rows[i].getElementsByTagName("TD")[0].innerHTML,rows[i].getElementsByTagName("TD")[col].innerHTML])
       }
       //copy of preswitch
-      console.log(preswitch)
+      //console.log(preswitch)
       let preswitch_copy = [...preswitch];
 
       function merge(left, right) {
