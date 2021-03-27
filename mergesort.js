@@ -88,10 +88,14 @@ function sortTable2(col) {
     var table, rows, preswitch = [], switching, i, x, y, shouldSwitch, dir, switchcount = 0;
     table = document.getElementById("dbtable");
     rows = table.rows;
+    let tbody = document.querySelector("#dbtable > tbody");
+    let new_tbody = tbody.cloneNode();
+
     for (i = 1; i < (rows.length); i++) {
         preswitch.push(rows[i].getElementsByTagName("TD")[col].innerHTML)
     }
-    console.log(preswitch);
+    //copy of preswitch
+    let preswitch_copy = [...preswitch];
 
     function merge(left, right) {
         let array = []
@@ -123,8 +127,22 @@ function sortTable2(col) {
       return merge(mergeSort(left),mergeSort(array))
     }
 
-    console.log(mergeSort(preswitch));
-
+    sorted = mergeSort(preswitch);
+    preswitch = preswitch_copy;
+    console.log(preswitch);
+    console.log(sorted);
+    let index_array = [];
+    // get the order of the sorted array based on the preswitch array
+    sorted.forEach(value => {
+        index_array.push(preswitch.indexOf(value));
+        // console.log(index_array);
+    })
+    console.log(index_array);
+    index_array.forEach(index => {
+        // console.log(tbody.children[index].children[1].innerHTML);
+        new_tbody.appendChild(tbody.children[index].cloneNode(true));
+    })
+    tbody.parentElement.replaceChild(new_tbody, tbody);
 }
 
 array = [4, 8, 7, 2, 11, 1, 3];
