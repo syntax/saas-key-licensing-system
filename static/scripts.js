@@ -1,11 +1,11 @@
 function relayUserTime(user){
     var time = new Date().getHours();
     if (0<=time && time<12) {
-        document.getElementById("time").innerHTML = "Good morning " + user + " !" ;
+        document.querySelector("#time").innerHTML = "Good morning " + user + " !" ;
     } else if (12<= time && time<17) {
-        document.getElementById("time").innerHTML = "Good afternoon " + user + " !" ;
+        document.querySelector("#time").innerHTML = "Good afternoon " + user + " !" ;
     } else {
-        document.getElementById("time").innerHTML = "Good evening " + user + " !" ;
+        document.querySelector("#time").innerHTML = "Good evening " + user + " !" ;
     }
 }
 
@@ -19,15 +19,15 @@ function redirectFunct() {
    }
 
 function openNav() {
-  document.getElementById("mySidenav").style.width = "250px";
-  document.getElementById("main").style.marginLeft = "250px";
+  document.querySelector("#mySidenav").style.width = "250px";
+  document.querySelector("#main").style.marginLeft = "250px";
   if (typeof(Storage) !== "undefined") {
         localStorage.setItem("sidebar", "opened");
     }
 }
 function closeNav() {
-  document.getElementById("mySidenav").style.width = "0";
-  document.getElementById("main").style.marginLeft = "0";
+  document.querySelector("#mySidenav").style.width = "0";
+  document.querySelector("#main").style.marginLeft = "0";
   if (typeof(Storage) !== "undefined") {
         localStorage.setItem("sidebar", "closed");
     }
