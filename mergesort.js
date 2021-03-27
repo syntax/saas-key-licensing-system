@@ -204,7 +204,7 @@ function sortTable2(col) {
       }
 
       sorted = mergeSort(preswitch);
-      console.log(sorted);
+      //console.log(sorted);
       preswitch = preswitch_copy;
       // console.log(preswitch);
       // console.log(sorted);
@@ -214,7 +214,7 @@ function sortTable2(col) {
         index_array.push(preswitch.indexOf(value));
         // console.log(index_array);
       })
-      console.log(index_array);
+      //console.log(index_array);
       if(dir=="desc")index_array.reverse();
       index_array.forEach(index => {
         // console.log(tbody.children[index].children[1].innerHTML);
