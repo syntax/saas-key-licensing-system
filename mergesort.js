@@ -31,13 +31,13 @@ function mergeSort(array) {
 //ONE WAY SORT
 function sortTable2(col) {
     let table, rows, preswitch = [], switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-    table = document.getElementById("dbtable");
+    table = document.querySelector("#dbtable");
     rows = table.rows;
     let tbody = document.querySelector("#dbtable > tbody");
     let new_tbody = tbody.cloneNode();
 
     for (i = 1; i < (rows.length); i++) {
-        preswitch.push(rows[i].getElementsByTagName("TD")[col].innerHTML)
+        preswitch.push(rows[i].querySelectorAll("TD")[col].innerHTML)
     }
     //copy of preswitch
     let preswitch_copy = [...preswitch];
@@ -102,14 +102,14 @@ function sortTable2(col) {
       }
       let table, rows, preswitch = [],
         switching, i, x, y, shouldSwitch, switchcount = 0;
-      table = document.getElementById("dbtable");
+      table = document.querySelector("#dbtable");
       rows = table.rows;
-      console.log(document.getElementsByTagName("TH"));
-      for (heading of document.getElementsByTagName("TH")) {
+      console.log(document.querySelectorAll("TH"));
+      for (heading of document.querySelectorAll("TH")) {
       console.log(heading)
         heading.style.textDecoration = "none";
       }
-      rows[0].getElementsByTagName("TH")[col].style.textDecoration = "underline";
+      rows[0].querySelectorAll("TH")[col].style.textDecoration = "underline";
       let tbody = document.querySelector("#dbtable > tbody");
       let new_tbody = tbody.cloneNode();
       //set direction to ascending initially
@@ -120,7 +120,7 @@ function sortTable2(col) {
       }
 
       for (i = 1; i < (rows.length); i++) {
-        preswitch.push([rows[i].getElementsByTagName("TD")[0].innerHTML,rows[i].getElementsByTagName("TD")[col].innerHTML])
+        preswitch.push([rows[i].querySelectorAll("TD")[0].innerHTML,rows[i].querySelectorAll("TD")[col].innerHTML])
       }
       //copy of preswitch
       //console.log(preswitch)
