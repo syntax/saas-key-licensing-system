@@ -174,7 +174,7 @@
             <div class="card">
                 <table id="dbtable" class="table mb-3 px-2">
                     <thead class="thead-dark">
-                    <tr class="clickable">
+                    <tr name="headings" class="clickable">
                         <th scope="col" onclick="sortTable2(0)">#</th>
                         <th scope="col" onclick="sortTable2(1)">License</th>
                         <th scope="col" onclick="sortTable2(2)">User</th>
@@ -272,6 +272,12 @@
         switching, i, x, y, shouldSwitch, switchcount = 0;
       table = document.getElementById("dbtable");
       rows = table.rows;
+      console.log(document.getElementsByTagName("TH"));
+      for (heading of document.getElementsByTagName("TH")) {
+      console.log(heading)
+        heading.style.textDecoration = "none";
+      }
+      rows[0].getElementsByTagName("TH")[col].style.textDecoration = "underline";
       let tbody = document.querySelector("#dbtable > tbody");
       let new_tbody = tbody.cloneNode();
       //set direction to ascending initially

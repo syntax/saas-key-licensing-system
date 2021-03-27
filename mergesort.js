@@ -28,61 +28,6 @@ function mergeSort(array) {
   return merge(mergeSort(left),mergeSort(array))
 }
 
-function sortTable(n) {
-  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-  table = document.getElementById("dbtable");
-  switching = true;
-  // Set the sorting direction to ascending:
-  dir = "asc";
-  /* Make a loop that will continue until
-  no switching has been done: */
-  while (switching) {
-    // Start by saying: no switching is done:
-    switching = false;
-    rows = table.rows;
-    /* Loop through all table rows (except the
-    first, which contains table headers): */
-    for (i = 1; i < (rows.length - 1); i++) {
-      // Start by saying there should be no switching:
-      shouldSwitch = false;
-      /* Get the two elements you want to compare,
-      one from current row and one from the next: */
-      x = rows[i].getElementsByTagName("TD")[n];
-      y = rows[i + 1].getElementsByTagName("TD")[n];
-      /* Check if the two rows should switch place,
-      based on the direction, asc or desc: */
-      if (dir == "asc") {
-        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-          // If so, mark as a switch and break the loop:
-          shouldSwitch = true;
-          break;
-        }
-      } else if (dir == "desc") {
-        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-          // If so, mark as a switch and break the loop:
-          shouldSwitch = true;
-          break;
-        }
-      }
-    }
-    if (shouldSwitch) {
-      /* If a switch has been marked, make the switch
-      and mark that a switch has been done: */
-      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-      switching = true;
-      // Each time a switch is done, increase this count by 1:
-      switchcount ++;
-    } else {
-      /* If no switching has been done AND the direction is "asc",
-      set the direction to "desc" and run the while loop again. */
-      if (switchcount == 0 && dir == "asc") {
-        dir = "desc";
-        switching = true;
-      }
-    }
-  }
-}
-
 //ONE WAY SORT
 function sortTable2(col) {
     let table, rows, preswitch = [], switching, i, x, y, shouldSwitch, dir, switchcount = 0;
@@ -145,8 +90,10 @@ function sortTable2(col) {
     tbody.parentElement.replaceChild(new_tbody, tbody);
 }
 
-// TWO WAY SORT
+// TWO WAY SORT WITH UNDERLINE
 function sortTable2(col) {
+      //console.log(lastCol);
+      //console.log(dir);
       if (lastCol == undefined) lastCol = col;
       if (dir == undefined) dir = "asc";
       if (lastCol != col) {
@@ -157,6 +104,12 @@ function sortTable2(col) {
         switching, i, x, y, shouldSwitch, switchcount = 0;
       table = document.getElementById("dbtable");
       rows = table.rows;
+      console.log(document.getElementsByTagName("TH"));
+      for (heading of document.getElementsByTagName("TH")) {
+      console.log(heading)
+        heading.style.textDecoration = "none";
+      }
+      rows[0].getElementsByTagName("TH")[col].style.textDecoration = "underline";
       let tbody = document.querySelector("#dbtable > tbody");
       let new_tbody = tbody.cloneNode();
       //set direction to ascending initially
@@ -204,10 +157,9 @@ function sortTable2(col) {
       }
 
       sorted = mergeSort(preswitch);
-      //console.log(sorted);
       preswitch = preswitch_copy;
       // console.log(preswitch);
-      // console.log(sorted);
+      //console.log(sorted);
       let index_array = [];
       // get the order of the sorted array based on the preswitch array
       sorted.forEach(value => {
