@@ -65,6 +65,12 @@ class Database():
 
     # license related functions
 
+    def getLicenseInfo(self,license):
+        self.c.execute(f'''SELECT * FROM licenses WHERE license = ?''',
+                       (license,))
+        result = self.c.fetchone()
+        return result
+
     def checkIfLicenseExists(self,license):
         self.c.execute(f'''SELECT * FROM licenses WHERE license = ?''',
                        (license,))

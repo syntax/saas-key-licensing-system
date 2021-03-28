@@ -425,48 +425,48 @@ def not_found():
     return make_response(jsonify({'error': 'malformed syntax, seek docs'}), 404)
 
 
-@app.route('/api/v1/licenses', methods=['GET'])
-def get_licenses():
-    pass
+#API speicifc functions
 
-
-@app.route('/api/v1/licenses/<int:licenseid>', methods=['GET'])
+@app.route('/api/v1/licenses/<licenseid>', methods=['GET','POST'])
 def get_specific_license(licenseid):
-    dbtemp = Database()
-    license = dbtemp.getFromTable(licenseid)
-    if len(license) == 0:
-        abort(404)
-    else:
-        license = license[0] #testing purposes only
-        license_dict = {
-                        "first_name": license[0],
-                        "last_name": license[1],
-                        "email": license[2],
-                        "pw": license[3],
-                        "license_key": license[4],
-                        "active_status": license[5],
-                        "hwid_identifier": license[6],
-                        "device_name": license[7]
-                        }
-    dbtemp.closeConnection()
-    return jsonify({'license': license_dict})
+    authenticated = True #placeholder
+    if authenticated:
+        if request.method == "GET":
+            try:
+                db = Database()
+                result = db.getLicenseInfo(licenseid)
+                licensedict = {
+                        "lickey":result[0],
+                        "user": result[1],
+                        "boundToUser": result[2],
+                        "boundToDevice": result[3],
+                        "HWID": result[4],
+                        "device": result[5],
+                        "nextRen": result[6],
+                        "planName": result[7]
+                               }
 
+                return jsonify({"license": licensedict})
+            except:
+                return jsonify({"license": "could not find license"})
+        elif request.method == "POST":
+            pass
 
-@app.route('/api/v1/licenses', methods=['POST'])
-def create_license():
-    if not request.json or not {'first_name', 'last_name', 'email', 'pw', 'license_key','active_status','hwid_identifier','devicename'}.issubset(set(request.json)):
-        abort(400) #either not all params provided, or not posted correctly
-    else:
-        formattedjson = ','.join(list(request.json.values()))
-        dbtemp = Database()
-        try:
-            dbtemp.addToTable_wholerow(formattedjson)
-            dbtemp.closeConnection()
-            return jsonify({'license': request.json}), 201
-        except Exception as e: #closes connection incase of issue writing to db, as to not present later issues
-            print(e)
-            dbtemp.closeConnection()
-            abort(500)
+# @app.route('/api/v1/licenses', methods=['POST'])
+# def create_license():
+#     if not request.json or not {'first_name', 'last_name', 'email', 'pw', 'license_key','active_status','hwid_identifier','devicename'}.issubset(set(request.json)):
+#         abort(400) #either not all params provided, or not posted correctly
+#     else:
+#         formattedjson = ','.join(list(request.json.values()))
+#         dbtemp = Database()
+#         try:
+#             dbtemp.addToTable_wholerow(formattedjson)
+#             dbtemp.closeConnection()
+#             return jsonify({'license': request.json}), 201
+#         except Exception as e: #closes connection incase of issue writing to db, as to not present later issues
+#             print(e)
+#             dbtemp.closeConnection()
+#             abort(500)
 
 
 @app.route('/api/v1/licenses/hwid/<int:licenseid>', methods=['POST'])
@@ -487,19 +487,6 @@ def update_hwid(licenseid):
             print(e)
             tempdb.closeConnection()
             abort(500)
-
-
-@app.route('/api/v1/licenses<int:licenseid>', methods=['DELETE'])
-def delete_task(licenseid):
-    temp = Database()
-    try:
-        temp.removeFromTable(licenseid)
-        temp.closeConnection()
-        return jsonify({'status': 'success'})
-    except Exception as e:
-        print(e)
-        temp.closeConnection()
-        abort(500)
 
 
 if __name__ == '__main__':
