@@ -116,6 +116,20 @@ class Database():
         self.conn.commit()
         return
 
+    def setLicenseToUnboundDEVICE(self,license):
+        self.c.execute(
+            f'''UPDATE licenses SET boundtoDevice = False, HWID = NULL, devicename = NULL WHERE license = ?;''',
+            (license,))
+        self.conn.commit()
+        return
+
+    def setLicenseHWIDandDevice(self,license,hwid,devicename):
+        self.c.execute(
+            f'''UPDATE licenses SET boundtoDevice = True, HWID = ?, devicename = ? WHERE license = ?;''',
+            (hwid,devicename,license,))
+        self.conn.commit()
+        return
+
     def updateNextRenewal(self,license,date):
         self.c.execute(f'''UPDATE licenses SET nextrenewal = ? WHERE license = ?;''',
                        (date, license))

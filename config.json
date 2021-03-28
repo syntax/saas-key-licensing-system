@@ -1,3 +1,5 @@
 {
-  "UPLOAD_DIRECTORY": "/Users/tomholland/OneDrive - Hampton School/mbp/coding/NEA/NEA-PROJECT/temp"
+  "UPLOAD_DIRECTORY": "/Users/tomholland/OneDrive - Hampton School/mbp/coding/NEA/NEA-PROJECT/temp",
+  "_comment": "DO NOT MANUALLY EDIT API KEY, REGEN THROUGH UTILS.PY FUNCTION",
+  "api_key": "test"
 }

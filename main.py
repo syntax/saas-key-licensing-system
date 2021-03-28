@@ -429,28 +429,54 @@ def not_found():
 
 @app.route('/api/v1/licenses/<licenseid>', methods=['GET','POST'])
 def get_specific_license(licenseid):
-    authenticated = True #placeholder
-    if authenticated:
-        if request.method == "GET":
-            try:
-                db = Database()
-                result = db.getLicenseInfo(licenseid)
-                licensedict = {
-                        "lickey":result[0],
-                        "user": result[1],
-                        "boundToUser": result[2],
-                        "boundToDevice": result[3],
-                        "HWID": result[4],
-                        "device": result[5],
-                        "nextRen": result[6],
-                        "planName": result[7]
-                               }
+    try:
+        if request.headers['api_key'] == app_config['api_key']:
+            if request.method == "GET":
+                try:
+                    db = Database()
+                    result = db.getLicenseInfo(licenseid)
+                    licensedict = {
+                            "lickey":result[0],
+                            "user": result[1],
+                            "boundToUser": result[2],
+                            "boundToDevice": result[3],
+                            "HWID": result[4],
+                            "device": result[5],
+                            "nextRen": result[6],
+                            "planName": result[7]
+                                   }
 
-                return jsonify({"license": licensedict})
-            except:
-                return jsonify({"license": "could not find license"})
-        elif request.method == "POST":
-            pass
+                    return jsonify({"license": licensedict})
+                except:
+                    return jsonify({"license": "could not find license"})
+            elif request.method == "POST":
+                    if "HWID" and "device" in request.json:
+                        db = Database()
+                        if not request.json["HWID"] and not request.json["device"]:
+                            db.setLicenseToUnboundDEVICE(licenseid)
+                        else:
+                            db.setLicenseHWIDandDevice(licenseid,request.json["HWID"],request.json["device"])
+
+                        result = db.getLicenseInfo(licenseid)
+                        licensedict = {
+                            "lickey": result[0],
+                            "user": result[1],
+                            "boundToUser": result[2],
+                            "boundToDevice": result[3],
+                            "HWID": result[4],
+                            "device": result[5],
+                            "nextRen": result[6],
+                            "planName": result[7]
+                        }
+
+                        return jsonify({"status":"updated","license": licensedict})
+                    else:
+                        return jsonify({"status": "malformed request in post, needs HWID and device"})
+
+        else:
+            return jsonify({"status": "unauthorised"})
+    except:
+        return jsonify({"status": "fatal error, perhaps malformed request"})
 
 # @app.route('/api/v1/licenses', methods=['POST'])
 # def create_license():
