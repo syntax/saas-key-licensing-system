@@ -414,6 +414,7 @@ def getTime():
     print("server time : ", time.strftime('%A %B, %d %Y %H:%M:%S'));
     return "Done"
 
+#API speicifc functions
 
 @app.errorhandler(404)
 def not_found():
@@ -424,8 +425,6 @@ def not_found():
 def not_found():
     return make_response(jsonify({'error': 'malformed syntax, seek docs'}), 404)
 
-
-#API speicifc functions
 
 @app.route('/api/v1/licenses/<licenseid>', methods=['GET','POST'])
 def get_specific_license(licenseid):
@@ -495,24 +494,24 @@ def get_specific_license(licenseid):
 #             abort(500)
 
 
-@app.route('/api/v1/licenses/hwid/<int:licenseid>', methods=['POST'])
-def update_hwid(licenseid):
-    if not request.json or not {'active_status','hwid_identifier','devicename'}.issubset(set(request.json)):
-        abort(400) #malformed request syntax
-    else:
-        tempdb = Database()
-        try:
-            hwid = request.json['hwid_identifier']
-            device = request.json['devicename']
-            active = request.json['active_status']
-            tempdb.hwidAndDeviceToTable(licenseid,hwid,device,active)
-            license = tempdb.getFromTable(licenseid)
-            tempdb.closeConnection()
-            return jsonify({'status_code':'success','license': license}), 201
-        except Exception as e:  # closes connection incase of issue writing to db, as to not present later issues
-            print(e)
-            tempdb.closeConnection()
-            abort(500)
+# @app.route('/api/v1/licenses/hwid/<int:licenseid>', methods=['POST'])
+# def update_hwid(licenseid):
+#     if not request.json or not {'active_status','hwid_identifier','devicename'}.issubset(set(request.json)):
+#         abort(400) #malformed request syntax
+#     else:
+#         tempdb = Database()
+#         try:
+#             hwid = request.json['hwid_identifier']
+#             device = request.json['devicename']
+#             active = request.json['active_status']
+#             tempdb.hwidAndDeviceToTable(licenseid,hwid,device,active)
+#             license = tempdb.getFromTable(licenseid)
+#             tempdb.closeConnection()
+#             return jsonify({'status_code':'success','license': license}), 201
+#         except Exception as e:  # closes connection incase of issue writing to db, as to not present later issues
+#             print(e)
+#             tempdb.closeConnection()
+#             abort(500)
 
 
 if __name__ == '__main__':
