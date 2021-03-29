@@ -59,8 +59,7 @@ def collectLocalData():
         processor_arch = platform.uname().processor  # gets name of local microprocessor
         machine = platform.uname().machine  # gets instruction set architecture
 
-        return str(
-            mac_address) + processor_arch + machine  # any convolution of data valid, could be hashed, hashed with a pepper, etc.
+        return str(mac_address) + processor_arch + machine  # any convolution of relevant data would be valid, could be hashed, hashed with a pepper, etc.
 
     hwid = deriveHWID()
     devicename = socket.gethostname()  # gets name of local node
@@ -74,6 +73,7 @@ def validateUser(license):
 
     auth = Authentication(license)
     localhwid, localdevname = collectLocalData()
+
     if auth.license:
         # checks license key is still valid
         if not (auth.hwid and auth.devicename):
