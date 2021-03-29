@@ -428,10 +428,10 @@ def not_found():
 
 @app.route('/api/v1/licenses/<licenseid>', methods=['GET','POST'])
 def get_specific_license(licenseid):
-    # try:
+    try:
         if request.headers['api_key'] == app_config['api_key']:
             if request.method == "GET":
-                # try:
+                try:
                     db = Database()
                     result = db.getLicenseInfo(licenseid)
                     print(result)
@@ -447,8 +447,8 @@ def get_specific_license(licenseid):
                                    }
 
                     return jsonify({"license": licensedict})
-                # except:
-                #     return jsonify({"license": "could not find license"})
+                except:
+                    return jsonify({"license": "could not find license"})
             elif request.method == "POST":
                     print(request.json)
                     if "HWID" and "device" in request.json:
@@ -476,44 +476,8 @@ def get_specific_license(licenseid):
 
         else:
             return jsonify({"status": "unauthorised"})
-    # except:
-    #     return jsonify({"status": "fatal error, perhaps malformed request"})
-
-# @app.route('/api/v1/licenses', methods=['POST'])
-# def create_license():
-#     if not request.json or not {'first_name', 'last_name', 'email', 'pw', 'license_key','active_status','hwid_identifier','devicename'}.issubset(set(request.json)):
-#         abort(400) #either not all params provided, or not posted correctly
-#     else:
-#         formattedjson = ','.join(list(request.json.values()))
-#         dbtemp = Database()
-#         try:
-#             dbtemp.addToTable_wholerow(formattedjson)
-#             dbtemp.closeConnection()
-#             return jsonify({'license': request.json}), 201
-#         except Exception as e: #closes connection incase of issue writing to db, as to not present later issues
-#             print(e)
-#             dbtemp.closeConnection()
-#             abort(500)
-
-
-# @app.route('/api/v1/licenses/hwid/<int:licenseid>', methods=['POST'])
-# def update_hwid(licenseid):
-#     if not request.json or not {'active_status','hwid_identifier','devicename'}.issubset(set(request.json)):
-#         abort(400) #malformed request syntax
-#     else:
-#         tempdb = Database()
-#         try:
-#             hwid = request.json['hwid_identifier']
-#             device = request.json['devicename']
-#             active = request.json['active_status']
-#             tempdb.hwidAndDeviceToTable(licenseid,hwid,device,active)
-#             license = tempdb.getFromTable(licenseid)
-#             tempdb.closeConnection()
-#             return jsonify({'status_code':'success','license': license}), 201
-#         except Exception as e:  # closes connection incase of issue writing to db, as to not present later issues
-#             print(e)
-#             tempdb.closeConnection()
-#             abort(500)
+    except:
+        return jsonify({"status": "fatal error, perhaps malformed request"})
 
 
 if __name__ == '__main__':
