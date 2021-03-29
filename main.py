@@ -88,7 +88,7 @@ class License:
             self.renewal = Renewal(self.key)
 
             licenseinfo = db.getLicenseInfo(license)
-            if licenseinfo[3] ==1:
+            if licenseinfo[3] == 1:
                 self.boundtodevice = True
             else:
                 self.boundtodevice = False
@@ -101,7 +101,7 @@ class License:
             return 'No license currently bound to account'
         else:
             if not self.boundtodevice:
-                'License not currently bound to a device to unbind from'
+                return 'License not currently bound to a device to unbind from'
             else:
                 db = Database()
                 db.setLicenseToUnboundDEVICE(self.key)
@@ -111,6 +111,24 @@ class License:
                 self.boundtodevice = False
                 return
 
+    def rescramble(self):
+        if not self.key:
+            return 'No license currently bound to account'
+        else:
+            while True:
+                license = utils.generatekey(random_chars=16)
+                # 79586 6110994640 0884391936 combinations
+                conn = Database()
+                if conn.checkIfLicenseExists(license):
+                    continue
+                else:
+                    print(f'found unused license value {license}')
+                    self.unbindDevice()
+                    conn.updateLicenseKey(license,self.key)
+                    self.loadUserLicense()
+                    conn.closeConnection()
+                    return license
+        return
 class User(UserMixin):
     def __init__(self, username, fname, sname, email, password, couldHaveLicense = True):
          self.id = username
@@ -174,17 +192,20 @@ def load_user(username):
 @app.route("/unbindaccount")
 @login_required
 def unbindkey():
-    print('1')
     current_user.unbindLicense()
     return redirect(url_for('dashboard'))
 
 @app.route("/unbinddevice")
 @login_required
 def unbinddevice():
-    print('2')
     current_user.license.unbindDevice()
     return redirect(url_for('dashboard'))
 
+@app.route("/rescramblelicense")
+@login_required
+def rescramblelicense():
+    current_user.license.rescramble()
+    return redirect(url_for('dashboard'))
 
 # front end
 @app.route('/')

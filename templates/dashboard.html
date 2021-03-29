@@ -77,6 +77,7 @@
                                     <h5 class="card-title">License Information </h5>
                                     <p class="card-text">key: {{ current_user.license }} <br><a href="javascript:unbind()" class="muted">click to unbind from account {{current_user.id}}</a></p>
                                     <p class="card-text">status: not currently bound</p>
+                                    <a href="javascript:rescramble()" class="btn btn-primary">Re-scramble Key</a>
                                 </div>
                                 {% else %}
                                 <div class="card-body">
@@ -84,6 +85,7 @@
                                     <p class="card-text">key: {{ current_user.license }} <br><a href="javascript:unbind()" class="muted">click to unbind from account {{current_user.id}}</a></p>
                                     <p class="card-text">status: bound to device {{ current_user.license.devicename}}</p>
                                     <a href="javascript:unbinddevice()" class="btn btn-primary">Unbind from {{ current_user.license.devicename}}</a>
+                                    <a href="javascript:rescramble()" class="btn btn-primary">Re-scramble Key</a>
                                 </div>
                                 {%endif%}
                             {%endif%}
@@ -144,6 +146,10 @@ function relayUserTime(user){
 
 function unbind() {
     $.get('/unbindaccount');
+    setTimeout(function(){ location.reload(); }, 100);
+}
+function rescramble() {
+    $.get('/rescramblelicense');
     setTimeout(function(){ location.reload(); }, 100);
 }
 function unbinddevice() {

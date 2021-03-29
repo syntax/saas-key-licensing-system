@@ -136,6 +136,12 @@ class Database():
         self.conn.commit()
         return
 
+    def updateLicenseKey(self,newlicense,oldlicense):
+        self.c.execute(f'''UPDATE licenses SET license = ? WHERE license = ?;''',
+                       (newlicense, oldlicense))
+        self.conn.commit()
+        return
+
     def getNextRenewal(self,license):
         self.c.execute(f'''SELECT nextrenewal FROM licenses WHERE license = ?''', (license,))
         result = self.c.fetchone()[0]
