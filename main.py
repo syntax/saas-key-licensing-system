@@ -428,12 +428,13 @@ def not_found():
 
 @app.route('/api/v1/licenses/<licenseid>', methods=['GET','POST'])
 def get_specific_license(licenseid):
-    try:
+    # try:
         if request.headers['api_key'] == app_config['api_key']:
             if request.method == "GET":
-                try:
+                # try:
                     db = Database()
                     result = db.getLicenseInfo(licenseid)
+                    print(result)
                     licensedict = {
                             "lickey":result[0],
                             "user": result[1],
@@ -446,9 +447,10 @@ def get_specific_license(licenseid):
                                    }
 
                     return jsonify({"license": licensedict})
-                except:
-                    return jsonify({"license": "could not find license"})
+                # except:
+                #     return jsonify({"license": "could not find license"})
             elif request.method == "POST":
+                    print(request.json)
                     if "HWID" and "device" in request.json:
                         db = Database()
                         if not request.json["HWID"] and not request.json["device"]:
@@ -474,8 +476,8 @@ def get_specific_license(licenseid):
 
         else:
             return jsonify({"status": "unauthorised"})
-    except:
-        return jsonify({"status": "fatal error, perhaps malformed request"})
+    # except:
+    #     return jsonify({"status": "fatal error, perhaps malformed request"})
 
 # @app.route('/api/v1/licenses', methods=['POST'])
 # def create_license():
