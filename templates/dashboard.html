@@ -74,7 +74,7 @@
                             {% else %}
                                 {% if not current_user.license.boundtodevice %}
                                 <div class="card-body">
-                                    <h5 class="card-title">License Information</h5>
+                                    <h5 class="card-title">License Information </h5>
                                     <p class="card-text">key: {{ current_user.license }} <br><a href="javascript:unbind()" class="muted">click to unbind from account {{current_user.id}}</a></p>
                                     <p class="card-text">status: not currently bound</p>
                                 </div>
@@ -82,8 +82,8 @@
                                 <div class="card-body">
                                     <h5 class="card-title">License Information</h5>
                                     <p class="card-text">key: {{ current_user.license }} <br><a href="javascript:unbind()" class="muted">click to unbind from account {{current_user.id}}</a></p>
-                                    <p class="card-text">status: bound to device MacbookPro</p>
-                                    <a href="#" class="btn btn-primary">Unbind from MacbookPro</a>
+                                    <p class="card-text">status: bound to device {{ current_user.license.devicename}}</p>
+                                    <a href="javascript:unbinddevice()" class="btn btn-primary">Unbind from {{ current_user.license.devicename}}</a>
                                 </div>
                                 {%endif%}
                             {%endif%}
@@ -144,6 +144,10 @@ function relayUserTime(user){
 
 function unbind() {
     $.get('/unbindaccount');
+    setTimeout(function(){ location.reload(); }, 100);
+}
+function unbinddevice() {
+    $.get('/unbinddevice');
     setTimeout(function(){ location.reload(); }, 100);
 }
 </script>

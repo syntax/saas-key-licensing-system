@@ -89,3 +89,8 @@ def validateUser(license):
     else:
         # license key is invalid, hence quit progam
         quit()
+
+
+auth = Authentication('nhh0xibesntk91rb')
+data = collectLocalData()
+auth.setToBound(data[0], data[1])

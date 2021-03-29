@@ -77,8 +77,8 @@ class License:
     def loadUserLicense(self):
         db = Database()
         license = db.checkIfUserHasLicense(self.owner)
-        db.closeConnection()
         if not license:
+            db.closeConnection()
             self.key = None
             self.exists = False
             return None
@@ -86,9 +86,30 @@ class License:
             self.key = license
             self.exists = True
             self.renewal = Renewal(self.key)
+
+            licenseinfo = db.getLicenseInfo(license)
+            if licenseinfo[3] ==1:
+                self.boundtodevice = True
+            else:
+                self.boundtodevice = False
+            self.hwid = licenseinfo[4]
+            self.devicename = licenseinfo[5]
             return license
 
-
+    def unbindDevice(self):
+        if not self.key:
+            return 'No license currently bound to account'
+        else:
+            if not self.boundtodevice:
+                'License not currently bound to a device to unbind from'
+            else:
+                db = Database()
+                db.setLicenseToUnboundDEVICE(self.key)
+                db.closeConnection()
+                self.hwid = None
+                self.devicename = None
+                self.boundtodevice = False
+                return
 
 class User(UserMixin):
     def __init__(self, username, fname, sname, email, password, couldHaveLicense = True):
@@ -117,6 +138,7 @@ class User(UserMixin):
             return
         else:
             return 'No License bound previously'
+
 
     def getAdminPerms(self):
         return self.isadmin
@@ -152,8 +174,17 @@ def load_user(username):
 @app.route("/unbindaccount")
 @login_required
 def unbindkey():
+    print('1')
     current_user.unbindLicense()
     return redirect(url_for('dashboard'))
+
+@app.route("/unbinddevice")
+@login_required
+def unbinddevice():
+    print('2')
+    current_user.license.unbindDevice()
+    return redirect(url_for('dashboard'))
+
 
 # front end
 @app.route('/')
