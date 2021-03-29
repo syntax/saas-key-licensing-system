@@ -49,6 +49,7 @@ class Authentication():
 
 # Local functions  (to follow) should be built in whatever way the developer sees fit, i.e. should derive the "HWID" element in a unique way, not necessarily the example shown.
 # more device related data can be collected using external libararys like psutil, which can be isntalled via pip, however for the sake of example the libraries used are preinstalled with py
+# These functions should be implemented around the developers software they are wanting to distrubute in order to validate users.
 
 def collectLocalData():
     # this function will end uo being called often for comparison, and could be written in a variety of ways
