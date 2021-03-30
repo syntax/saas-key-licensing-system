@@ -150,6 +150,14 @@ class Database():
         else:
             return datetime.strptime(result, '%Y-%m-%d %H:%M:%S.%f')
 
+    def getAllLicenseWithRenewal(self):
+        self.c.execute(f'''SELECT license, nextrenewal FROM licenses WHERE nextrenewal != "None"''')
+        result = self.c.fetchall()
+        renewaldict = {}
+        for value in result:
+            renewaldict[value[0]] = datetime.strptime(value[1], '%Y-%m-%d %H:%M:%S.%f')
+        return renewaldict
+
     def bindUsertoLicense(self,license,username):
         if self.checkIfLicenseExists(license):
             if not self.checkIfLicenseBound(license):

@@ -10,6 +10,12 @@ import time
 from functools import wraps
 import datetime
 import json
+import asyncio
+
+
+
+#async runs 'green threads', basically it gives the illusion of parallelism without actually bypassing the GIL (global interpreter lock - forces the app onto 1 thread at any time)
+
 
 class Renewal:
     def __init__(self, key):
@@ -131,6 +137,8 @@ class License:
                     conn.closeConnection()
                     return license
         return
+
+
 class User(UserMixin):
     def __init__(self, username, fname, sname, email, password, couldHaveLicense = True):
          self.id = username
@@ -167,6 +175,43 @@ class AdministativeUser(User):
     def __init__(self, username, fname, sname, email, password):
         super().__init__(username, fname, sname, email, password, couldHaveLicense = False)
         self.isadmin = True
+
+
+async def main():
+    print('hello')
+    await asyncio.sleep(1)
+    print('world')
+
+def monitor():
+
+    def charge(success= True):
+        #placeholder function
+        if success:
+            return True
+        else:
+            return False
+
+    db = Database()
+    rendict = db.getAllLicenseWithRenewal()
+    db.closeConnection()
+    now = datetime.datetime.now()
+    for value in rendict:
+        print(f'license: {value} // {(rendict[value] - now).total_seconds()} seconds until renewal')
+        if (rendict[value] - now).total_seconds() <= 0:
+            attempt = charge()
+            if attempt:
+                renewal = Renewal(value)
+                renewal.incrementRenewalDate()
+                renewal.commitRenewdatetoDatabase(value)
+            else:
+                print('failed to charge')
+                db = Database()
+                db.deleteLicense(value)
+                db.closeConnection()
+        else:
+            pass
+
+
 
 
 app = Flask(__name__)
@@ -547,4 +592,5 @@ if __name__ == '__main__':
         app_config = json.load(configfile)
     db = Database()
     db.create()
+    monitor()
     app.run()
