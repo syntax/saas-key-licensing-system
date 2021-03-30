@@ -592,8 +592,7 @@ if __name__ == '__main__':
     db = Database()
     db.create()
 
-    monitorfunct = threading.Thread(name='monitor', target=monitor)
-    monitorfunct.setDaemon(True)
+    monitorfunct = threading.Thread(name='monitor', target=monitor, daemon=True)
     monitorfunct.start()
 
     app.run()
