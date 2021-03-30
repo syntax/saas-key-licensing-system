@@ -185,10 +185,7 @@ def monitor():
         # print('Monitoring...')
         def charge(success= True):
             #placeholder function
-            if success:
-                return True
-            else:
-                return False
+            return success
 
         db = Database()
         rendict = db.getAllLicenseWithRenewal()
