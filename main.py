@@ -1,5 +1,7 @@
 from flask import Flask, render_template, redirect, url_for, request, abort, jsonify, make_response, send_from_directory
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 import re
 from api import Database
 import utils
@@ -172,6 +174,13 @@ app.secret_key = os.urandom(24) #secret key for encoding of session on the webap
 
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
+
+limiter = Limiter(
+    app,
+    key_func=get_remote_address,
+    default_limits=["5 per second"],
+)
+
 
 
 @login_manager.user_loader
@@ -479,6 +488,7 @@ def not_found():
 
 
 @app.route('/api/v1/licenses/<licenseid>', methods=['GET','POST'])
+@limiter.limit("2 per second")
 def get_specific_license(licenseid):
     try:
         if request.headers['api_key'] == app_config['api_key']:
