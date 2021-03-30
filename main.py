@@ -10,7 +10,7 @@ import time
 from functools import wraps
 import datetime
 import json
-import asyncio
+import threading
 
 
 
@@ -177,39 +177,38 @@ class AdministativeUser(User):
         self.isadmin = True
 
 
-async def main():
-    print('hello')
-    await asyncio.sleep(1)
-    print('world')
 
 def monitor():
 
-    def charge(success= True):
-        #placeholder function
-        if success:
-            return True
-        else:
-            return False
+    while True:
+        time.sleep(5)
 
-    db = Database()
-    rendict = db.getAllLicenseWithRenewal()
-    db.closeConnection()
-    now = datetime.datetime.now()
-    for value in rendict:
-        print(f'license: {value} // {(rendict[value] - now).total_seconds()} seconds until renewal')
-        if (rendict[value] - now).total_seconds() <= 0:
-            attempt = charge()
-            if attempt:
-                renewal = Renewal(value)
-                renewal.incrementRenewalDate()
-                renewal.commitRenewdatetoDatabase(value)
+        def charge(success= True):
+            #placeholder function
+            if success:
+                return True
             else:
-                print('failed to charge')
-                db = Database()
-                db.deleteLicense(value)
-                db.closeConnection()
-        else:
-            pass
+                return False
+
+        db = Database()
+        rendict = db.getAllLicenseWithRenewal()
+        db.closeConnection()
+        now = datetime.datetime.now()
+        for value in rendict:
+            # print(f'license: {value} // {(rendict[value] - now).total_seconds()} seconds until renewal')
+            if (rendict[value] - now).total_seconds() <= 0:
+                attempt = charge()
+                if attempt:
+                    renewal = Renewal(value)
+                    renewal.incrementRenewalDate()
+                    renewal.commitRenewdatetoDatabase(value)
+                else:
+                    print('failed to charge')
+                    db = Database()
+                    db.deleteLicense(value)
+                    db.closeConnection()
+            else:
+                pass
 
 
 
@@ -592,5 +591,9 @@ if __name__ == '__main__':
         app_config = json.load(configfile)
     db = Database()
     db.create()
-    monitor()
+
+    monitorfunct = threading.Thread(name='monitor', target=monitor)
+    monitorfunct.setDaemon(True)
+    monitorfunct.start()
+
     app.run()
