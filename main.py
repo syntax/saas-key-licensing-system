@@ -182,7 +182,7 @@ def monitor():
 
     while True:
         time.sleep(5)
-
+        # print('Monitoring...')
         def charge(success= True):
             #placeholder function
             if success:
