@@ -12,7 +12,7 @@ class Database():
             return 'DB File already exists and has already been created.'
         else:
             self.c.execute('CREATE TABLE users (username text PRIMARY KEY, fName text, sName text, emailAddress text, password text, admin bool)')
-            self.c.execute('CREATE TABLE licenses (license text PRIMARY KEY, username text, boundToUser boolean, boundToDevice boolean, HWID string, devicename string, nextrenewal string, plan string)')
+            self.c.execute('CREATE TABLE licenses (license text PRIMARY KEY, username text, boundToUser boolean, boundToDevice boolean, HWID string, devicename string, nextrenewal string, plan string, stripeSessionID string)')
             self.c.execute('CREATE TABLE plans (name text PRIMARY KEY, interval integer, amount float)')
             self.conn.commit()
             return 'Created DB file'
@@ -105,8 +105,8 @@ class Database():
             return None
 
     def commitLicense(self,license,plan):
-        self.c.execute(f'''INSERT INTO licenses(license,username,boundtoUser,boundtoDevice,HWID,devicename,nextrenewal,plan)
-                      VALUES(?, NULL, FALSE, FALSE, NULL, NULL, NULL, ?)''', (license,plan)) #needs to be updated to include plan, and validate that plane xists etc.
+        self.c.execute(f'''INSERT INTO licenses(license,username,boundtoUser,boundtoDevice,HWID,devicename,nextrenewal,plan,stripeSessionID)
+                      VALUES(?, NULL, FALSE, FALSE, NULL, NULL, NULL, ?, "placeholder")''', (license,plan)) #needs to be updated to include plan, and validate that plane xists etc.
         self.conn.commit()
         return
 
@@ -149,6 +149,11 @@ class Database():
             return None
         else:
             return datetime.strptime(result, '%Y-%m-%d %H:%M:%S.%f')
+
+    def getLicenseStripeSessionID(self, license):
+        self.c.execute(f'''SELECT stripeSessionID FROM licenses WHERE license = ?''', (license,))
+        result = self.c.fetchone()[0]
+        return result
 
     def getAllLicenseWithRenewal(self):
         self.c.execute(f'''SELECT license, nextrenewal FROM licenses WHERE nextrenewal != "None"''')
@@ -205,6 +210,8 @@ class Database():
         self.c.execute('''DELETE FROM licenses WHERE license = ?;''', (license,))
         self.conn.commit()
         return
+
+
     #plan related functions
 
     def getPlanInfo(self,name):

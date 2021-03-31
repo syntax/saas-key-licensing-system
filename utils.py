@@ -76,4 +76,5 @@ def createAdminUser(values): #needs username,fName,sName,emailAddress,password p
     db.addToUsers(values)
     return 'success'
 
-createAdminUser(f'''admin,tom,holland,admin@gmail.com,{hash('admin','Ihpw2014')}''')
+if __name__ == '__main__':
+    createAdminUser(f'''admin,tom,holland,admin@gmail.com,{hash('admin','Ihpw2014')}''')

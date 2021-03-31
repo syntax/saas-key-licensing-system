@@ -179,12 +179,17 @@ def monitor():
         time.sleep(5)
 
         # print('Monitoring...')
-        def charge(success=True):
+        def charge(session):
             # placeholder function
-            if success:
-                return True
-            else:
-                return False
+
+            # sing session ID, makes get request to status webhook
+            # creates communction with stripe API, which will return one of the following
+            if session:
+                event_type = "checkout.session.completed" # response from stripe API, example.
+                if event_type == "checkout.session.completed" or "invoice.paid":
+                    return True
+                else:
+                    return False
 
         db = Database()
         rendict = db.getAllLicenseWithRenewal()
@@ -193,7 +198,11 @@ def monitor():
         for value in rendict:
             # print(f'license: {value} // {(rendict[value] - now).total_seconds()} seconds until renewal')
             if (rendict[value] - now).total_seconds() <= 0:
-                attempt = charge()
+
+                db = Database()
+                session = db.getLicenseStripeSessionID(value)
+                attempt = charge(session)
+
                 if attempt:
                     renewal = Renewal(value)
                     renewal.incrementRenewalDate()
