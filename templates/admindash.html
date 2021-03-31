@@ -11,101 +11,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
           crossorigin="anonymous">
-    <style>
-    body,html{
-        height:100%;
-    }
-
-    .h-90{
-        height:90%;
-    }
-
-    .h-80{
-        height:80%;
-    }
-
-    .h-10{
-        height:10%;
-    }
-
-    .sidenav {
-      height: 100%;
-      width: 0;
-      position: fixed;
-      z-index: 1;
-      top: 0;
-      left: 0;
-      background-color: #111;
-      overflow-x: hidden;
-      padding-top: 60px;
-      transition: 0.5s;
-    }
-
-    .sidenav a {
-      padding: 8px 8px 8px 32px;
-      text-decoration: none;
-      font-size: 25px;
-      color: #818181;
-      display: block;
-      transition: 0.3s;
-    }
-
-    .sidenav a:hover {
-      color: #f1f1f1;
-    }
-
-    .sidenav .closebtn {
-      position: absolute;
-      top: 0;
-      right: 25px;
-      font-size: 36px;
-      margin-left: 50px;
-    }
-
-    .footer {
-      color: #f1f1f1;
-      padding: 8px 8px 8px 32px;
-      white-space: nowrap;
-    }
-
-    .navbarbutton {
-      font-size: 150%;
-      color: #E5D4C0;
-      position: fixed;
-    }
-
-    .navbarbutton a {
-      padding: 8px 8px 8px 32px;
-      color: #818181;
-      transition: 0.3s;
-    }
-
-    .navbarbutton a:hover {
-      text-decoration: none;
-      color: #f1f1f1 !important;
-    }
-
-    .navbarbutton a:visited {
-      color: #818181;
-    }
-
-    .navbarbutton a:link {
-      color: #818181;
-    }
-
-    #main {
-      transition: margin-left .5s;
-      padding: 20px;
-    }
-
-    @media screen and (max-height: 450px) {
-      .sidenav {padding-top: 15px;}
-      .sidenav a {font-size: 18px;}
-    }
-
-
-
-    </style>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/admindashboard.css') }}">
 </head>
 
 <body class="bg-dark">
@@ -136,26 +42,5 @@
     </div>
 </div>
 </body>
-<script>
-if (typeof(Storage) !== "undefined") {
-        if(localStorage.getItem("sidebar") == "opened"){
-            document.getElementById("mySidenav").style.width = "250px";
-            document.getElementById("main").style.marginLeft = "250px";
-        }
-    }
-function openNav() {
-  document.getElementById("mySidenav").style.width = "250px";
-  document.getElementById("main").style.marginLeft = "250px";
-  if (typeof(Storage) !== "undefined") {
-        localStorage.setItem("sidebar", "opened");
-    }
-}
-function closeNav() {
-  document.getElementById("mySidenav").style.width = "0";
-  document.getElementById("main").style.marginLeft = "0";
-  if (typeof(Storage) !== "undefined") {
-        localStorage.setItem("sidebar", "closed");
-    }
-}
-</script>
+<script src="{{url_for('static', filename='js/admindashboard.js')}}"></script>
 </html>

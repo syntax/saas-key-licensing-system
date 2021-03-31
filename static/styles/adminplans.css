@@ -1,0 +1,133 @@
+form  { display: table;      }
+p     { display: table-row;  }
+label { display: table-cell; }
+input { display: table-cell; }
+
+body,html{
+    height:100%;
+}
+
+.h-90{
+    height:90%;
+}
+
+.h-80{
+    height:80%;
+}
+
+.h-10{
+    height:10%;
+}
+
+.h-5{
+    height:5%;
+}
+
+.sidenav {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  padding-top: 60px;
+  transition: 0.5s;
+}
+
+.sidenav a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+.sidenav a:hover {
+  color: #f1f1f1;
+}
+
+.sidenav .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+}
+
+.footer {
+  color: #f1f1f1;
+  padding: 8px 8px 8px 32px;
+  white-space: nowrap;
+}
+
+.navbarbutton {
+  font-size: 150%;
+  color: #E5D4C0;
+  position: fixed;
+}
+
+.navbarbutton a {
+  padding: 8px 8px 8px 32px;
+  color: #818181;
+  transition: 0.3s;
+}
+
+.navbarbutton a:hover {
+  text-decoration: none;
+  color: #f1f1f1 !important;
+}
+
+.navbarbutton a:visited {
+  color: #818181;
+}
+
+.navbarbutton a:link {
+  color: #818181;
+}
+
+.invisblebutton {
+  background: none!important;
+  border: none;
+  padding: 0!important;
+  /*optional*/
+  font-family: arial, sans-serif;
+  /*input has OS specific font-family*/
+  color: #818181;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+ table {
+  width: 100%;
+}
+
+thead, tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+tbody {
+  display: block;
+  overflow-y: auto;
+  table-layout: fixed;
+  max-height: 200px;
+}
+
+
+#main {
+  transition: margin-left .5s;
+  padding: 20px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}

@@ -12,24 +12,7 @@
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
           crossorigin="anonymous">
      <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
-    <style>
-    body,html{
-        height:100%;
-    }
-
-    .h-90{
-        height:90%;
-    }
-
-    .h-80{
-        height:80%;
-    }
-
-    .h-10{
-        height:10%;
-    }
-
-    </style>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/dashboard.css') }}">
 </head>
 
 <body onload="relayUserTime('{{ current_user.fname }}')">
@@ -132,29 +115,5 @@
     </div>
 </div>
 </body>
-<script>
-function relayUserTime(user){
-    var time = new Date().getHours();
-    if (0<=time && time<12) {
-        document.getElementById("time").innerHTML = "Good morning " + user + " !" ;
-    } else if (12<= time && time<17) {
-        document.getElementById("time").innerHTML = "Good afternoon " + user + " !" ;
-    } else {
-        document.getElementById("time").innerHTML = "Good evening " + user + " !" ;
-    }
-}
-
-function unbind() {
-    $.get('/unbindaccount');
-    setTimeout(function(){ location.reload(); }, 100);
-}
-function rescramble() {
-    $.get('/rescramblelicense');
-    setTimeout(function(){ location.reload(); }, 100);
-}
-function unbinddevice() {
-    $.get('/unbinddevice');
-    setTimeout(function(){ location.reload(); }, 100);
-}
-</script>
+<script src="{{url_for('static', filename='js/dashboard.js')}}"></script>
 </html>
