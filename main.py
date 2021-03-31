@@ -13,17 +13,13 @@ import json
 import threading
 
 
-
-#async runs 'green threads', basically it gives the illusion of parallelism without actually bypassing the GIL (global interpreter lock - forces the app onto 1 thread at any time)
-
-
 class Renewal:
     def __init__(self, key):
         self.renewdate = self.getRenewalDate(key)
         self.renewamount = None
         self.renewinterval = None
 
-        #running of this function should result in the last two being defined.
+        # running of this function should result in the last two being defined.
         self.getRenewalInfoFromPlan(key)
 
     def getRenewalDate(self, key):
@@ -49,7 +45,7 @@ class Renewal:
             self.renewdate = self.renewdate + datetime.timedelta(days=self.renewinterval)
             return self.renewdate
 
-    def initalRenewalIncrement(self,key):
+    def initalRenewalIncrement(self, key):
         print(self.renewdate)
         if not self.renewdate:
             self.renewdate = datetime.datetime.now()
@@ -58,10 +54,11 @@ class Renewal:
             return
         else:
             return 'Not inital'
-    
+
+
 class License:
-    #this is a class that describes the license in context of the user its bound to, only.
-    def __init__(self,owner):
+    # this is a class that describes the license in context of the user its bound to, only.
+    def __init__(self, owner):
         self.owner = owner
         self.hwid = None
         self.boundtodevice = False
@@ -69,7 +66,7 @@ class License:
         self.renewal = None
 
         self.key = self.loadUserLicense()
-        #self.exists is necessary as self.key being None cannot necessarily be represented in conitional statements (due to str dunder), otherwise.
+        # self.exists is necessary as self.key being None cannot necessarily be represented in conitional statements (due to str dunder), otherwise.
         if self.key:
             self.exists = True
             self.renewal = Renewal(self.key)
@@ -132,7 +129,7 @@ class License:
                 else:
                     print(f'found unused license value {license}')
                     self.unbindDevice()
-                    conn.updateLicenseKey(license,self.key)
+                    conn.updateLicenseKey(license, self.key)
                     self.loadUserLicense()
                     conn.closeConnection()
                     return license
@@ -140,24 +137,24 @@ class License:
 
 
 class User(UserMixin):
-    def __init__(self, username, fname, sname, email, password, couldHaveLicense = True):
-         self.id = username
-         self.fname = fname
-         self.sname = sname
-         self.email = email
-         self.hashdpassword = password
-         self.authenticated = False
-         self.isadmin = False
+    def __init__(self, username, fname, sname, email, password, couldHaveLicense=True):
+        self.id = username
+        self.fname = fname
+        self.sname = sname
+        self.email = email
+        self.hashdpassword = password
+        self.authenticated = False
+        self.isadmin = False
 
-         if couldHaveLicense:
+        if couldHaveLicense:
             self.license = License(self.id)
 
     def __str__(self):
         return self.id
 
     def unbindLicense(self):
-        #probably needs to be implemented with some sort of ajax on the html client side to prevent it from just having the entire page render again
-        #will need to do things such as unbinding from device, as well, keep this in consideration!
+        # probably needs to be implemented with some sort of ajax on the html client side to prevent it from just having the entire page render again
+        # will need to do things such as unbinding from device, as well, keep this in consideration!
         if self.license:
             db = Database()
             db.setLicenseToUnbound(self.license.key)
@@ -167,24 +164,23 @@ class User(UserMixin):
         else:
             return 'No License bound previously'
 
-
     def getAdminPerms(self):
         return self.isadmin
 
+
 class AdministativeUser(User):
     def __init__(self, username, fname, sname, email, password):
-        super().__init__(username, fname, sname, email, password, couldHaveLicense = False)
+        super().__init__(username, fname, sname, email, password, couldHaveLicense=False)
         self.isadmin = True
 
 
-
 def monitor():
-
     while True:
         time.sleep(5)
+
         # print('Monitoring...')
-        def charge(success= True):
-            #placeholder function
+        def charge(success=True):
+            # placeholder function
             if success:
                 return True
             else:
@@ -211,10 +207,8 @@ def monitor():
                 pass
 
 
-
-
 app = Flask(__name__)
-app.secret_key = os.urandom(24) #secret key for encoding of session on the webapp
+app.secret_key = os.urandom(24)  # secret key for encoding of session on the webapp
 
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
@@ -224,7 +218,6 @@ limiter = Limiter(
     key_func=get_remote_address,
     default_limits=["5 per second"],
 )
-
 
 
 @login_manager.user_loader
@@ -240,6 +233,7 @@ def load_user(username):
     else:
         return None
 
+
 # api based functs
 
 @app.route("/unbindaccount")
@@ -248,17 +242,20 @@ def unbindkey():
     current_user.unbindLicense()
     return redirect(url_for('dashboard'))
 
+
 @app.route("/unbinddevice")
 @login_required
 def unbinddevice():
     current_user.license.unbindDevice()
     return redirect(url_for('dashboard'))
 
+
 @app.route("/rescramblelicense")
 @login_required
 def rescramblelicense():
     current_user.license.rescramble()
     return redirect(url_for('dashboard'))
+
 
 # front end
 @app.route('/')
@@ -293,7 +290,6 @@ def login():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
-
     mailregex = r"^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$"
     pwregex = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
     unameregex = r"^[A-Za-z0-9]+$"
@@ -307,17 +303,19 @@ def signup():
             error = 'We require your first and surname, with a space inbetween!'
         elif not re.search(unameregex, request.form['username']):
             error = 'Your username cannot contain any spaces!'
-        elif not re.search(mailregex,request.form['email']):
+        elif not re.search(mailregex, request.form['email']):
             error = 'Email Invalid'
         elif not re.search(pwregex, request.form['password']):
             error = 'Password invalid. Must be 8+ characters, including at least one upper-case letter, lower-case letter, number and special character.'
         elif request.form['password'] != request.form['confirmpassword']:
             error = 'Your passwords do not match.'
-        elif temp.searchUsers(request.form['email'],request.form['username']): #checks if this returns anythng other than NONE
+        elif temp.searchUsers(request.form['email'],
+                              request.form['username']):  # checks if this returns anythng other than NONE
             error = 'An account using that email or username already exists!'
         else:
-            hashdpw = utils.hash(request.form['username'],request.form['password'])
-            temp.addToUsers(f'''{request.form['username']},{request.form['name'].split()[0]},{request.form['name'].split()[1]},{request.form['email']},{hashdpw},FALSE''')
+            hashdpw = utils.hash(request.form['username'], request.form['password'])
+            temp.addToUsers(
+                f'''{request.form['username']},{request.form['name'].split()[0]},{request.form['name'].split()[1]},{request.form['email']},{hashdpw},FALSE''')
             user = load_user(request.form['username'])
             login_user(user)
             temp.closeConnection()
@@ -341,7 +339,7 @@ def dashboard():
         lerror = None
         if request.method == 'POST' and request.form['licenseid'] != '':
             temp = Database()
-            result = temp.bindUsertoLicense(request.form['licenseid'],current_user.id)
+            result = temp.bindUsertoLicense(request.form['licenseid'], current_user.id)
             if result == "success":
                 current_user.license.loadUserLicense()
                 if not current_user.license.renewal.getRenewalDate(current_user.license.key):
@@ -349,9 +347,10 @@ def dashboard():
             else:
                 lerror = result
                 print(f'ERROR: {lerror}')
-    
-            return redirect(url_for('dashboard')) #https://www.youtube.com/watch?v=JQFeEscCvTg&ab_channel=DaveHollingworth
-    
+
+            return redirect(
+                url_for('dashboard'))  # https://www.youtube.com/watch?v=JQFeEscCvTg&ab_channel=DaveHollingworth
+
         return render_template('dashboard.html', lerror=lerror)
     else:
         return redirect(url_for('admindash'))
@@ -365,45 +364,48 @@ def dashboardaccount():
         mailregex = r"^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$"
         namesregex = r"[a-zA-Z]+"
         pwregex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
-    
+
         if request.method == 'POST':
             form = request.form.to_dict()
-            if utils.hash(current_user.id,form['cpassword']) == current_user.hashdpassword:
-                for regex, value, potentialerror in zip([namesregex, namesregex, mailregex], [form['fname'], form['sname'], form['email']], ["Invalid first name", "Invalid surname", "Invalid email"]):
+            if utils.hash(current_user.id, form['cpassword']) == current_user.hashdpassword:
+                for regex, value, potentialerror in zip([namesregex, namesregex, mailregex],
+                                                        [form['fname'], form['sname'], form['email']],
+                                                        ["Invalid first name", "Invalid surname", "Invalid email"]):
                     if not re.fullmatch(regex, value):
-                        return render_template('dashboardaccount.html', error = potentialerror)
+                        return render_template('dashboardaccount.html', error=potentialerror)
                 if request.form['newpassword']:
-                    if not re.fullmatch(pwregex,form['newpassword']):
-                        return render_template('dashboardaccount.html', error = 'Not a valid password!')
+                    if not re.fullmatch(pwregex, form['newpassword']):
+                        return render_template('dashboardaccount.html', error='Not a valid password!')
                     else:
-                        form['newpassword'] = utils.hash(current_user.id,request.form['newpassword'])
-    
+                        form['newpassword'] = utils.hash(current_user.id, request.form['newpassword'])
+
                 db = Database()
-    
+
                 keymap = {"newpassword": "password", "fname": "fName", "sname": "sName", "email": "emailAddress"}
                 for k, v in form.items():
                     if v != "" and k != "cpassword":
                         db.updateUser(keymap[k], v, current_user.id)
-                        
+
                 db.closeConnection()
                 return render_template('redirect.html', reason='Successfully commited changes!')
             else:
                 error = 'Current password is needed to commit changes and is incorrect/missing'
-    
-    
+
         return render_template('dashboardaccount.html', error=error)
     else:
         return redirect(url_for('admindash'))
 
+
 @app.route("/admin/dashboard", methods=['GET', 'POST'])
 @login_required
 def admindash():
-    #https://www.w3schools.com/howto/howto_js_sort_table.asp for the tables when being implemented
+    # https://www.w3schools.com/howto/howto_js_sort_table.asp for the tables when being implemented
     if current_user.getAdminPerms():
         return render_template('admindash.html')
     else:
         reason = f'Insufficient permissions.'
         return render_template('redirect.html', reason=reason)
+
 
 @app.route("/admin/dashboard/users", methods=['GET', 'POST'])
 @login_required
@@ -412,11 +414,11 @@ def adminusers():
         if request.method == "POST":
             try:
                 db = Database()
-                if db.checkIfUserHasLicense(request.form['delete']) != False:
+                if db.checkIfUserHasLicense(request.form['delete']):
                     db.setLicenseToUnbound(db.checkIfUserHasLicense(request.form['delete']))
                 db.deleteUser(request.form['delete'])
                 db.closeConnection()
-                
+
                 return redirect(url_for('adminusers'))
 
             except:
@@ -428,16 +430,17 @@ def adminusers():
         for user in tempusers:
             user = list(user)
             dbattempt = db.checkIfUserHasLicense(user[0])
-            if dbattempt != False:
+            if dbattempt:
                 user.append(dbattempt)
             else:
                 user.append(None)
             users.append(user)
         db.closeConnection()
-        return render_template('adminusers.html',users=users)
+        return render_template('adminusers.html', users=users)
     else:
         reason = f'Insufficient permissions.'
         return render_template('redirect.html', reason=reason)
+
 
 @app.route("/admin/dashboard/licenses", methods=['GET', 'POST'])
 @login_required
@@ -471,10 +474,11 @@ def adminlicenses():
         licenses = db.getAll('licenses')
         plans = db.getAll('plans')
         db.closeConnection()
-        return render_template('adminlicenses.html',licenses=licenses, plans = plans)
+        return render_template('adminlicenses.html', licenses=licenses, plans=plans)
     else:
         reason = f'Insufficient permissions.'
         return render_template('redirect.html', reason=reason)
+
 
 @app.route("/admin/dashboard/plans", methods=['GET', 'POST'])
 @login_required
@@ -490,7 +494,7 @@ def adminplans():
                     return redirect(url_for('adminplans'))
                 else:
                     db = Database()
-                    if db.findBoundLicensesOfGivenPlan(request.form['delete']) != []:
+                    if db.findBoundLicensesOfGivenPlan(request.form['delete']):
                         print('cannot delete')
                         db = Database()
                         plans = list(db.getAll('plans'))
@@ -508,10 +512,11 @@ def adminplans():
         db = Database()
         plans = list(db.getAll('plans'))
         db.closeConnection()
-        return render_template('adminplans.html',plans=plans, reason= None)
+        return render_template('adminplans.html', plans=plans, reason=None)
     else:
         reason = f'Insufficient permissions.'
         return render_template('redirect.html', reason=reason)
+
 
 @app.route("/getTime", methods=['GET'])
 def getTime():
@@ -519,7 +524,8 @@ def getTime():
     print("server time : ", time.strftime('%A %B, %d %Y %H:%M:%S'));
     return "Done"
 
-#API speicifc functions
+
+# API speicifc functions
 
 @app.errorhandler(404)
 def not_found():
@@ -531,7 +537,7 @@ def not_found():
     return make_response(jsonify({'error': 'malformed syntax, seek docs'}), 404)
 
 
-@app.route('/api/v1/licenses/<licenseid>', methods=['GET','POST'])
+@app.route('/api/v1/licenses/<licenseid>', methods=['GET', 'POST'])
 @limiter.limit("2 per second")
 def get_specific_license(licenseid):
     try:
@@ -542,43 +548,43 @@ def get_specific_license(licenseid):
                     result = db.getLicenseInfo(licenseid)
                     print(result)
                     licensedict = {
-                            "lickey":result[0],
-                            "user": result[1],
-                            "boundToUser": result[2],
-                            "boundToDevice": result[3],
-                            "HWID": result[4],
-                            "device": result[5],
-                            "nextRen": result[6],
-                            "planName": result[7]
-                                   }
+                        "lickey": result[0],
+                        "user": result[1],
+                        "boundToUser": result[2],
+                        "boundToDevice": result[3],
+                        "HWID": result[4],
+                        "device": result[5],
+                        "nextRen": result[6],
+                        "planName": result[7]
+                    }
 
                     return jsonify({"license": licensedict})
                 except:
                     return jsonify({"license": "could not find license"})
             elif request.method == "POST":
-                    print(request.json)
-                    if "HWID" and "device" in request.json:
-                        db = Database()
-                        if not request.json["HWID"] and not request.json["device"]:
-                            db.setLicenseToUnboundDEVICE(licenseid)
-                        else:
-                            db.setLicenseHWIDandDevice(licenseid,request.json["HWID"],request.json["device"])
-
-                        result = db.getLicenseInfo(licenseid)
-                        licensedict = {
-                            "lickey": result[0],
-                            "user": result[1],
-                            "boundToUser": result[2],
-                            "boundToDevice": result[3],
-                            "HWID": result[4],
-                            "device": result[5],
-                            "nextRen": result[6],
-                            "planName": result[7]
-                        }
-
-                        return jsonify({"status":"updated","license": licensedict})
+                print(request.json)
+                if "HWID" and "device" in request.json:
+                    db = Database()
+                    if not request.json["HWID"] and not request.json["device"]:
+                        db.setLicenseToUnboundDEVICE(licenseid)
                     else:
-                        return jsonify({"status": "malformed request in post, needs HWID and device"})
+                        db.setLicenseHWIDandDevice(licenseid, request.json["HWID"], request.json["device"])
+
+                    result = db.getLicenseInfo(licenseid)
+                    licensedict = {
+                        "lickey": result[0],
+                        "user": result[1],
+                        "boundToUser": result[2],
+                        "boundToDevice": result[3],
+                        "HWID": result[4],
+                        "device": result[5],
+                        "nextRen": result[6],
+                        "planName": result[7]
+                    }
+
+                    return jsonify({"status": "updated", "license": licensedict})
+                else:
+                    return jsonify({"status": "malformed request in post, needs HWID and device"})
 
         else:
             return jsonify({"status": "unauthorised"})
@@ -587,12 +593,12 @@ def get_specific_license(licenseid):
 
 
 if __name__ == '__main__':
-    with open('config.json','r') as configfile:
+    with open('config.json', 'r') as configfile:
         app_config = json.load(configfile)
     db = Database()
     db.create()
-
+    # creates and runs monitor function on a secondary daemon thread
     monitorfunct = threading.Thread(name='monitor', target=monitor, daemon=True)
     monitorfunct.start()
-
+    # runs on main thread
     app.run()
