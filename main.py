@@ -266,7 +266,7 @@ def rescramblelicense():
     return redirect(url_for('dashboard'))
 
 
-# front end
+# front end webapp endpoints
 @app.route('/')
 def index():
     return render_template('home.html')

@@ -80,13 +80,17 @@
                                 <div class="card-body">
                                     <h5 class="card-title">Account and Billing</h5>
                                     <p class="card-text">No impending charge as no license is bound.</p>
-                                    <a href="/dashboard/account" class="btn btn-primary mt-1">Edit Account/Billing Settings</a>
+                                    <a href="/dashboard/account" class="btn btn-primary mt-1">Edit Account Settings</a>
+                                    <!-- following button acts only as a placeholder as described by documentation -->
+                                    <a href="#" class="btn btn-primary mt-1">Edit Billing Settings</a>
                                 </div>
                             {% else %}
                                 <div class="card-body">
                                     <h5 class="card-title">Account and Billing</h5>
                                     <p class="card-text">Next Charge of ${{ current_user.license.renewal.renewamount }} due on {{ current_user.license.renewal.renewdate }}</p>
-                                    <a href="/dashboard/account" class="btn btn-primary mt-1">Edit Account/Billing Settings</a>
+                                    <a href="/dashboard/account" class="btn btn-primary mt-1">Edit Account Settings</a>
+                                    <!-- following button acts only as a placeholder as described by documentation -->
+                                    <a href="#" class="btn btn-primary mt-1">Edit Billing Settings</a>
                                 </div>
                             {% endif %}
                         </div>
