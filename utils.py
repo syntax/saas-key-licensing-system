@@ -10,7 +10,6 @@ def generatekey(random_chars, alphabet="abcdefghijklmnopqrstuvwxyz1234567890"):
 
 
 def createLicense(planname):
-    print(planname)
     initialconn = Database()
     if initialconn.getPlanInfo(planname):
         initialconn.closeConnection()
