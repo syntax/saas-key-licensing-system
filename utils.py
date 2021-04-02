@@ -8,6 +8,7 @@ def generatekey(random_chars, alphabet="abcdefghijklmnopqrstuvwxyz1234567890"):
     r = random.SystemRandom()
     return ''.join([r.choice(alphabet) for _ in range(random_chars)])
 
+
 def createLicense(planname):
     print(planname)
     initialconn = Database()
@@ -21,17 +22,17 @@ def createLicense(planname):
                 continue
             else:
                 print(f'created license {license}')
-                conn.commitLicense(license,planname)
+                conn.commitLicense(license, planname)
                 conn.closeConnection()
                 return license
     else:
         initialconn.closeConnection()
         return 'Plan does not exist'
 
-def gensalt(username):
 
+def gensalt(username):
     # a strange algorithm to create larger salts, as well as remove the predictability vulnerability for as long as this algorithm is kept secret
-    def ceaser(shift,string):
+    def ceaser(shift, string):
         alphabet = '0abcdefghijkl1234mnopqrst567uvwx89yz'
         output = []
 
@@ -42,25 +43,26 @@ def gensalt(username):
         return ''.join(output)
 
     def manipulationalgo(inputstr):
-        doubled = ''.join([element*2 for element in inputstr])
+        doubled = ''.join([element * 2 for element in inputstr])
         output = []
         count = 1
         for letter in doubled:
-            #cant use .index() as letter appears multiple times!
+            # cant use .index() as letter appears multiple times!
             if count % 2 == 0:
-                output.append(ceaser(count,letter))
+                output.append(ceaser(count, letter))
             else:
-                output.append(ceaser(-1,letter))
+                output.append(ceaser(-1, letter))
             count += 1
-            
+
         return ''.join(output)
-    
+
     salt = manipulationalgo(username)
     pepper = '3UwF4zVIB2CkF3uOMkmAifCMjO+88RKNfL4u6EXifPQ='
 
-    return salt+pepper
+    return salt + pepper
 
-def hash(username,password):
+
+def hash(username, password):
     hashdpw = hashlib.pbkdf2_hmac(
         hash_name='sha256',  # The hash digest algorithm for HMAC
         password=password.encode('utf-8'),
@@ -70,11 +72,28 @@ def hash(username,password):
 
     return hashdpw.hex()
 
-def createAdminUser(values): #needs username,fName,sName,emailAddress,password passed into it as a comma seperated str, where pw is pre hashed
+
+def createAdminUser(
+        values):  # needs username,fName,sName,emailAddress,password passed into it as a comma seperated str, where pw is pre hashed
     values += ',TRUE'
     db = Database()
     db.addToUsers(values)
     return 'success'
 
+
+def gatherStatistics():
+    db = Database()
+    dict = {
+        "Licenses": db.getCountofTable('licenses'),
+        "Users": db.getCountofTable('users'),
+        "Plans": db.getCountofTable('plans'),
+        "Users with a License Bound": db.getConditionalCountofTable('licenses','boundToUser','1'),
+        "Licenses Bound to a User's Device": db.getConditionalCountofTable('licenses', 'boundToDevice', '1'),
+        "Most Popular Plan": db.getMostPopular('licenses','plan')[0],
+        "Percentages of Licenses bound to a User": f'''{round((db.getConditionalCountofTable('licenses','boundToUser','1')/ db.getCountofTable('licenses')), 4)*100}%'''
+            }
+    db.closeConnection()
+    return dict
+
 if __name__ == '__main__':
-    createAdminUser(f'''admin,tom,holland,admin@gmail.com,{hash('admin','Ihpw2014')}''')
+    createAdminUser(f'''admin,tom,holland,admin@gmail.com,{hash('admin', 'Ihpw2014')}''')

@@ -11,6 +11,7 @@ from functools import wraps
 import datetime
 import json
 import threading
+import random
 
 
 class Renewal:
@@ -408,9 +409,10 @@ def dashboardaccount():
 @app.route("/admin/dashboard", methods=['GET', 'POST'])
 @login_required
 def admindash():
-    # https://www.w3schools.com/howto/howto_js_sort_table.asp for the tables when being implemented
     if current_user.getAdminPerms():
-        return render_template('admindash.html')
+        statsdict = utils.gatherStatistics()
+        randomstats = [[statsdict[value],value] for value in random.sample(list(statsdict), 3)]
+        return render_template('admindash.html',stats = randomstats)
     else:
         reason = f'Insufficient permissions.'
         return render_template('redirect.html', reason=reason)

@@ -2,6 +2,7 @@ import os
 import sqlite3
 from datetime import datetime
 
+
 class Database():
     def __init__(self):
         self.conn = sqlite3.connect('./licenses.db')
@@ -21,9 +22,26 @@ class Database():
         self.conn.close()
         return
 
-    #user related functions
+    # non specific functions
 
-    def getAll(self,dbname):
+    def getCountofTable(self, table):
+        self.c.execute(f'''SELECT COUNT(*) FROM {table}''')
+        result = self.c.fetchone()
+        return result[0]
+
+    def getConditionalCountofTable(self, table, column, condition):
+        self.c.execute(f'''SELECT COUNT(*) FROM {table} WHERE {column} = {condition}''')
+        result = self.c.fetchone()
+        return result[0]
+
+    def getMostPopular(self,table, column):
+        self.c.execute(f'''SELECT {column}, COUNT({column}) AS value_occurance FROM {table} GROUP BY {column} ORDER BY value_occurance DESC LIMIT 1;''')
+        result = self.c.fetchone()
+        return result
+
+    # user related functions
+
+    def getAll(self, dbname):
         self.c.execute(f'''SELECT * FROM {dbname}''')
         result = self.c.fetchall()
         return result
@@ -33,12 +51,12 @@ class Database():
         self.conn.commit()
         return
 
-    def searchUsersByUsername(self,user):
-        self.c.execute(f'''SELECT * FROM users WHERE username = ?''', (user,) )
+    def searchUsersByUsername(self, user):
+        self.c.execute(f'''SELECT * FROM users WHERE username = ?''', (user,))
         result = self.c.fetchone()
         return result
 
-    def addToUsers(self,values):
+    def addToUsers(self, values):
         if not self.searchUsersByUsername(tuple(values.split(','))[0]):
             self.c.execute(f'''INSERT INTO users(username,fName,sName,emailAddress,password,admin)
                   VALUES(?, ?, ?, ?, ?, ?)''', tuple(values.split(',')))
@@ -47,37 +65,37 @@ class Database():
         else:
             return 'user already exists'
 
-    def updateUser(self,param,value,username):
+    def updateUser(self, param, value, username):
         self.c.execute(f'''UPDATE users SET {param} = "{value}" WHERE username = "{username}";''')
         self.conn.commit()
         return
 
-    def searchUsers(self, email,user):
-        self.c.execute(f'''SELECT username, emailAddress FROM users WHERE emailAddress = ? OR username = ?''', (email,user) )
+    def searchUsers(self, email, user):
+        self.c.execute(f'''SELECT username, emailAddress FROM users WHERE emailAddress = ? OR username = ?''',
+                       (email, user))
         result = self.c.fetchone()
         return result
 
-    def deleteUser(self,user):
-        self.c.execute('''DELETE FROM users WHERE username = ?;''',(user,))
+    def deleteUser(self, user):
+        self.c.execute('''DELETE FROM users WHERE username = ?;''', (user,))
         self.conn.commit()
         return
 
-
     # license related functions
 
-    def getLicenseInfo(self,license):
+    def getLicenseInfo(self, license):
         self.c.execute(f'''SELECT * FROM licenses WHERE license = ?''',
                        (license,))
         result = self.c.fetchone()
         return result
 
-    def checkIfLicenseExists(self,license):
+    def checkIfLicenseExists(self, license):
         self.c.execute(f'''SELECT * FROM licenses WHERE license = ?''',
                        (license,))
         result = self.c.fetchone()
         return bool(result)
 
-    def checkIfLicenseBound(self,license):
+    def checkIfLicenseBound(self, license):
         self.c.execute(f'''SELECT boundToUser FROM licenses WHERE license = ?''',
                        (license,))
         result = self.c.fetchone()
@@ -86,7 +104,7 @@ class Database():
         else:
             return True
 
-    def checkIfUserHasLicense(self,username):
+    def checkIfUserHasLicense(self, username):
         self.c.execute(f'''SELECT license FROM licenses WHERE username = ?''',
                        (username,))
         result = self.c.fetchone()
@@ -95,7 +113,7 @@ class Database():
         else:
             return False
 
-    def getUserbyLicense(self,license):
+    def getUserbyLicense(self, license):
         self.c.execute(f'''SELECT username FROM licenses WHERE license = ?''',
                        (license,))
         result = self.c.fetchone()
@@ -104,45 +122,48 @@ class Database():
         else:
             return None
 
-    def commitLicense(self,license,plan):
-        self.c.execute(f'''INSERT INTO licenses(license,username,boundtoUser,boundtoDevice,HWID,devicename,nextrenewal,plan,stripeSessionID)
-                      VALUES(?, NULL, FALSE, FALSE, NULL, NULL, NULL, ?, "placeholder")''', (license,plan)) #needs to be updated to include plan, and validate that plane xists etc.
+    def commitLicense(self, license, plan):
+        self.c.execute(
+            f'''INSERT INTO licenses(license,username,boundtoUser,boundtoDevice,HWID,devicename,nextrenewal,plan,stripeSessionID)
+                      VALUES(?, NULL, FALSE, FALSE, NULL, NULL, NULL, ?, "placeholder")''',
+            (license, plan))  # needs to be updated to include plan, and validate that plane xists etc.
         self.conn.commit()
         return
 
-    def setLicenseToUnbound(self,license):
-        self.c.execute(f'''UPDATE licenses SET username = NULL, boundtoUser = False, boundtoDevice = False, HWID = NULL, devicename = NULL WHERE license = ?;''',
-                       (license,))
+    def setLicenseToUnbound(self, license):
+        self.c.execute(
+            f'''UPDATE licenses SET username = NULL, boundtoUser = False, boundtoDevice = False, HWID = NULL, devicename = NULL WHERE license = ?;''',
+            (license,))
         self.conn.commit()
         return
 
-    def setLicenseToUnboundDEVICE(self,license):
+    def setLicenseToUnboundDEVICE(self, license):
         self.c.execute(
             f'''UPDATE licenses SET boundtoDevice = False, HWID = NULL, devicename = NULL WHERE license = ?;''',
             (license,))
         self.conn.commit()
         return
 
-    def setLicenseHWIDandDevice(self,license,hwid,devicename):
+    def setLicenseHWIDandDevice(self, license, hwid, devicename):
         self.c.execute(
             f'''UPDATE licenses SET boundtoDevice = True, HWID = ?, devicename = ? WHERE license = ?;''',
-            (hwid,devicename,license,))
+            (hwid, devicename, license,))
         self.conn.commit()
         return
 
-    def updateNextRenewal(self,license,date):
+    def updateNextRenewal(self, license, date):
         self.c.execute(f'''UPDATE licenses SET nextrenewal = ? WHERE license = ?;''',
                        (date, license))
         self.conn.commit()
         return
 
-    def updateLicenseKey(self,newlicense,oldlicense):
+    def updateLicenseKey(self, newlicense, oldlicense):
         self.c.execute(f'''UPDATE licenses SET license = ? WHERE license = ?;''',
                        (newlicense, oldlicense))
         self.conn.commit()
         return
 
-    def getNextRenewal(self,license):
+    def getNextRenewal(self, license):
         self.c.execute(f'''SELECT nextrenewal FROM licenses WHERE license = ?''', (license,))
         result = self.c.fetchone()[0]
         if not result or result == "NULL":
@@ -163,11 +184,12 @@ class Database():
             renewaldict[value[0]] = datetime.strptime(value[1], '%Y-%m-%d %H:%M:%S.%f')
         return renewaldict
 
-    def bindUsertoLicense(self,license,username):
+    def bindUsertoLicense(self, license, username):
         if self.checkIfLicenseExists(license):
             if not self.checkIfLicenseBound(license):
                 if not self.checkIfUserHasLicense(username):
-                    self.c.execute(f'''UPDATE licenses SET boundtoUser = TRUE, username = ? WHERE license = ?;''', (username,license))
+                    self.c.execute(f'''UPDATE licenses SET boundtoUser = TRUE, username = ? WHERE license = ?;''',
+                                   (username, license))
                     print(f'bound {license} to {username}')
                     self.conn.commit()
                     return 'success'
@@ -178,30 +200,31 @@ class Database():
         else:
             return 'License doesnt exist'
 
-    def getPlanfromLicense(self,license):
-        self.c.execute('''SELECT plans.* FROM plans JOIN licenses ON licenses.plan = plans.name WHERE licenses.license = ?;''',(license,))
+    def getPlanfromLicense(self, license):
+        self.c.execute(
+            '''SELECT plans.* FROM plans JOIN licenses ON licenses.plan = plans.name WHERE licenses.license = ?;''',
+            (license,))
         result = self.c.fetchone()
-        resultdict = {"name":result[0],
-                      "renewalinterval":result[1],
-                      "renewalprice":result[2]}
+        resultdict = {"name": result[0],
+                      "renewalinterval": result[1],
+                      "renewalprice": result[2]}
         return resultdict
 
-    def getLicensesfromPlan(self,plan):
+    def getLicensesfromPlan(self, plan):
         self.c.execute(
             '''SELECT license FROM licenses where plan =?;''',
             (plan,))
         result = self.c.fetchall()
         return result
 
-    def findBoundLicensesOfGivenPlan(self,plan):
+    def findBoundLicensesOfGivenPlan(self, plan):
         self.c.execute(
             '''SELECT license FROM licenses where plan =? and boundToUser = 1;''',
             (plan,))
         result = self.c.fetchall()
         return result
 
-
-    def deleteLicensesOfGivenPlan(self,plan):
+    def deleteLicensesOfGivenPlan(self, plan):
         self.c.execute('''DELETE FROM licenses WHERE plan = ?;''', (plan,))
         self.conn.commit()
         return
@@ -211,10 +234,9 @@ class Database():
         self.conn.commit()
         return
 
+    # plan related functions
 
-    #plan related functions
-
-    def getPlanInfo(self,name):
+    def getPlanInfo(self, name):
         self.c.execute(f'''SELECT * FROM plans WHERE name = "{name}";''')
         result = self.c.fetchone()
         print(result)
@@ -223,37 +245,17 @@ class Database():
         else:
             return result
 
-    def createPlan(self,name,interval,amount):
+    def createPlan(self, name, interval, amount):
         if not self.getPlanInfo(name):
             self.c.execute(f'''INSERT INTO plans(name,interval,amount)
-                  VALUES(?, ?, ?)''', (name,interval,amount))
+                  VALUES(?, ?, ?)''', (name, interval, amount))
             self.conn.commit()
             return
         else:
             return 'Plan already exists'
 
-    def deletePlan(self,plan):
-        self.c.execute('''DELETE FROM plans WHERE name = ?;''',(plan,))
+    def deletePlan(self, plan):
+        self.c.execute('''DELETE FROM plans WHERE name = ?;''', (plan,))
         self.conn.commit()
         return
 
-#this is not really needed, only for testing.
-# db = Database()
-# db.create()
-# #testing adding fields to database
-#db.addToTable_wholerow('sam,barnett,sambarnettbusiness@gmail.com,killthecats!!,12345678,active,91294macbook,Sams macbook')
-# db.addToTable_wholerow('ollie,blair,ollieblair.03@gmail.com,Icat112!!,1292-9412-1539,active,windowsanddat, Ollies XPS')
-#
-# licenses = [{'id': 1,'key':'asbd918b2819basd89'}, {'id': 2,'key':'iniboniogb123bobo'}]
-
-
-
-# def genlicensesession():  # will need to justify why this is ALWAYS random and crytographically secure
-#     return hexlify(os.urandom(16))
-
-
-#
-#
-# if __name__ == '__main__':
-#     db.create()
-#     app.run()

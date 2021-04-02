@@ -11,36 +11,71 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
           crossorigin="anonymous">
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/admindashboard.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/admindashboard.css') }}">
 </head>
 
 <body class="bg-dark">
 <div id="mySidenav" class="sidenav">
-  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-  <a href="/admin/dashboard">overview</a>
-  <a href="/admin/dashboard/users">users</a>
-  <a href="/admin/dashboard/licenses">licenses</a>
-  <a href="/admin/dashboard/plans">plans</a>
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <a href="/admin/dashboard">overview</a>
+    <a href="/admin/dashboard/users">users</a>
+    <a href="/admin/dashboard/licenses">licenses</a>
+    <a href="/admin/dashboard/plans">plans</a>
     <p class="footer fixed-bottom">logged in as {{ current_user.id }}</p>
 </div>
-<div id="main" class="container-fluid h-90 bg-dark text-white">
+<div id="main" class="container-fluid h-10 bg-dark text-white">
+    <div class="col-3 text-left">
+        <div class="navbarbutton"><a href="#" onclick="openNav()"><i class="fas fa-bars"></i></a></div>
+    </div>
+</div>
+<div class="container-fluid h-80 bg-dark text-white">
     <div class="row h-90">
-        <div class="col-3 text-left">
-            <div class ="navbarbutton"><a href="#" onclick="openNav()" ><i class="fas fa-bars"></i></a></div>
+        <div class="col-3">
         </div>
-        <div class="col-md-6 text-left justify-content-center align-items-center"> ASDOIADSIODASASDOIDSAION</div>
-        <div class="col-3"></div>
-    </div>
-</div>
-<div class="container-fluid h-10 bg-dark text-white ">
-    <div class="row">
-        <div class="col-4"></div>
-        <div class="col-4 text-center align-bottom">
-            SaaS distrubution system by Tom Holland :)
+        <div class="col-md-6 text-center ">
+            <h2 class="text-white">Welcome to the administrator panel!</h2>
+            <h5 class="text-white muted mt-3"> Your statistics at a glance...</h5>
+            <div class="row h-5"></div>
+            <div class="row h-95 mt-2 text-dark">
+                <div class="col-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ stats[0][0] }}</h5>
+                            <h6 class="card-subtitle">{{ stats[0][1] }}</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ stats[1][0] }}</h5>
+                            <h6 class="card-subtitle">{{ stats[1][1] }}</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ stats[2][0] }}</h5>
+                            <h6 class="card-subtitle">{{ stats[2][1] }}</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="col-4"></div>
+        <div class="col-3">
+
+        </div>
     </div>
-</div>
+    <div class="container-fluid h-10 bg-dark text-white ">
+        <div class="row">
+            <div class="col-4"></div>
+            <div class="col-4 text-center align-bottom">
+                SaaS distrubution system by Tom Holland :)
+            </div>
+            <div class="col-4"></div>
+        </div>
+    </div>
 </body>
 <script src="{{url_for('static', filename='js/admindashboard.js')}}"></script>
 </html>
