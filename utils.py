@@ -82,6 +82,8 @@ def createAdminUser(
 
 def gatherStatistics():
     db = Database()
+
+    #this dict can easily be added to due to modular programming design
     dict = {
         "Licenses": db.getCountofTable('licenses'),
         "Users": db.getCountofTable('users'),
