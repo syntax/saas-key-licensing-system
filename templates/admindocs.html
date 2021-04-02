@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Dashboard: {{ current_user.id }}</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/admindocs.css') }}">
+</head>
+
+<body class="bg-dark">
+<div id="mySidenav" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <a href="/admin/dashboard">overview</a>
+    <a href="/admin/dashboard/users">users</a>
+    <a href="/admin/dashboard/licenses">licenses</a>
+    <a href="/admin/dashboard/plans">plans</a>
+    <a href="/admin/dashboard/documentation">api</a>
+    <p class="footer fixed-bottom text-white">logged in as {{ current_user.id }}</p>
+</div>
+<div id="main" class="container-fluid h-10 bg-dark text-white">
+    <div class="col-3 text-left">
+        <div class="navbarbutton"><a href="#" onclick="openNav()"><i class="fas fa-bars"></i></a></div>
+    </div>
+</div>
+<div class="container-fluid h-80 bg-dark text-white">
+    <div class="row h-90">
+        <div class="col-3 text-left">
+        </div>
+        <div class="col-md-6 text-left justify-content-center align-items-center">
+            <div class="card">
+                <div class="card-body text-dark">
+                    <h5 class="card-title ">API documentation</h5>
+                    <h6 class="card-subtitle muted">For all requests, headers must be parsed in the format {"api_key":
+                        YOUR_API_KEY_HERE} for authentication.</h6>
+                    <br>
+                    <div class="card-text mt-3"><kbd> GET</kbd>
+                        <code>http://127.0.0.1:5000/api/v1/licenses/{license}</code>
+                        <br>
+                        ------------------
+                        <br>
+                        retrieves information relating to the license parsed into the paramaters of the request,
+                        denoted by {license}. If the request authenticates successfully, a JSON object on the specfic
+                        license will be returned.
+                    </div>
+                    <div class="mt-5 mb-3">
+                        <kbd> POST</kbd> <code>http://127.0.0.1:5000/api/v1/licenses/{license}</code>
+                        <br>
+                        <i><b>REQUIRES</b> body paramaters of "HWID" and "device"</i>
+                        <br>
+                        ------------------
+                        <br>
+                        updates the HWID and devicename for a given license, specified in the request. Both can be set
+                        to None in the case the user is attempting to log out (unbind) of their device. If the request
+                        is valid
+                        and authenticated successfully, it will return a JSON object of the updated license and a
+                        suitable status.
+                    </div>
+                </div>
+            </div>
+            <div class="card mt-3 text-dark">
+                <div class="card-body">
+                    <h5 class="card-title">API Wrappers for quick implentation</h5>
+                    <h6 class="card-subtitle">Includes an example implementation of the API and provides an API wrapper
+                        class for the language of your project. Click to download.</h6>
+                    <form method="post">
+                        <div class="card-text"><br><u>
+                            <button class="invisblebutton" type="submit">Python 3.7</button>
+                        </u></div>
+                    </form>
+                </div>
+            </div>
+            <div class="card text-dark mt-3">
+                <div class="card-body">
+                    Your personal API key is <b>{{ api_key }}</b>
+                </div>
+            </div>
+            <div class="col-3"></div>
+        </div>
+    </div>
+    <div class="container-fluid h-10 bg-dark text-white "></div>
+</div>
+</body>
+<script src="{{url_for('static', filename='js/tablefunction.js')}}"></script>
+</html>

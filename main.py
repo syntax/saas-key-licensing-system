@@ -186,7 +186,7 @@ def monitor():
             # sing session ID, makes get request to status webhook
             # creates communction with stripe API, which will return one of the following
             if session:
-                event_type = "checkout.session.completed" # response from stripe API, example.
+                event_type = "checkout.session.completed"  # response from stripe API, example.
                 if event_type == "checkout.session.completed" or "invoice.paid":
                     return True
                 else:
@@ -411,8 +411,8 @@ def dashboardaccount():
 def admindash():
     if current_user.getAdminPerms():
         statsdict = utils.gatherStatistics()
-        randomstats = [[statsdict[value],value] for value in random.sample(list(statsdict), 3)]
-        return render_template('admindash.html',stats = randomstats)
+        randomstats = [[statsdict[value], value] for value in random.sample(list(statsdict), 3)]
+        return render_template('admindash.html', stats=randomstats)
     else:
         reason = f'Insufficient permissions.'
         return render_template('redirect.html', reason=reason)
@@ -471,7 +471,7 @@ def adminlicenses():
                             output.write("%s\n" % key)
 
                     # return redirect(url_for('dashboard'))
-                    return send_from_directory(directory=app_config['UPLOAD_DIRECTORY'], filename=filename,
+                    return send_from_directory(directory=app_config['UPLOAD_DIRECTORY_TEMP'], filename=filename,
                                                as_attachment=True)
                 else:
                     db = Database()
@@ -524,6 +524,19 @@ def adminplans():
         plans = list(db.getAll('plans'))
         db.closeConnection()
         return render_template('adminplans.html', plans=plans, reason=None)
+    else:
+        reason = f'Insufficient permissions.'
+        return render_template('redirect.html', reason=reason)
+
+
+@app.route("/admin/dashboard/documentation", methods=['GET', 'POST'])
+@login_required
+def admindocs():
+    if current_user.getAdminPerms():
+        if request.method == 'POST':
+            return send_from_directory(directory=app_config['UPLOAD_DIRECTORY_MAIN'], filename='examplerequests.py',
+                                       as_attachment=True)
+        return render_template('admindocs.html', api_key=app_config['api_key'])
     else:
         reason = f'Insufficient permissions.'
         return render_template('redirect.html', reason=reason)

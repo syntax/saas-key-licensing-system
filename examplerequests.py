@@ -3,7 +3,7 @@ from uuid import getnode as get_mac
 import socket
 import platform
 
-API_KEY = 'test'
+API_KEY = ''
 
 
 # Authentication class acts as a framework for building your authnetication system off
@@ -89,8 +89,3 @@ def validateUser(license):
     else:
         # license key is invalid, hence quit progam
         quit()
-
-
-auth = Authentication('nhh0xibesntk91rb')
-data = collectLocalData()
-auth.setToBound(data[0], data[1])
