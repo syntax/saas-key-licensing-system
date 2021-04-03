@@ -7,17 +7,11 @@ from api import Database
 import utils
 import os
 import time
-from functools import wraps
 import datetime
 import json
 import threading
 import random
 import csv
-
-import matplotlib
-matplotlib.use('Agg')
-
-import matplotlib.pyplot as plt
 
 class Renewal:
     def __init__(self, key):
@@ -180,7 +174,7 @@ class AdministativeUser(User):
         self.isadmin = True
 
 
-def monitor():
+def monitorRenewals():
     while True:
         time.sleep(5)
 
@@ -221,25 +215,25 @@ def monitor():
             else:
                 pass
 
+def monitorGraphs():
+    while True:
+        #only checks to refesh once every 10 minutes, as generating graphs is relatively processer intensive
+        time.sleep(10*60)
 
-def generateGraph():
-    with open('graphinfo.csv','r') as graphdata:
-        graphpoints = csv.reader(graphdata, delimiter=',')
-        rows = list(graphpoints)
+        with open('graphinfo.csv','r') as current_file:
+            latestdate = list(csv.reader(current_file, delimiter=','))[-1][0]
 
-    #get licenses graph
-    fig, ax = plt.subplots()
-    plt.plot([value[0] for value in rows[1:]], [value[1] for value in rows[1:]])
-    plt.ylabel(rows[0][1])
-    fig.autofmt_xdate()
-    plt.savefig('static/images/licenses.png',dpi=300)
+        latestdate = datetime.datetime.strptime(latestdate,'%d/%m/%Y').date()
+        nowdate = datetime.date.today()
 
-    #get users graph
-    fig, ax = plt.subplots()
-    plt.plot([value[0] for value in rows[1:]], [value[2] for value in rows[1:]])
-    plt.ylabel(rows[0][2])
-    fig.autofmt_xdate()
-    plt.savefig('static/images/users.png', dpi=300)
+        if nowdate > latestdate:
+            with open('graphinfo.csv', 'a') as current_file:
+                db = Database()
+                current_file.write(f'''\n{datetime.datetime.strftime(nowdate,'%d/%m/%Y')},{db.getCountofTable('licenses')},{db.getCountofTable('users')}''')
+                db.closeConnection()
+
+            #generate a new set of graphs for the new day
+            utils.generateGraph()
 
 
 app = Flask(__name__)
@@ -437,7 +431,6 @@ def admindash():
     if current_user.getAdminPerms():
         statsdict = utils.gatherStatistics()
         randomstats = [[statsdict[value], value] for value in random.sample(list(statsdict), 3)]
-        generateGraph()
         return render_template('admindash.html', stats=randomstats)
     else:
         reason = f'Insufficient permissions.'
@@ -648,7 +641,12 @@ if __name__ == '__main__':
     db = Database()
     db.create()
     # creates and runs monitor function on a secondary daemon thread
-    monitorfunct = threading.Thread(name='monitor', target=monitor, daemon=True)
+    monitorfunct = threading.Thread(name='monitor', target=monitorRenewals, daemon=True)
     monitorfunct.start()
+
+    # creates and runs monitor stats function on a secondary daemon thread
+    monitorstats = threading.Thread(name='monitorstats', target=monitorGraphs, daemon=True)
+    monitorstats.start()
+
     # runs on main thread
     app.run()

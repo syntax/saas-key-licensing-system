@@ -1,8 +1,13 @@
 from api import Database
 import random
 import hashlib
-import math
+import csv
+import matplotlib
 
+#necessary in relation to imports as to stop
+matplotlib.use('Agg')
+
+import matplotlib.pyplot as plt
 
 def generatekey(random_chars, alphabet="abcdefghijklmnopqrstuvwxyz1234567890"):
     r = random.SystemRandom()
@@ -101,14 +106,14 @@ def generateGraph():
         graphpoints = csv.reader(graphdata, delimiter=',')
         rows = list(graphpoints)
 
-    #get licenses graph
+    # get licenses graph
     fig, ax = plt.subplots()
     plt.plot([value[0] for value in rows[1:]], [value[1] for value in rows[1:]])
     plt.ylabel(rows[0][1])
     fig.autofmt_xdate()
     plt.savefig('static/images/licenses.png',dpi=300)
 
-    #get users graph
+    # get users graph
     fig, ax = plt.subplots()
     plt.plot([value[0] for value in rows[1:]], [value[2] for value in rows[1:]])
     plt.ylabel(rows[0][2])
