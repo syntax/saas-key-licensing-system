@@ -91,10 +91,31 @@ def gatherStatistics():
         "Users with a License Bound": db.getConditionalCountofTable('licenses','boundToUser','1'),
         "Licenses Bound to a User's Device": db.getConditionalCountofTable('licenses', 'boundToDevice', '1'),
         "Most Popular Plan": db.getMostPopular('licenses','plan')[0],
-        "Percentages of Licenses bound to a User": f'''{round((db.getConditionalCountofTable('licenses','boundToUser','1')/ db.getCountofTable('licenses')), 4)*100}%'''
+        "Percentages of Licenses bound to a User": f'''{round((db.getConditionalCountofTable('licenses','boundToUser','1')/ db.getCountofTable('licenses'))*100, 2)}%'''
             }
     db.closeConnection()
     return dict
 
+def generateGraph():
+    with open('graphinfo.csv','r') as graphdata:
+        graphpoints = csv.reader(graphdata, delimiter=',')
+        rows = list(graphpoints)
+
+    #get licenses graph
+    fig, ax = plt.subplots()
+    plt.plot([value[0] for value in rows[1:]], [value[1] for value in rows[1:]])
+    plt.ylabel(rows[0][1])
+    fig.autofmt_xdate()
+    plt.savefig('static/images/licenses.png',dpi=300)
+
+    #get users graph
+    fig, ax = plt.subplots()
+    plt.plot([value[0] for value in rows[1:]], [value[2] for value in rows[1:]])
+    plt.ylabel(rows[0][2])
+    fig.autofmt_xdate()
+    plt.savefig('static/images/users.png', dpi=300)
+
 if __name__ == '__main__':
-    createAdminUser(f'''admin,tom,holland,admin@gmail.com,{hash('admin', 'Ihpw2014')}''')
+    generateGraph()
+    #createAdminUser(f'''admin,tom,holland,admin@gmail.com,{hash('admin', 'Ihpw2014')}''')
+

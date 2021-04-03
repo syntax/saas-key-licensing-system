@@ -12,7 +12,8 @@ import datetime
 import json
 import threading
 import random
-
+import matplotlib.pyplot as plt
+import csv
 
 class Renewal:
     def __init__(self, key):
@@ -217,6 +218,26 @@ def monitor():
                 pass
 
 
+def generateGraph():
+    with open('graphinfo.csv','r') as graphdata:
+        graphpoints = csv.reader(graphdata, delimiter=',')
+        rows = list(graphpoints)
+
+    #get licenses graph
+    fig, ax = plt.subplots()
+    plt.plot([value[0] for value in rows[1:]], [value[1] for value in rows[1:]])
+    plt.ylabel(rows[0][1])
+    fig.autofmt_xdate()
+    plt.savefig('static/images/licenses.png',dpi=300)
+
+    #get users graph
+    fig, ax = plt.subplots()
+    plt.plot([value[0] for value in rows[1:]], [value[2] for value in rows[1:]])
+    plt.ylabel(rows[0][2])
+    fig.autofmt_xdate()
+    plt.savefig('static/images/users.png', dpi=300)
+
+
 app = Flask(__name__)
 app.secret_key = os.urandom(24)  # secret key for encoding of session on the webapp
 
@@ -412,6 +433,7 @@ def admindash():
     if current_user.getAdminPerms():
         statsdict = utils.gatherStatistics()
         randomstats = [[statsdict[value], value] for value in random.sample(list(statsdict), 3)]
+        generateGraph()
         return render_template('admindash.html', stats=randomstats)
     else:
         reason = f'Insufficient permissions.'
