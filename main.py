@@ -12,8 +12,12 @@ import datetime
 import json
 import threading
 import random
-import matplotlib.pyplot as plt
 import csv
+
+import matplotlib
+matplotlib.use('Agg')
+
+import matplotlib.pyplot as plt
 
 class Renewal:
     def __init__(self, key):
