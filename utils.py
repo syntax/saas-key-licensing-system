@@ -121,17 +121,18 @@ def generateGraph():
 
     # get licenses graph
     fig, ax = plt.subplots()
-    plt.plot([value[0] for value in rows[1:]], [value[1] for value in rows[1:]])
+    plt.plot([value[0] for value in rows[1:]], [int(value[1]) for value in rows[1:]])
     plt.ylabel(rows[0][1])
     fig.autofmt_xdate()
     plt.savefig('static/images/licenses.png',dpi=300)
 
     # get users graph
     fig, ax = plt.subplots()
-    plt.plot([value[0] for value in rows[1:]], [value[2] for value in rows[1:]])
+    plt.plot([value[0] for value in rows[1:]], [int(value[2]) for value in rows[1:]])
     plt.ylabel(rows[0][2])
     fig.autofmt_xdate()
     plt.savefig('static/images/users.png', dpi=300)
+
 
 if __name__ == '__main__':
     generateGraph()
