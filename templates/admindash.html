@@ -34,48 +34,49 @@
         <div class="col-3">
         </div>
         <div class="col-md-6 text-center ">
-            <h2 class="text-white">Welcome to the administrator panel!</h2>
-            <h5 class="text-white muted mt-3"> Your statistics at a glance...</h5>
-            <div class="row h-5"></div>
-            <div class="row mt-2 h-20 text-dark">
-                <div class="col-4">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ stats[0][0] }}</h5>
-                            <h6 class="card-subtitle">{{ stats[0][1] }}</h6>
+            <div class="container-fluid">
+                <h2 class="text-white">Welcome to the administrator panel!</h2>
+                <h5 class="text-white muted mt-3"> Your statistics at a glance...</h5>
+                <div class="row h-5"></div>
+                <div class="row mt-2 h-20 text-dark">
+                    <div class="col-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ stats[0][0] }}</h5>
+                                <h6 class="card-subtitle">{{ stats[0][1] }}</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ stats[1][0] }}</h5>
+                                <h6 class="card-subtitle">{{ stats[1][1] }}</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ stats[2][0] }}</h5>
+                                <h6 class="card-subtitle">{{ stats[2][1] }}</h6>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-4">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ stats[1][0] }}</h5>
-                            <h6 class="card-subtitle">{{ stats[1][1] }}</h6>
+                <div class="row mt-2 h-40 text-dark">
+                    <div class="col-6">
+                        <div class="card mt-3">
+                            <img src="{{url_for('static', filename='images/licenses.png')}}" alt="Image">
                         </div>
                     </div>
-                </div>
-                <div class="col-4">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ stats[2][0] }}</h5>
-                            <h6 class="card-subtitle">{{ stats[2][1] }}</h6>
+                    <div class="col-6">
+                        <div class="card mt-3">
+                            <img src="{{url_for('static', filename='images/users.png')}}" alt="Image">
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="row mt-4 h-40 text-dark">
-                <div class="col-6">
-                    <div class="card mt-3">
-                        <img src="{{url_for('static', filename='images/licenses.png')}}" alt="Image">
-                    </div>
-                </div>
-                <div class="col-6">
-                    <div class="card mt-3">
-                        <img src="{{url_for('static', filename='images/users.png')}}" alt="Image">
-                    </div>
-                </div>
-            </div>
-
         </div>
         <div class="col-3">
         </div>
