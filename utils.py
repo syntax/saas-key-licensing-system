@@ -89,15 +89,28 @@ def gatherStatistics():
     db = Database()
 
     #this dict can easily be added to due to modular programming design
-    dict = {
-        "Licenses": db.getCountofTable('licenses'),
-        "Users": db.getCountofTable('users'),
-        "Plans": db.getCountofTable('plans'),
-        "Users with a License Bound": db.getConditionalCountofTable('licenses','boundToUser','1'),
-        "Licenses Bound to a User's Device": db.getConditionalCountofTable('licenses', 'boundToDevice', '1'),
-        "Most Popular Plan": db.getMostPopular('licenses','plan')[0],
-        "Percentages of Licenses bound to a User": f'''{round((db.getConditionalCountofTable('licenses','boundToUser','1')/ db.getCountofTable('licenses'))*100, 2)}%'''
-            }
+    try:
+        dict = {
+            "Licenses": db.getCountofTable('licenses'),
+            "Users": db.getCountofTable('users'),
+            "Plans": db.getCountofTable('plans'),
+            "Users with a License Bound": db.getConditionalCountofTable('licenses','boundToUser','1'),
+            "Licenses Bound to a User's Device": db.getConditionalCountofTable('licenses', 'boundToDevice', '1'),
+            "Most Popular Plan": db.getMostPopular('licenses','plan')[0],
+            "Percentages of Licenses bound to a User": f'''{round((db.getConditionalCountofTable('licenses','boundToUser','1')/ db.getCountofTable('licenses'))*100, 2)}%'''
+                }
+    except:
+        # in the case where tables are not populated enough
+        dict = {
+            "Licenses": '',
+            "Users": '',
+            "Plans":'',
+            "Users with a License Bound": '',
+            "Licenses Bound to a User's Device": '',
+            "Most Popular Plan": '',
+            "Percentages of Licenses bound to a User": '',
+        }
+
     db.closeConnection()
     return dict
 
