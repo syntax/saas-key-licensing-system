@@ -4,6 +4,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import re
 from api import Database
+import monitor
 import utils
 import os
 import time
@@ -172,68 +173,6 @@ class AdministativeUser(User):
     def __init__(self, username, fname, sname, email, password):
         super().__init__(username, fname, sname, email, password, couldHaveLicense=False)
         self.isadmin = True
-
-
-def monitorRenewals():
-    while True:
-        time.sleep(5)
-
-        # print('Monitoring...')
-        def charge(session):
-            # placeholder function
-
-            # sing session ID, makes get request to status webhook
-            # creates communction with stripe API, which will return one of the following
-            if session:
-                event_type = "checkout.session.completed"  # response from stripe API, example.
-                if event_type == "checkout.session.completed" or "invoice.paid":
-                    return True
-                else:
-                    return False
-
-        db = Database()
-        rendict = db.getAllLicenseWithRenewal()
-        db.closeConnection()
-        now = datetime.datetime.now()
-        for value in rendict:
-            # print(f'license: {value} // {(rendict[value] - now).total_seconds()} seconds until renewal')
-            if (rendict[value] - now).total_seconds() <= 0:
-
-                db = Database()
-                session = db.getLicenseStripeSessionID(value)
-                attempt = charge(session)
-
-                if attempt:
-                    renewal = Renewal(value)
-                    renewal.incrementRenewalDate()
-                    renewal.commitRenewdatetoDatabase(value)
-                else:
-                    print('failed to charge')
-                    db = Database()
-                    db.deleteLicense(value)
-                    db.closeConnection()
-            else:
-                pass
-
-def monitorGraphs():
-    while True:
-        #only checks to refesh once every 10 minutes, as generating graphs is relatively processer intensive
-        time.sleep(10*60)
-
-        with open('graphinfo.csv','r') as current_file:
-            latestdate = list(csv.reader(current_file, delimiter=','))[-1][0]
-
-        latestdate = datetime.datetime.strptime(latestdate,'%d/%m/%Y').date()
-        nowdate = datetime.date.today()
-
-        if nowdate > latestdate:
-            with open('graphinfo.csv', 'a') as current_file:
-                db = Database()
-                current_file.write(f'''\n{datetime.datetime.strftime(nowdate,'%d/%m/%Y')},{db.getCountofTable('licenses')},{db.getCountofTable('users')}''')
-                db.closeConnection()
-
-            #generate a new set of graphs for the new day
-            utils.generateGraph()
 
 
 app = Flask(__name__)
@@ -641,11 +580,11 @@ if __name__ == '__main__':
     db = Database()
     db.create()
     # creates and runs monitor function on a secondary daemon thread
-    monitorfunct = threading.Thread(name='monitor', target=monitorRenewals, daemon=True)
+    monitorfunct = threading.Thread(name='monitor', target=monitor.monitorRenewals, daemon=True)
     monitorfunct.start()
 
     # creates and runs monitor stats function on a secondary daemon thread
-    monitorstats = threading.Thread(name='monitorstats', target=monitorGraphs, daemon=True)
+    monitorstats = threading.Thread(name='monitorstats', target=monitor.monitorGraphs, daemon=True)
     monitorstats.start()
 
     # runs on main thread
