@@ -112,7 +112,7 @@ tbody {
   display: block;
   overflow-y: auto;
   table-layout: fixed;
-  max-height: 200px;
+  max-height: 500px;
 }
 
 #main {

@@ -141,6 +141,5 @@ def generateGraph():
 
 
 if __name__ == '__main__':
-    generateGraph()
-    createAdminUser(f'''admin,tom,holland,admin@gmail.com,{hash('admin', 'test')}''')
+    createAdminUser(f'''admin,test,account,admin@gmail.com,{hash('admin', 'test')}''')
 
