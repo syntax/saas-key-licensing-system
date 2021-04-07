@@ -27,7 +27,6 @@ def monitorRenewals():
         db.closeConnection()
         now = datetime.datetime.now()
         for value in rendict:
-            # print(f'license: {value} // {(rendict[value] - now).total_seconds()} seconds until renewal')
             if (rendict[value] - now).total_seconds() <= 0:
 
                 db = Database()

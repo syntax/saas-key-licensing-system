@@ -121,14 +121,20 @@ def generateGraph():
 
     # get licenses graph
     fig, ax = plt.subplots()
-    plt.plot([value[0] for value in rows[1:]], [int(value[1]) for value in rows[1:]])
+    if len(rows) > 15:
+        plt.plot([value[0] for value in rows[1:][-15:]], [int(value[1]) for value in rows[1:][-15:]])
+    else:
+        plt.plot([value[0] for value in rows[1:]], [int(value[1]) for value in rows[1:]])
     plt.ylabel(rows[0][1])
     fig.autofmt_xdate()
     plt.savefig('static/images/licenses.png',dpi=300)
 
     # get users graph
     fig, ax = plt.subplots()
-    plt.plot([value[0] for value in rows[1:]], [int(value[2]) for value in rows[1:]])
+    if len(rows) > 15:
+        plt.plot([value[0] for value in rows[1:][-15:]], [int(value[2]) for value in rows[1:][-15:]])
+    else:
+        plt.plot([value[0] for value in rows[1:]], [int(value[2]) for value in rows[1:]])
     plt.ylabel(rows[0][2])
     fig.autofmt_xdate()
     plt.savefig('static/images/users.png', dpi=300)
