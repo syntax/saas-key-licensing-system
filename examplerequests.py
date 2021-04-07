@@ -13,6 +13,7 @@ class Authentication():
         self.license = licenseid
         self.hwid = None
         self.devicename = None
+        self.isBoundToUser = False
 
         self.headers = {'api_key': API_KEY}
 
@@ -23,6 +24,7 @@ class Authentication():
             resp = requests.get(f'http://127.0.0.1:5000/api/v1/licenses/{self.license}', headers=self.headers).json()
             self.hwid = resp['license']['HWID']
             self.devicename = resp['license']["device"]
+            self.isBoundToUser = bool(resp['license']["boundToUser"])
             return resp['license']
         except:
             self.license = None
@@ -74,7 +76,7 @@ def validateUser(license):
     auth = Authentication(license)
     localhwid, localdevname = collectLocalData()
 
-    if auth.license:
+    if auth.license and auth.isBoundToUser:
         # checks license key is still valid
         if not (auth.hwid and auth.devicename):
             # in the case where license is currently unbound
