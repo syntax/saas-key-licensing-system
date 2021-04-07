@@ -11,7 +11,7 @@
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
           crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/home.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/home.css') }}">
 </head>
 <body>
 <div class="container-fluid h-95 bg-dark text-light">
@@ -21,13 +21,14 @@
 
             <h1>
                 A Software-as-a-Service means of distributing your project
-                <p><h5><small class="text-muted">By Tom • Demo Version</small></h5></p>
+                <p><h5><small class="text-muted">By Tom • Showcase Version</small></h5></p>
             </h1>
         </div>
         <div class="col-lg-2"></div>
         <div class="col-lg-6">
             <p>New or exisiting user?</p>
-            <a href="/login" class="btn btn-primary btn-lg active animate__animated animate__tada animate__delay-2s" role="button" aria-pressed="true" >Login</a>
+            <a href="/login" class="btn btn-primary btn-lg active animate__animated animate__tada animate__delay-2s"
+               role="button" aria-pressed="true">Login</a>
             or
             <a href="/signup" class="btn btn-secondary btn-lg active" role="button" aria-pressed="true">Sign-up</a>
         </div>
@@ -42,8 +43,19 @@
         <div class="col-4"></div>
     </div>
 </div>
-<div class="container-fluid h-100 bg-light text-dark ">
+<div class="container-fluid h-60 bg-light text-dark ">
     <div class="row">
+        <div class="col-4"></div>
+        <div class="col-4 text-center">
+            <div class="mt-4 mb-4"><b>Account login details to showcase certain features of the application:</b>
+                <br><br>
+                For the admin panel, use account<br>
+                user: <i>admin</i><br>password: test
+                <br><br>
+                For the user's point of view, use accounts<br>
+                user: <i>windows4life</i> or <i>appleman22</i> or <i>johnsmith2</i><br>password: ExamplePassword123!!</div>
+        </div>
+        <div class="col-4"></div>
     </div>
 </div>
 </body>
