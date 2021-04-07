@@ -25,7 +25,7 @@ class Authentication():
             self.devicename = resp['license']["device"]
             return resp['license']
         except:
-            set.license = None
+            self.license = None
             return None
 
     def setToBound(self, hwid, devicename):
