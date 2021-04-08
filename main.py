@@ -523,13 +523,13 @@ def getTime():
 # API speicifc functions
 
 @app.errorhandler(404)
-def not_found():
-    return make_response(jsonify({'error': 'not found'}), 404)
+def not_found(e):
+    return render_template('redirect.html', reason='Unrecognised endpoint.')
 
 
 @app.errorhandler(400)
-def not_found():
-    return make_response(jsonify({'error': 'malformed syntax, seek docs'}), 404)
+def bad_syntax(e):
+    return make_response(jsonify({'error': 'malformed syntax, seek docs'}), 400)
 
 
 @app.route('/api/v1/licenses/<licenseid>', methods=['GET', 'POST'])
