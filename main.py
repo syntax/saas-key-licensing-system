@@ -226,6 +226,19 @@ def rescramblelicense():
 
 
 # front end webapp endpoints
+
+#stops favicon related GET errors,
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                          'favicon.ico',mimetype='image/vnd.microsoft.icon')
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
+    print(f'recieved invalid request attempt of /{path}')
+    return render_template('redirect.html', reason='Unrecognised endpoint.')
+
 @app.route('/')
 def index():
     return render_template('home.html')

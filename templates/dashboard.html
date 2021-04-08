@@ -11,8 +11,8 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
           crossorigin="anonymous">
-     <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/dashboard.css') }}">
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/dashboard.css') }}">
 </head>
 
 <body onload="relayUserTime('{{ current_user.fname }}')">
@@ -23,61 +23,69 @@
             <div class="card text-center">
                 <h2 class="card-title mt-5" id="time"></h2>
                 {% if current_user.license.exists %}
-                    <div class="card-body">
-                        email: {{ current_user.email }}
-                            <br>
-                            license: {{ current_user.license }}
-                    </div>
+                <div class="card-body">
+                    email: {{ current_user.email }}
+                    <br>
+                    license: {{ current_user.license }}
+                </div>
                 {% else %}
-                    <div class="card-body">
-                        email: {{ current_user.email }}
-                            <br>
-                            <br>
-                    </div>
+                <div class="card-body">
+                    email: {{ current_user.email }}
+                    <br>
+                    <br>
+                </div>
                 {% endif %}
                 <div class="container-fluid">
-                <div class="row mt-2">
-                    <div class="col-sm-1"></div>
-                    <div class="col-sm-5">
+                    <div class="row mt-2">
+                        <div class="col-sm-1"></div>
+                        <div class="col-sm-5">
 
-                        <!--License management widget-->
-                        <div class="card h-100">
-                            {% if not current_user.license.exists %}
-                            <div class="card-body">
-                                <h5 class="card-title">No license currently bound</h5>
-                                <div class="card-text">
-                                    {% if lerror %}
-                                    <p class="error text-danger"><strong>Error:</strong> {{ lerror }}
-                                        {% endif %}
-                                    <form action="" method="post">
-                                        <input type="text" class="form-control" name="licenseid" placeholder="License Key">
-                                        <button type="submit" class="btn btn-primary mt-2">Bind to this account</button>
-                                    </form>
+                            <!--License management widget-->
+                            <div class="card h-100">
+                                {% if not current_user.license.exists %}
+                                <div class="card-body">
+                                    <h5 class="card-title">No license currently bound</h5>
+                                    <div class="card-text">
+                                        {% if lerror %}
+                                        <p class="error text-danger"><strong>Error:</strong> {{ lerror }}
+                                            {% endif %}
+                                        <form action="" method="post">
+                                            <input type="text" class="form-control" name="licenseid"
+                                                   placeholder="License Key">
+                                            <button type="submit" class="btn btn-primary mt-2">Bind to this account
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
-                            </div>
-                            {% else %}
+                                {% else %}
                                 {% if not current_user.license.boundtodevice %}
                                 <div class="card-body">
                                     <h5 class="card-title">License Information </h5>
-                                    <p class="card-text">key: {{ current_user.license }} <br><a href="javascript:unbind()" class="muted">click to unbind from account {{current_user.id}}</a></p>
+                                    <p class="card-text">key: {{ current_user.license }} <br><a
+                                            href="javascript:unbind()" class="muted">click to unbind from account
+                                        {{current_user.id}}</a></p>
                                     <p class="card-text">status: not currently bound</p>
                                     <a href="javascript:rescramble()" class="btn btn-primary mt-1">Re-scramble Key</a>
                                 </div>
                                 {% else %}
                                 <div class="card-body">
                                     <h5 class="card-title">License Information</h5>
-                                    <p class="card-text">key: {{ current_user.license }} <br><a href="javascript:unbind()" class="muted">click to unbind from account {{current_user.id}}</a></p>
-                                    <p class="card-text">status: bound to device {{ current_user.license.devicename}}</p>
-                                    <a href="javascript:unbinddevice()" class="btn btn-primary mt-1">Unbind from {{ current_user.license.devicename}}</a>
+                                    <p class="card-text">key: {{ current_user.license }} <br><a
+                                            href="javascript:unbind()" class="muted">click to unbind from account
+                                        {{current_user.id}}</a></p>
+                                    <p class="card-text">status: bound to device {{
+                                        current_user.license.devicename}}</p>
+                                    <a href="javascript:unbinddevice()" class="btn btn-primary mt-1">Unbind from {{
+                                        current_user.license.devicename}}</a>
                                     <a href="javascript:rescramble()" class="btn btn-primary mt-1">Re-scramble Key</a>
                                 </div>
                                 {%endif%}
-                            {%endif%}
+                                {%endif%}
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-5">
-                        <div class="card h-100">
-                            {% if not current_user.license.exists %}
+                        <div class="col-sm-5">
+                            <div class="card h-100">
+                                {% if not current_user.license.exists %}
                                 <div class="card-body">
                                     <h5 class="card-title">Account and Billing</h5>
                                     <p class="card-text">No impending charge as no license is bound.</p>
@@ -85,19 +93,20 @@
                                     <!-- following button acts only as a placeholder as described by documentation -->
                                     <a href="#" class="btn btn-primary mt-1">Edit Billing Settings</a>
                                 </div>
-                            {% else %}
+                                {% else %}
                                 <div class="card-body">
                                     <h5 class="card-title">Account and Billing</h5>
-                                    <p class="card-text">Next Charge of ${{ current_user.license.renewal.renewamount }} due on {{ current_user.license.renewal.renewdate }}</p>
+                                    <p class="card-text">Next Charge of ${{ current_user.license.renewal.renewamount }}
+                                        due on {{ current_user.license.renewal.renewdate }}</p>
                                     <a href="/dashboard/account" class="btn btn-primary mt-1">Edit Account Settings</a>
                                     <!-- following button acts only as a placeholder as described by documentation -->
                                     <a href="#" class="btn btn-primary mt-1">Edit Billing Settings</a>
                                 </div>
-                            {% endif %}
+                                {% endif %}
+                            </div>
                         </div>
+                        <div class="col-sm-1"></div>
                     </div>
-                    <div class="col-sm-1"></div>
-                </div>
                 </div>
                 <div class="row mt-3">
                     <div class="col text-center">
