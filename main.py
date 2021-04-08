@@ -233,11 +233,6 @@ def getfavicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
                           'favicon.ico',mimetype='image/vnd.microsoft.icon')
 
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def catch_all(path):
-    print(f'recieved invalid request attempt of /{path}')
-    return render_template('redirect.html', reason='Unrecognised endpoint.')
 
 @app.route('/')
 def index():
