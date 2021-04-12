@@ -22,9 +22,7 @@ function closeNav() {
 var lastCol = undefined;
 var dir = undefined;
 
-function sortTable2(col) {
-  //console.log(lastCol);
-  //console.log(dir);
+function sortTable2(col, isInteger = false) {
   if (lastCol == undefined) lastCol = col;
   if (dir == undefined) dir = "asc";
   if (lastCol != col) {
@@ -35,9 +33,7 @@ function sortTable2(col) {
     switching, i, x, y, shouldSwitch, switchcount = 0;
   table = document.querySelector("#dbtable");
   rows = table.rows;
-  console.log(document.querySelectorAll("TH"));
   for (heading of document.querySelectorAll("TH")) {
-  console.log(heading)
     heading.style.textDecoration = "none";
   }
   rows[0].querySelectorAll("TH")[col].style.textDecoration = "underline";
@@ -49,12 +45,16 @@ function sortTable2(col) {
   } else {
     dir = "asc"
   }
-
-  for (i = 1; i < (rows.length); i++) {
-    preswitch.push([rows[i].querySelectorAll("TD")[0].innerHTML,rows[i].querySelectorAll("TD")[col].innerHTML])
+  if (isInteger) {
+      for (i = 1; i < (rows.length); i++) {
+        preswitch.push([rows[i].querySelectorAll("TD")[0].innerHTML,parseInt(rows[i].querySelectorAll("TD")[col].innerHTML)])
+      }
+  } else {
+      for (i = 1; i < (rows.length); i++) {
+        preswitch.push([rows[i].querySelectorAll("TD")[0].innerHTML,rows[i].querySelectorAll("TD")[col].innerHTML])
+      }
   }
   //copy of preswitch
-  //console.log(preswitch)
   let preswitch_copy = [...preswitch];
 
   function merge(left, right) {
