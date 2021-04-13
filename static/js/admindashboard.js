@@ -15,7 +15,7 @@ function openNav() {
     }
 }
 function closeNav() {
-  // function for closing navigation panel, commits to local storage after change
+  // function for closing navigation panel, commits to local storage after it has been changed
   document.getElementById("mySidenav").style.width = "0";
   document.getElementById("main").style.marginLeft = "0";
   if (typeof(Storage) !== "undefined") {
