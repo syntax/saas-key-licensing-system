@@ -7,9 +7,11 @@ import csv
 
 
 def monitorRenewals():
+    # function that repetitively monitors for when current time becomes equal to the users license date
+    # whent this event occurs, it attempts to charge the user (stub function as explained in design documentation)
+    # upon success renewal date is incremeneted, upon failure key is destroyed
     while True:
 
-        # print('Monitoring...')
         def charge(session):
             # placeholder function
 
@@ -49,6 +51,9 @@ def monitorRenewals():
 
 
 def monitorGraphs():
+    # function that monitors for when it becomes a new day
+    # when this event occurs, it recollects data relating to number of users/ licenses against time
+    # then polts new graphs for the admin user to see on their dashboard
     while True:
 
         with open('graphinfo.csv', 'r') as current_file:

@@ -7,6 +7,8 @@ API_KEY = ''
 
 
 # Authentication class acts as a framework for building your authnetication system off
+# this is a guide and does not to be adheard to exactly, the API functionality should allow for multiple authentication
+# flows to exist, whilst all are secure and suffice.
 
 class Authentication():
     def __init__(self, licenseid):
@@ -20,6 +22,7 @@ class Authentication():
         self.getLicenseInfo()
 
     def getLicenseInfo(self):
+        # performs GET request given a license key and attempts to return its attributes
         try:
             resp = requests.get(f'http://127.0.0.1:5000/api/v1/licenses/{self.license}', headers=self.headers).json()
             self.hwid = resp['license']['HWID']
@@ -31,6 +34,7 @@ class Authentication():
             return None
 
     def setToBound(self, hwid, devicename):
+        # performs POST request given a license key sets it to bound, given appropriate request data
         payloadjson = {
             "HWID": f"{hwid}",
             "device": f"{devicename}"
@@ -40,6 +44,7 @@ class Authentication():
         return resp
 
     def setToUnbound(self):
+        # performs POST request given a license key sets it to unbound
         payloadjson = {
             "HWID": None,
             "device": None
@@ -54,17 +59,23 @@ class Authentication():
 # These functions should be implemented around the developers software they are wanting to distrubute in order to validate users.
 
 def collectLocalData():
-    # this function will end uo being called often for comparison, and could be written in a variety of ways
+    # this function will end up being called often for comparison, and could be written in a variety of ways
 
     def deriveHWID():
-        mac_address = get_mac()  # gets device MAC address
-        processor_arch = platform.uname().processor  # gets name of local microprocessor
-        machine = platform.uname().machine  # gets instruction set architecture
+        # gets device MAC address
+        mac_address = get_mac()
+        # gets name of local microprocessor
+        processor_arch = platform.uname().processor
+        # gets instruction set architecture
+        machine = platform.uname().machine
 
-        return str(mac_address) + processor_arch + machine  # any convolution of relevant data would be valid, could be hashed, hashed with a pepper, etc.
+        # any convolution of relevant data would be valid, could be hashed, hashed with a pepper, etc.
+        # how this value is derived should be kept unkown to the user of the application
+        return str(mac_address) + processor_arch + machine
 
     hwid = deriveHWID()
-    devicename = socket.gethostname()  # gets name of local node
+    # gets name of local node
+    devicename = socket.gethostname()
 
     return hwid, devicename
 

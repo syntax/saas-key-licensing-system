@@ -1,4 +1,5 @@
 function relayUserTime(user){
+    // collects client side time as to show a representitive welcome message
     var time = new Date().getHours();
     if (0<=time && time<12) {
         document.getElementById("time").innerHTML = "Good morning " + user + " !" ;
@@ -8,6 +9,8 @@ function relayUserTime(user){
         document.getElementById("time").innerHTML = "Good evening " + user + " !" ;
     }
 }
+
+// ajax functions
 
 function unbind() {
     $.get('/unbindaccount');

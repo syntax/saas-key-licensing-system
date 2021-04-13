@@ -14,6 +14,7 @@ import threading
 import random
 import csv
 
+
 class Renewal:
     def __init__(self, key):
         self.renewdate = self.getRenewalDate(key)
@@ -24,17 +25,20 @@ class Renewal:
         self.getRenewalInfoFromPlan(key)
 
     def getRenewalDate(self, key):
+        # gets date of the next renewal given a key
         db = Database()
         dbdate = db.getNextRenewal(key)
         return dbdate
 
     def commitRenewdatetoDatabase(self, key):
+        # commits a renewal date to db following a change within the class
         dbconn = Database()
         dbconn.updateNextRenewal(key, self.renewdate)
         dbconn.closeConnection()
         return
 
     def getRenewalInfoFromPlan(self, key):
+        # gets all information regarding a licenses renewal through its plan attribute
         db = Database()
         planinfo = db.getPlanfromLicense(key)
         self.renewamount = float(planinfo['renewalprice'])
@@ -42,12 +46,13 @@ class Renewal:
         return planinfo
 
     def incrementRenewalDate(self):
+        # increments the renewal date the correct period in the case the license is renewed
         if self.renewdate and self.renewdate != 'Error reading DB':
             self.renewdate = self.renewdate + datetime.timedelta(days=self.renewinterval)
             return self.renewdate
 
     def initalRenewalIncrement(self, key):
-        print(self.renewdate)
+        # performs the inital renewal increment, adding correct period of days on its first bind
         if not self.renewdate:
             self.renewdate = datetime.datetime.now()
             self.incrementRenewalDate()
@@ -81,6 +86,7 @@ class License:
         return self.__str__()
 
     def loadUserLicense(self):
+        # loads all license related information in relation to a user, when given a user.
         db = Database()
         license = db.checkIfUserHasLicense(self.owner)
         if not license:
@@ -103,6 +109,7 @@ class License:
             return license
 
     def unbindDevice(self):
+        # sets the device the license is bound to to none
         if not self.key:
             return 'No license currently bound to account'
         else:
@@ -118,6 +125,7 @@ class License:
                 return
 
     def rescramble(self):
+        # rescrambles the key identifier to a unique value
         if not self.key:
             return 'No license currently bound to account'
         else:
@@ -154,8 +162,7 @@ class User(UserMixin):
         return self.id
 
     def unbindLicense(self):
-        # probably needs to be implemented with some sort of ajax on the html client side to prevent it from just having the entire page render again
-        # will need to do things such as unbinding from device, as well, keep this in consideration!
+        # unbinds a license from a user's account, called by an ajax function.
         if self.license:
             db = Database()
             db.setLicenseToUnbound(self.license.key)
@@ -176,7 +183,8 @@ class AdministativeUser(User):
 
 
 app = Flask(__name__)
-app.secret_key = os.urandom(24)  # secret key for encoding of session on the webapp
+# secret key for encoding of session on the webapp
+app.secret_key = os.urandom(24)
 
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
@@ -190,6 +198,7 @@ limiter = Limiter(
 
 @login_manager.user_loader
 def load_user(username):
+    # function for loading all appropriate user data, and the specific user type, on login
     dbconnection = Database()
     result = dbconnection.searchUsersByUsername(username)
     dbconnection.closeConnection()
@@ -207,6 +216,7 @@ def load_user(username):
 @app.route("/unbindaccount")
 @login_required
 def unbindkey():
+    # ajax-called function for unbinding key from a account
     current_user.unbindLicense()
     return redirect(url_for('dashboard'))
 
@@ -214,6 +224,7 @@ def unbindkey():
 @app.route("/unbinddevice")
 @login_required
 def unbinddevice():
+    # ajax-called function for unbinding device from a key
     current_user.license.unbindDevice()
     return redirect(url_for('dashboard'))
 
@@ -221,26 +232,30 @@ def unbinddevice():
 @app.route("/rescramblelicense")
 @login_required
 def rescramblelicense():
+    # ajax-called function for rescrambling license identifier
     current_user.license.rescramble()
     return redirect(url_for('dashboard'))
 
 
 # front end webapp endpoints
 
-#stops favicon related GET errors,
 @app.route('/favicon.ico')
 def getfavicon():
+    # returns favicon for any page on the domain
+    # otherwise risks returning 500s if this endpoint is not present.
     return send_from_directory(os.path.join(app.root_path, 'static'),
-                          'favicon.ico',mimetype='image/vnd.microsoft.icon')
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 
 @app.route('/')
 def index():
+    # front page of website
     return render_template('home.html')
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    # validates inputs and compares with database
     error = None
     if current_user.is_authenticated:
         return redirect(url_for('dashboard'))
@@ -266,6 +281,7 @@ def login():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
+    # validates inputs and commits to database
     mailregex = r"^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$"
     pwregex = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
     unameregex = r"^[A-Za-z0-9]+$"
@@ -303,6 +319,7 @@ def signup():
 @app.route("/logout")
 @login_required
 def logout():
+    # logs out of the application
     reason = f'logging out of account {current_user}!'
     logout_user()
     return render_template('redirect.html', reason=reason)
@@ -311,6 +328,7 @@ def logout():
 @app.route("/dashboard", methods=['GET', 'POST'])
 @login_required
 def dashboard():
+    # returns user based dashboad
     if not current_user.getAdminPerms():
         lerror = None
         if request.method == 'POST' and request.form['licenseid'] != '':
@@ -324,8 +342,9 @@ def dashboard():
                 lerror = result
                 print(f'ERROR: {lerror}')
 
-            return redirect(
-                url_for('dashboard'))  # https://www.youtube.com/watch?v=JQFeEscCvTg&ab_channel=DaveHollingworth
+            # redirect appropriate as to avoid POST callbacks
+            # explained beautifully here: https://www.youtube.com/watch?v=JQFeEscCvTg&ab_channel=DaveHollingworth
+            return redirect(url_for('dashboard'))
 
         return render_template('dashboard.html', lerror=lerror)
     else:
@@ -335,6 +354,7 @@ def dashboard():
 @app.route("/dashboard/account", methods=['GET', 'POST'])
 @login_required
 def dashboardaccount():
+    # allows for user account settings to be edited following their arrival at their dashboard
     if not current_user.getAdminPerms():
         error = None
         mailregex = r"^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$"
@@ -375,6 +395,7 @@ def dashboardaccount():
 @app.route("/admin/dashboard", methods=['GET', 'POST'])
 @login_required
 def admindash():
+    # shows overview page with a selection of interesting stats
     if current_user.getAdminPerms():
         statsdict = utils.gatherStatistics()
         randomstats = [[statsdict[value], value] for value in random.sample(list(statsdict), 3)]
@@ -387,7 +408,9 @@ def admindash():
 @app.route("/admin/dashboard/users", methods=['GET', 'POST'])
 @login_required
 def adminusers():
+    # endpoint for reaching users table
     if current_user.getAdminPerms():
+        # in the case where users are attempting to be deleted (POST)
         if request.method == "POST":
             try:
                 db = Database()
@@ -422,7 +445,9 @@ def adminusers():
 @app.route("/admin/dashboard/licenses", methods=['GET', 'POST'])
 @login_required
 def adminlicenses():
+    # endpoint for reaching licenses table
     if current_user.getAdminPerms():
+        # in the case where licenses are attempting to be made / deleted (POST)
         if request.method == 'POST':
             try:
                 if not 'delete' in request.form:
@@ -460,7 +485,9 @@ def adminlicenses():
 @app.route("/admin/dashboard/plans", methods=['GET', 'POST'])
 @login_required
 def adminplans():
+    # endpoint for reaching plans table
     if current_user.getAdminPerms():
+        # in the case where plans are attempting to be made / deleted (POST)
         if request.method == 'POST':
             try:
                 if not 'delete' in request.form:
@@ -498,8 +525,10 @@ def adminplans():
 @app.route("/admin/dashboard/documentation", methods=['GET', 'POST'])
 @login_required
 def admindocs():
+    # endpoint for accessing documentation
     if current_user.getAdminPerms():
         if request.method == 'POST':
+            # in the case where user attempts to download a API wrapper file
             return send_from_directory(directory=app_config['UPLOAD_DIRECTORY_MAIN'], filename='examplerequests.py',
                                        as_attachment=True)
         return render_template('admindocs.html', api_key=app_config['api_key'])
@@ -508,28 +537,24 @@ def admindocs():
         return render_template('redirect.html', reason=reason)
 
 
-@app.route("/getTime", methods=['GET'])
-def getTime():
-    print("browser time: ", request.args.get("time"))
-    print("server time : ", time.strftime('%A %B, %d %Y %H:%M:%S'));
-    return "Done"
-
-
 # API speicifc functions
 
 @app.errorhandler(404)
 def not_found(e):
+    # error handler in the case of unrecognised endpoint
     return render_template('redirect.html', reason='Unrecognised endpoint.')
 
 
 @app.errorhandler(400)
 def bad_syntax(e):
+    # error handler in the case of unrecognised request body, through API
     return make_response(jsonify({'error': 'malformed syntax, seek docs'}), 400)
 
 
 @app.route('/api/v1/licenses/<licenseid>', methods=['GET', 'POST'])
 @limiter.limit("2 per second")
 def get_specific_license(licenseid):
+    # entire API endpoint which accepts both GET and POST requests
     try:
         if request.headers['api_key'] == app_config['api_key']:
             if request.method == "GET":
@@ -584,10 +609,14 @@ def get_specific_license(licenseid):
 
 if __name__ == '__main__':
     with open('config.json', 'r') as configfile:
+        # open and read config file
         app_config = json.load(configfile)
+
+    # initalistaion of the database
     db = Database()
     db.create()
-    # creates and runs monitor function on a secondary daemon thread
+
+    # creates and runs monitor renewal function on a secondary daemon thread
     monitorfunct = threading.Thread(name='monitor', target=monitor.monitorRenewals, daemon=True)
     monitorfunct.start()
 
@@ -595,5 +624,5 @@ if __name__ == '__main__':
     monitorstats = threading.Thread(name='monitorstats', target=monitor.monitorGraphs, daemon=True)
     monitorstats.start()
 
-    # runs on main thread
+    # runs flask application on main thread
     app.run()

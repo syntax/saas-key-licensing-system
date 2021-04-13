@@ -9,6 +9,7 @@ class Database():
         self.c = self.conn.cursor()
 
     def create(self):
+        # creates and configues the database in the case it is empty or does not exist
         if os.path.getsize('licenses.db') != 0:
             return 'DB File already exists and has already been created.'
         else:
@@ -19,10 +20,12 @@ class Database():
             return 'Created DB file'
 
     def closeConnection(self):
+        # closes connection
+        # necessary to be called as it is important to refrain from concurrent database connections where possible
         self.conn.close()
         return
 
-    # non specific functions
+    # --- non specific functions ---
 
     def getCountofTable(self, table):
         self.c.execute(f'''SELECT COUNT(*) FROM {table}''')
@@ -39,17 +42,12 @@ class Database():
         result = self.c.fetchone()
         return result
 
-    # user related functions
+    # --- user related functions ---
 
     def getAll(self, dbname):
         self.c.execute(f'''SELECT * FROM {dbname}''')
         result = self.c.fetchall()
         return result
-
-    def removeTable(self):
-        self.c.execute('DROP TABLE licenses')
-        self.conn.commit()
-        return
 
     def searchUsersByUsername(self, user):
         self.c.execute(f'''SELECT * FROM users WHERE username = ?''', (user,))
@@ -81,7 +79,7 @@ class Database():
         self.conn.commit()
         return
 
-    # license related functions
+    # --- license related functions ---
 
     def getLicenseInfo(self, license):
         self.c.execute(f'''SELECT * FROM licenses WHERE license = ?''',
@@ -185,6 +183,7 @@ class Database():
         return renewaldict
 
     def bindUsertoLicense(self, license, username):
+        # attemps to bind a license to a certain user given the license is valid.
         if self.checkIfLicenseExists(license):
             if not self.checkIfLicenseBound(license):
                 if not self.checkIfUserHasLicense(username):
@@ -234,7 +233,7 @@ class Database():
         self.conn.commit()
         return
 
-    # plan related functions
+    # --- plan related functions ---
 
     def getPlanInfo(self, name):
         self.c.execute(f'''SELECT * FROM plans WHERE name = "{name}";''')

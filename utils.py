@@ -10,11 +10,13 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 def generatekey(random_chars, alphabet="abcdefghijklmnopqrstuvwxyz1234567890"):
+    # generates a license key from a pseudorandom mechanism
     r = random.SystemRandom()
     return ''.join([r.choice(alphabet) for _ in range(random_chars)])
 
 
 def createLicense(planname):
+    # creates a license using generatekey function, commiting to database after suitable logic
     initialconn = Database()
     if initialconn.getPlanInfo(planname):
         initialconn.closeConnection()
@@ -23,6 +25,7 @@ def createLicense(planname):
             # 79586 6110994640 0884391936 combinations
             conn = Database()
             if conn.checkIfLicenseExists(license):
+                # in the event the license identifier generated is already in use, retry
                 continue
             else:
                 print(f'created license {license}')
@@ -36,6 +39,8 @@ def createLicense(planname):
 
 def gensalt(username):
     # a strange algorithm to create larger salts, as well as remove the predictability vulnerability for as long as this algorithm is kept secret
+    # uses a combination of ceaser shifts
+    # goal of this is not to provide a secure cipher, simply to act as a string manipulation algorithm
     def ceaser(shift, string):
         alphabet = '0abcdefghijkl1234mnopqrst567uvwx89yz'
         output = []
@@ -67,11 +72,12 @@ def gensalt(username):
 
 
 def hash(username, password):
+    # performs hashing function given the salt
     hashdpw = hashlib.pbkdf2_hmac(
         hash_name='sha256',  # The hash digest algorithm for HMAC
         password=password.encode('utf-8'),
         salt=gensalt(username).encode('utf-8'),
-        iterations=100000  # 100,000 iterations of SHA-256
+        iterations=100000  # 100,0 00 iterations of SHA-256
     )
 
     return hashdpw.hex()
@@ -86,9 +92,10 @@ def createAdminUser(values):
 
 
 def gatherStatistics():
+    # function to perform database calls to collect 'insight' statistics for the admin overview page
     db = Database()
 
-    #this dict can easily be added to due to modular programming design
+    # this dict can easily be added to due to modular programming design
     try:
         dict = {
             "Licenses": db.getCountofTable('licenses'),
@@ -100,7 +107,7 @@ def gatherStatistics():
             "Percentages of Licenses bound to a User": f'''{round((db.getConditionalCountofTable('licenses','boundToUser','1')/ db.getCountofTable('licenses'))*100, 2)}%'''
                 }
     except:
-        # in the case where tables are not populated enough
+        # in the event where tables are not populated enough
         dict = {
             "Licenses": '',
             "Users": '',
@@ -115,6 +122,7 @@ def gatherStatistics():
     return dict
 
 def generateGraph():
+    # function to collect information, generate graphs and convert to png form for the admin dashboard
     with open('graphinfo.csv','r') as graphdata:
         graphpoints = csv.reader(graphdata, delimiter=',')
         rows = list(graphpoints)
