@@ -5,12 +5,12 @@ HOW TO RUN PROGRAM
 An example database has been set-up for the purpose of showcase. Use the following login details to access different aspects of the application.
 
 For the admin panel, use account
-user: admin
-password: test
+- user: admin
+- password: test
 
-For the user's point of view, use accounts
-user: windows4life or appleman22 or johnsmith2
-password: ExamplePassword123!!
+For the user's point of view, use accounts 
+- user: windows4life or appleman22 or johnsmith2
+- password: ExamplePassword123!!
 
 ------
 HOW TO RUN LOCALLY:::
