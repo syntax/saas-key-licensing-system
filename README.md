@@ -20,11 +20,13 @@ requirements;
 - the following python libs; Flask, flask-login, flask-limiter, requests, matplotlib
 
 following cmd commands will install required libraries:
-pip install Flask
-pip install flask-login
-pip install Flask-Limiter
-pip install requests
-pip install matplotlib
+<ol>
+<li>pip install Flask</li>
+<li>pip install flask-login</li>
+<li>pip install Flask-Limiter</li>
+<li>pip install requests</li>
+<li>pip install matplotlib</li>
+</ol>
 
 AFTER THIS, config.json needs to be edited in order to correspond with the directory the program is being run in.
 
