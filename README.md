@@ -26,7 +26,7 @@ following cmd commands will install required libraries:
 - pip install requests
 - pip install matplotlib
 
-AFTER THIS, config.json needs to be edited in order to correspond with the directory the program is being run in.
+AFTER THIS, config.json needs to be edited in order to correspond with the directory the program is being run in. If running on windows, the absolute path's will likely contain backward slashes. Please change these backslashes to forward slashes before saving the config.json; if running on a unix-based OS ignore this step.
 
 After all requirements have been met, running main.py will run the host server on your localhost machine.
 
