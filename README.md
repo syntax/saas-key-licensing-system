@@ -5,12 +5,12 @@ HOW TO RUN PROGRAM
 An example database has been set-up for the purpose of showcase. Use the following login details to access different aspects of the application.
 
 For the admin panel, use account
-- user: admin
-- password: test
+user: admin
+password: test
 
-For the user's point of view, use accounts 
-- user: windows4life or appleman22 or johnsmith2
-- password: ExamplePassword123!!
+For the user's point of view, use accounts
+user: windows4life or appleman22 or johnsmith2
+password: ExamplePassword123!!
 
 ------
 HOW TO RUN LOCALLY:::
@@ -20,13 +20,11 @@ requirements;
 - the following python libs; Flask, flask-login, flask-limiter, requests, matplotlib
 
 following cmd commands will install required libraries:
-<ol>
-<li>pip install Flask</li>
-<li>pip install flask-login</li>
-<li>pip install Flask-Limiter</li>
-<li>pip install requests</li>
-<li>pip install matplotlib</li>
-</ol>
+> pip install Flask
+> pip install flask-login
+> pip install Flask-Limiter
+> pip install requests
+> pip install matplotlib
 
 AFTER THIS, config.json needs to be edited in order to correspond with the directory the program is being run in.
 
