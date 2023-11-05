@@ -190,7 +190,7 @@ login_manager = LoginManager(app)
 login_manager.login_view = "login"
 
 limiter = Limiter(
-    app,
+    app=app,
     key_func=get_remote_address,
     default_limits=["20 per second"],
 )
